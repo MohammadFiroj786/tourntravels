@@ -98,9 +98,11 @@ transform:translateY(-5px);
 
 <div class="col-md-3 col-lg-2 sidebar p-4">
 
-<h3 class="mb-4"><i class="fa fa-plane"></i> Tour N Travels</h3>
+<a href="user-dashboard.php" class="text-decoration-none text-dark">
+    <h3 class="mb-4"><i class="fa fa-plane"></i> Tour N Travels</h3>
+</a>
 
-<a href="#"><i class="fa fa-home"></i> Dashboard</a>
+<a href="user-dashboard.php"><i class="fa fa-home"></i> Dashboard</a>
 <a href="my-bookings.php"><i class="fa fa-calendar"></i> My Bookings</a>
 <a href="packages.php"><i class="fa fa-box"></i> View Packages</a>
 <a href="profile.php"><i class="fa fa-user"></i> Profile</a>
