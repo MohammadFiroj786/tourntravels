@@ -60,33 +60,48 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tour N Travels - Login</title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: url('images/bg_5.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    .card {
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-    }
-    .password-toggle {
-      position: absolute;
-      right: 15px;
-      bottom: 12px; /* bottom aligned */
-      cursor: pointer;
-      color: #F96D00;
-    }
-  </style>
+	<title>Tour N Travels - Login</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="css/animate.css">
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
+	<link rel="stylesheet" href="css/bootstrap-datepicker.css">
+	<link rel="stylesheet" href="css/jquery.timepicker.css">
+	<link rel="stylesheet" href="css/flaticon.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<style>
+	body {
+		background: url('images/bg_5.jpg') no-repeat center center fixed;
+		background-size: cover;
+	}
+
+	.card {
+		background-color: rgba(255,255,255,0.9);
+		border-radius: 20px;
+	}
+
+	.password-toggle{
+		position:absolute;
+		right:15px;
+		bottom:12px;
+		cursor:pointer;
+		color:#F96D00;
+	}
+	</style>
 </head>
 <body>
+<?php include 'navbar.php'; ?>
 
+<main class="pt-5 mt-4">
 <div class="min-vh-100 d-flex align-items-center justify-content-center">
   <div class="card shadow-lg p-4 p-md-5 w-100 mx-3" style="max-width: 480px;">
     <div class="card-body text-center">
@@ -142,10 +157,22 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     </div>
   </div>
 </div>
-
-<!-- Bootstrap 5 JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+</main>
+<?php include 'footer.php'; ?>
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-migrate-3.0.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/jquery.waypoints.min.js"></script>
+<script src="js/jquery.stellar.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/jquery.animateNumber.min.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/jquery.timepicker.min.js"></script>
+<script src="js/scrollax.min.js"></script>
+<script src="js/main.js"></script>
 <!-- Password toggle -->
 <script>
   function togglePassword(id) {
