@@ -7,7 +7,6 @@ if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
     exit();
 }
 
-// Dashboard Statistics
 $total_users = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
 $total_packages = $conn->query("SELECT COUNT(*) as total FROM packages")->fetch_assoc()['total'];
 $total_bookings = $conn->query("SELECT COUNT(*) as total FROM bookings")->fetch_assoc()['total'];
@@ -27,6 +26,7 @@ LIMIT 5
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Admin Dashboard</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@ font-family:'Poppins',sans-serif;
 background:#f4f7fc;
 }
 
-/* Sidebar */
+/* SIDEBAR */
 
 .sidebar{
 height:100vh;
@@ -51,34 +51,18 @@ color:white;
 position:fixed;
 width:240px;
 padding-top:30px;
+left:0;
+top:0;
 }
 
-.sidebar h4{
-font-weight:700;
-}
-
-.sidebar a{
-color:#cfd8dc;
-padding:12px 25px;
-display:block;
-text-decoration:none;
-transition:0.3s;
-}
-
-.sidebar a:hover{
-background:#F96D00;
-color:white;
-padding-left:35px;
-}
-
-/* Content */
+/* CONTENT */
 
 .content{
 margin-left:260px;
 padding:40px;
 }
 
-/* Cards */
+/* DASHBOARD CARDS */
 
 .dashboard-card{
 border-radius:20px;
@@ -97,6 +81,8 @@ transform:translateY(-8px);
 .bg3{ background:linear-gradient(135deg,#f7971e,#ffd200); }
 .bg4{ background:linear-gradient(135deg,#ff416c,#ff4b2b); }
 
+/* TABLE */
+
 .table{
 border-radius:15px;
 overflow:hidden;
@@ -107,35 +93,52 @@ background:#1e1e2f;
 color:white;
 }
 
+/* BADGES */
+
 .badge{
 font-size:13px;
 padding:6px 12px;
 border-radius:20px;
 }
 
+/* MOBILE FIX */
+
+@media(max-width:991px){
+
+.sidebar{
+display:none;
+}
+
+.content{
+margin-left:0;
+padding:20px;
+}
+
+}
+
+/* SMALL MOBILE */
+
+@media(max-width:576px){
+
+.dashboard-card{
+padding:20px;
+text-align:center;
+}
+
+.content{
+padding:15px;
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <!-- Sidebar -->
-
-<div class="sidebar">
-
-<h4 class="text-center mb-4">👑 Admin Panel</h4>
-
-<a href="dashboard.php">Dashboard</a>
-<a href="manage_packages.php">Manage Packages</a>
-<a href="manage_bookings.php">Manage Bookings</a>
-<a href="manage_users.php">Manage Users</a>
-<a href="manage_payments.php">Manage Payments</a>
-<a href="reports.php">Reports & Analytics</a>
-<a href="../includes/logout.php" class="text-danger">Logout</a>
-
-</div>
-
-
-<!-- Content -->
+<?php include("navbar_admin.php"); ?>
 
 <div class="content">
 
@@ -143,28 +146,28 @@ border-radius:20px;
 
 <div class="row g-4">
 
-<div class="col-md-3">
+<div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg1">
 <h2><?php echo $total_users; ?></h2>
 <p>Total Users</p>
 </div>
 </div>
 
-<div class="col-md-3">
+<div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg2">
 <h2><?php echo $total_packages; ?></h2>
 <p>Total Packages</p>
 </div>
 </div>
 
-<div class="col-md-3">
+<div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg3 text-dark">
 <h2><?php echo $total_bookings; ?></h2>
 <p>Total Bookings</p>
 </div>
 </div>
 
-<div class="col-md-3">
+<div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg4">
 <h2>₹<?php echo $total_revenue ?? 0; ?></h2>
 <p>Total Revenue</p>
@@ -180,6 +183,8 @@ border-radius:20px;
 <div class="card shadow-lg border-0">
 
 <div class="card-body">
+
+<div class="table-responsive">
 
 <table class="table table-hover">
 
@@ -199,7 +204,6 @@ border-radius:20px;
 <?php while($row = $recent_bookings->fetch_assoc()){ 
 
 $status = strtolower(trim($row['booking_status']));
-
 ?>
 
 <tr>
@@ -215,20 +219,18 @@ $status = strtolower(trim($row['booking_status']));
 <td>
 
 <?php
-
 if($status == 'confirmed'){
-echo "<span class='badge bg-success'>✔ Confirmed</span>";
+echo "<span class='badge bg-success'>Confirmed</span>";
 }
 elseif($status == 'pending'){
-echo "<span class='badge bg-warning text-dark'>⏳ Pending</span>";
+echo "<span class='badge bg-warning text-dark'>Pending</span>";
 }
 elseif($status == 'cancelled'){
-echo "<span class='badge bg-danger'>✖ Cancelled</span>";
+echo "<span class='badge bg-danger'>Cancelled</span>";
 }
 else{
 echo "<span class='badge bg-secondary'>Unknown</span>";
 }
-
 ?>
 
 </td>
@@ -248,6 +250,10 @@ echo "<span class='badge bg-secondary'>Unknown</span>";
 </div>
 
 </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

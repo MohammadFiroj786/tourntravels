@@ -12,20 +12,15 @@ $user_name = $_SESSION['name'];
 
 /* ================= STATISTICS ================= */
 
-// Total Bookings
 $totalBookings = $conn->query("SELECT COUNT(*) as total FROM bookings WHERE user_id=$user_id")->fetch_assoc()['total'];
 
-// Pending
 $pendingBookings = $conn->query("SELECT COUNT(*) as total FROM bookings WHERE user_id=$user_id AND booking_status='pending'")->fetch_assoc()['total'];
 
-// Confirmed
 $confirmedBookings = $conn->query("SELECT COUNT(*) as total FROM bookings WHERE user_id=$user_id AND booking_status='confirmed'")->fetch_assoc()['total'];
 
-// Total Amount Spent
 $totalSpent = $conn->query("SELECT SUM(total_price) as total FROM bookings WHERE user_id=$user_id AND booking_status='confirmed'")->fetch_assoc()['total'];
 $totalSpent = $totalSpent ? $totalSpent : 0;
 
-// Recent Bookings
 $recentBookings = $conn->query("
 SELECT bookings.*, packages.title 
 FROM bookings 
@@ -38,6 +33,7 @@ LIMIT 5
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>User Dashboard</title>
@@ -52,24 +48,6 @@ LIMIT 5
 
 body{
 background:#f4f6f9;
-}
-
-.sidebar{
-height:100vh;
-background:linear-gradient(135deg,#ff7e5f,#feb47b);
-color:white;
-}
-
-.sidebar a{
-color:white;
-text-decoration:none;
-display:block;
-padding:12px;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:rgba(255,255,255,0.2);
 }
 
 .card{
@@ -91,29 +69,9 @@ transform:translateY(-5px);
 
 <body>
 
-<div class="container-fluid">
-<div class="row">
+<?php include("navbar_user.php"); ?>
 
-<!-- Sidebar -->
-
-<div class="col-md-3 col-lg-2 sidebar p-4">
-
-<a href="user-dashboard.php" class="text-decoration-none text-dark">
-    <h3 class="mb-4"><i class="fa fa-plane"></i> Tour N Travels</h3>
-</a>
-
-<a href="user-dashboard.php"><i class="fa fa-home"></i> Dashboard</a>
-<a href="my-bookings.php"><i class="fa fa-calendar"></i> My Bookings</a>
-<a href="packages.php"><i class="fa fa-box"></i> View Packages</a>
-<a href="profile.php"><i class="fa fa-user"></i> Profile</a>
-<a href="../includes/logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
-
-</div>
-
-
-<!-- Main Content -->
-
-<div class="col-md-9 col-lg-10 p-4">
+<div class="main-content p-4">
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -122,7 +80,6 @@ transform:translateY(-5px);
 <span class="badge bg-success p-2">User Panel</span>
 
 </div>
-
 
 <!-- Stat Cards -->
 
@@ -140,7 +97,6 @@ transform:translateY(-5px);
 
 </div>
 
-
 <div class="col-md-3">
 
 <div class="card shadow stat-card p-3 text-center">
@@ -153,7 +109,6 @@ transform:translateY(-5px);
 
 </div>
 
-
 <div class="col-md-3">
 
 <div class="card shadow stat-card p-3 text-center">
@@ -165,7 +120,6 @@ transform:translateY(-5px);
 </div>
 
 </div>
-
 
 <div class="col-md-3">
 
@@ -180,7 +134,6 @@ transform:translateY(-5px);
 </div>
 
 </div>
-
 
 <!-- Recent Bookings -->
 
@@ -219,11 +172,8 @@ $status = strtolower(trim($row['booking_status']));
 <tr>
 
 <td><?php echo $row['title']; ?></td>
-
 <td><?php echo $row['travel_date']; ?></td>
-
 <td><?php echo $row['persons']; ?></td>
-
 <td>₹<?php echo $row['total_price']; ?></td>
 
 <td>
@@ -268,8 +218,8 @@ echo "<span class='badge bg-secondary'>Unknown</span>";
 </div>
 
 </div>
-</div>
-</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

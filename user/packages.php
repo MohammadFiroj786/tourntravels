@@ -47,7 +47,33 @@ $result = $conn->query($sql);
 
 body{
 background:#f4f6f9;
-font-family: 'Segoe UI', sans-serif;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* ===== NAVBAR FIX ===== */
+
+nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+z-index:999;
+}
+
+/* Prevent bootstrap from changing logo style */
+
+.navbar-brand{
+font-size:20px !important;
+font-weight:600 !important;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+/* MAIN CONTENT */
+
+.main-content{
+margin-top:90px;
 }
 
 /* PACKAGE CARD */
@@ -81,11 +107,7 @@ flex-direction:column;
 font-weight:600;
 }
 
-/* DISCOUNT BADGE */
-
-.position-relative{
-position:relative;
-}
+/* DISCOUNT */
 
 .discount-badge{
 position:absolute;
@@ -97,7 +119,6 @@ padding:6px 12px;
 font-size:13px;
 border-radius:6px;
 font-weight:600;
-z-index:10;
 }
 
 /* PRICE */
@@ -123,7 +144,7 @@ font-weight:600;
 font-size:14px;
 }
 
-/* BUTTON AREA */
+/* BUTTONS */
 
 .buttons{
 margin-top:auto;
@@ -152,6 +173,10 @@ background:#1ebd5a;
 height:180px;
 }
 
+.main-content{
+margin-top:100px;
+}
+
 }
 
 </style>
@@ -160,26 +185,35 @@ height:180px;
 
 <body>
 
-<div class="container py-5">
+<!-- NAVBAR -->
+<?php include("navbar_user.php"); ?>
+
+<div class="main-content">
+
+<div class="container">
 
 <h2 class="text-center mb-5 fw-bold">
 🌍 Explore Tour Packages
 </h2>
 
-<!-- SEARCH FILTER -->
-
 <form method="GET" class="row mb-4 g-2">
 
 <div class="col-md-4">
-<input type="text" name="search" class="form-control" placeholder="Search destination..." value="<?php echo $search; ?>">
+<input type="text" name="search" class="form-control"
+placeholder="Search destination..."
+value="<?php echo $search; ?>">
 </div>
 
 <div class="col-md-3">
-<input type="number" name="min_price" class="form-control" placeholder="Min Price" value="<?php echo $min_price; ?>">
+<input type="number" name="min_price" class="form-control"
+placeholder="Min Price"
+value="<?php echo $min_price; ?>">
 </div>
 
 <div class="col-md-3">
-<input type="number" name="max_price" class="form-control" placeholder="Max Price" value="<?php echo $max_price; ?>">
+<input type="number" name="max_price" class="form-control"
+placeholder="Max Price"
+value="<?php echo $max_price; ?>">
 </div>
 
 <div class="col-md-2">
@@ -190,7 +224,7 @@ height:180px;
 
 <div class="row">
 
-<?php while($row = $result->fetch_assoc()) { 
+<?php while($row = $result->fetch_assoc()) {
 
 $images = explode(",", $row['image']);
 $totalImages = count($images);
@@ -205,44 +239,40 @@ $firstImage = $images[0];
 <div class="position-relative">
 
 <?php if($row['discount'] > 0){ ?>
-
 <div class="discount-badge">
 🔥 <?php echo $row['discount']; ?>% OFF
 </div>
-
 <?php } ?>
 
 <?php if($totalImages > 1){ ?>
-
-<!-- IMAGE SLIDER -->
 
 <div id="carousel<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
 
 <div class="carousel-inner">
 
-<?php 
-$i = 0;
+<?php
+$i=0;
 foreach($images as $img){
 ?>
 
 <div class="carousel-item <?php if($i==0) echo 'active'; ?>">
-
 <img src="../uploads/<?php echo $img; ?>" class="d-block w-100 package-img">
-
 </div>
 
-<?php 
+<?php
 $i++;
-} 
+}
 ?>
 
 </div>
 
-<button class="carousel-control-prev" type="button" data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="prev">
+<button class="carousel-control-prev" type="button"
+data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="prev">
 <span class="carousel-control-prev-icon"></span>
 </button>
 
-<button class="carousel-control-next" type="button" data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="next">
+<button class="carousel-control-next" type="button"
+data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="next">
 <span class="carousel-control-next-icon"></span>
 </button>
 
@@ -269,52 +299,38 @@ $i++;
 </p>
 
 <?php if($row['seats'] <= 5 && $row['seats'] > 0){ ?>
-
 <p class="seats-warning">
 ⚠ Only <?php echo $row['seats']; ?> Seats Left
 </p>
-
 <?php } ?>
 
 <?php if($row['seats'] == 0){ ?>
-
-<p class="text-danger fw-bold">
-❌ Sold Out
-</p>
-
+<p class="text-danger fw-bold">❌ Sold Out</p>
 <?php } ?>
 
 <p class="price">
 
 <?php if($row['discount'] > 0){ ?>
-
 <span class="old-price">₹<?php echo $row['price']; ?></span>
 ₹<?php echo $row['final_price']; ?>
-
 <?php } else { ?>
-
 ₹<?php echo $row['price']; ?>
-
 <?php } ?>
 
 </p>
 
 <div class="buttons">
 
-<a href="package-details.php?id=<?php echo $row['id']; ?>" 
+<a href="package-details.php?id=<?php echo $row['id']; ?>"
 class="btn btn-outline-primary btn-sm w-100 mb-2">
-
 View Details
-
 </a>
 
 <?php if($row['seats'] > 0){ ?>
 
-<a href="book.php?id=<?php echo $row['id']; ?>" 
+<a href="book.php?id=<?php echo $row['id']; ?>"
 class="btn btn-primary btn-sm w-100 mb-2">
-
 Book Now
-
 </a>
 
 <?php } else { ?>
@@ -325,11 +341,9 @@ Sold Out
 
 <?php } ?>
 
-<a href="https://wa.me/918158036510?text=Hello I want details about <?php echo urlencode($row['title']); ?>" 
+<a href="https://wa.me/918158036510?text=Hello I want details about <?php echo urlencode($row['title']); ?>"
 class="btn whatsapp-btn btn-sm w-100">
-
 📱 WhatsApp Inquiry
-
 </a>
 
 </div>
@@ -341,6 +355,8 @@ class="btn whatsapp-btn btn-sm w-100">
 </div>
 
 <?php } ?>
+
+</div>
 
 </div>
 
