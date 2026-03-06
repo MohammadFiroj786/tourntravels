@@ -252,14 +252,19 @@ color:white;
 
 </head>
 
-<body class="p-4">
+<body >
+<!-- SIDEBAR -->
+<?php include("navbar_admin.php"); ?>
 
+<div class="main-content container-fluid py-4">
 <div class="header-gradient mb-4 d-flex justify-content-between align-items-center">
 <h3>📦 Manage Packages</h3>
 <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addModal">+ Add Package</button>
 </div>
 
 <div class="card p-4">
+
+<div class="table-responsive">
 
 <table class="table table-hover align-middle">
 
@@ -414,7 +419,7 @@ Drag & Drop OR Paste Images
 </tbody>
 
 </table>
-
+</div>
 </div>
 
 
@@ -468,7 +473,7 @@ Drag & Drop OR Paste Images
 </div>
 
 </div>
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

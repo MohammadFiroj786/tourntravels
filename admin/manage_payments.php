@@ -89,7 +89,7 @@ body{ background:#f4f6f9; }
 </style>
 </head>
 <body>
-
+<?php include("navbar_admin.php"); ?>
 <div class="container py-4">
 
 <h3 class="mb-4">💳 Payment Management</h3>
@@ -196,6 +196,6 @@ new Chart(ctx, {
     }
 });
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -10,15 +10,18 @@ if(!isset($_SESSION['admin_id'])){
 /* ================= USER ACTIONS ================= */
 
 if(isset($_GET['block'])){
-    $conn->query("UPDATE users SET status='Blocked' WHERE id=".$_GET['block']);
+    $id = intval($_GET['block']);
+    $conn->query("UPDATE users SET status='Blocked' WHERE id=$id");
 }
 
 if(isset($_GET['unblock'])){
-    $conn->query("UPDATE users SET status='Active' WHERE id=".$_GET['unblock']);
+    $id = intval($_GET['unblock']);
+    $conn->query("UPDATE users SET status='Active' WHERE id=$id");
 }
 
 if(isset($_GET['delete'])){
-    $conn->query("DELETE FROM users WHERE id=".$_GET['delete']);
+    $id = intval($_GET['delete']);
+    $conn->query("DELETE FROM users WHERE id=$id");
 }
 
 if(isset($_POST['change_role'])){
@@ -60,58 +63,96 @@ FROM users
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Manage Users</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
 <style>
+
 body{
-    background:#f4f6f9;
+background:#f4f6f9;
 }
+
+/* content layout */
+
+.content{
+margin-left:250px;
+padding:25px;
+}
+
+/* mobile layout */
+
+@media(max-width:768px){
+
+.content{
+margin-left:0;
+padding:15px;
+}
+
+}
+
 .card{
-    border-radius:12px;
+border-radius:12px;
 }
+
 .table th{
-    font-size:14px;
+font-size:14px;
 }
+
 .action-btn{
-    padding:5px 10px;
+padding:5px 10px;
 }
+
 </style>
+
 </head>
+
 <body>
 
-<div class="container py-4">
+<?php include("navbar_admin.php"); ?>
+
+<div class="content">
 
 <h3 class="mb-4">👥 Manage Users</h3>
 
 <!-- STATS -->
+
 <div class="row mb-4">
-<div class="col-md-4">
+
+<div class="col-md-4 mb-3">
 <div class="card shadow-sm p-3">
 <h6>Total Users</h6>
 <h4><?= $stats['total'] ?></h4>
 </div>
 </div>
 
-<div class="col-md-4">
+<div class="col-md-4 mb-3">
 <div class="card shadow-sm p-3">
 <h6>Active Users</h6>
 <h4 class="text-success"><?= $stats['active_users'] ?></h4>
 </div>
 </div>
 
-<div class="col-md-4">
+<div class="col-md-4 mb-3">
 <div class="card shadow-sm p-3">
 <h6>Blocked Users</h6>
 <h4 class="text-danger"><?= $stats['blocked_users'] ?></h4>
 </div>
 </div>
+
 </div>
 
-<!-- SEARCH & FILTER -->
+<!-- SEARCH -->
+
 <form method="GET" class="card shadow-sm p-3 mb-4">
-<div class="row g-2 align-items-center">
+
+<div class="row g-2">
+
 <div class="col-md-5">
 <input type="text" name="search" class="form-control"
 placeholder="Search by name or email"
@@ -133,15 +174,21 @@ value="<?= $search ?>">
 <div class="col-md-2">
 <a href="manage_users.php" class="btn btn-secondary w-100">Reset</a>
 </div>
+
 </div>
+
 </form>
 
 <!-- USERS TABLE -->
+
 <div class="card shadow-sm p-3">
+
 <div class="table-responsive">
+
 <table class="table table-hover align-middle">
 
 <thead class="table-light">
+
 <tr>
 <th>ID</th>
 <th>Name</th>
@@ -152,37 +199,57 @@ value="<?= $search ?>">
 <th>Joined</th>
 <th class="text-center">Actions</th>
 </tr>
+
 </thead>
 
 <tbody>
 
 <?php while($row = $users->fetch_assoc()): ?>
+
 <tr>
 
 <td><?= $row['id'] ?></td>
+
 <td><?= $row['name'] ?></td>
+
 <td><?= $row['email'] ?></td>
+
 <td><?= $row['phone'] ?></td>
 
 <td>
+
 <form method="POST" class="d-flex">
+
 <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
+
 <select name="role" class="form-select form-select-sm me-2">
+
 <option value="user" <?= $row['role']=="user"?"selected":"" ?>>User</option>
+
 <option value="admin" <?= $row['role']=="admin"?"selected":"" ?>>Admin</option>
+
 </select>
+
 <button name="change_role" class="btn btn-sm btn-outline-primary">
 <i class="fa fa-save"></i>
 </button>
+
 </form>
+
 </td>
 
 <td>
+
 <?php if($row['status']=="Active"): ?>
+
 <span class="badge bg-success">Active</span>
+
 <?php else: ?>
+
 <span class="badge bg-danger">Blocked</span>
+
 <?php endif; ?>
+
 </td>
 
 <td><?= date("d M Y", strtotime($row['created_at'])) ?></td>
@@ -190,19 +257,23 @@ value="<?= $search ?>">
 <td class="text-center">
 
 <?php if($row['status']=="Active"): ?>
-<a href="?block=<?= $row['id'] ?>" 
+
+<a href="?block=<?= $row['id'] ?>"
 class="btn btn-sm btn-outline-warning action-btn">
 <i class="fa fa-ban"></i>
 </a>
+
 <?php else: ?>
-<a href="?unblock=<?= $row['id'] ?>" 
+
+<a href="?unblock=<?= $row['id'] ?>"
 class="btn btn-sm btn-outline-success action-btn">
 <i class="fa fa-check"></i>
 </a>
+
 <?php endif; ?>
 
-<a href="?delete=<?= $row['id'] ?>" 
-onclick="return confirm('Delete this user?')" 
+<a href="?delete=<?= $row['id'] ?>"
+onclick="return confirm('Delete this user?')"
 class="btn btn-sm btn-outline-danger action-btn">
 <i class="fa fa-trash"></i>
 </a>
@@ -214,14 +285,19 @@ data-bs-target="#history<?= $row['id'] ?>">
 </button>
 
 </td>
+
 </tr>
 
-<!-- BOOKING HISTORY COLLAPSE -->
+<!-- BOOKING HISTORY -->
+
 <tr class="collapse bg-light" id="history<?= $row['id'] ?>">
+
 <td colspan="8">
+
 <strong>Booking History:</strong>
 
 <table class="table table-sm mt-2">
+
 <tr>
 <th>Package</th>
 <th>Date</th>
@@ -231,21 +307,29 @@ data-bs-target="#history<?= $row['id'] ?>">
 </tr>
 
 <?php
+
 $history = $conn->query("
-SELECT bookings.*, packages.title 
+SELECT bookings.*, packages.title
 FROM bookings
 JOIN packages ON bookings.package_id = packages.id
 WHERE bookings.user_id=".$row['id']);
 
 while($b = $history->fetch_assoc()):
+
 ?>
 
 <tr>
+
 <td><?= $b['title'] ?></td>
+
 <td><?= $b['travel_date'] ?></td>
+
 <td><?= $b['persons'] ?></td>
+
 <td>₹<?= $b['total_price'] ?></td>
+
 <td><?= $b['booking_status'] ?></td>
+
 </tr>
 
 <?php endwhile; ?>
@@ -253,17 +337,22 @@ while($b = $history->fetch_assoc()):
 </table>
 
 </td>
+
 </tr>
 
 <?php endwhile; ?>
 
 </tbody>
+
 </table>
+
 </div>
+
 </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
