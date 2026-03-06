@@ -86,11 +86,27 @@ $result = $conn->query("SELECT * FROM payments ORDER BY created_at DESC");
 <style>
 body{ background:#f4f6f9; }
 .card{ border-radius:12px; }
+.content{
+margin-left:250px;
+padding:25px;
+transition:0.3s;
+}
+
+/* Mobile Fix */
+
+@media(max-width:768px){
+
+.content{
+margin-left:0;
+padding:15px;
+}
+
+}
 </style>
 </head>
 <body>
 <?php include("navbar_admin.php"); ?>
-<div class="container py-4">
+<div class="content">
 
 <h3 class="mb-4">💳 Payment Management</h3>
 
