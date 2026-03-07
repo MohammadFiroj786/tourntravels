@@ -42,26 +42,6 @@ font-family:'Poppins',sans-serif;
 background:#f4f7fc;
 }
 
-/* SIDEBAR */
-
-.sidebar{
-height:100vh;
-background:linear-gradient(180deg,#1e1e2f,#2c2c54);
-color:white;
-position:fixed;
-width:240px;
-padding-top:30px;
-left:0;
-top:0;
-}
-
-/* CONTENT */
-
-.content{
-margin-left:260px;
-padding:40px;
-}
-
 /* DASHBOARD CARDS */
 
 .dashboard-card{
@@ -101,36 +81,6 @@ padding:6px 12px;
 border-radius:20px;
 }
 
-/* MOBILE FIX */
-
-@media(max-width:991px){
-
-.sidebar{
-display:none;
-}
-
-.content{
-margin-left:0;
-padding:20px;
-}
-
-}
-
-/* SMALL MOBILE */
-
-@media(max-width:576px){
-
-.dashboard-card{
-padding:20px;
-text-align:center;
-}
-
-.content{
-padding:15px;
-}
-
-}
-
 </style>
 
 </head>
@@ -140,7 +90,7 @@ padding:15px;
 <!-- Sidebar -->
 <?php include("navbar_admin.php"); ?>
 
-<div class="content">
+<div class="adminLayoutContent">
 
 <h2 class="mb-4 fw-bold">Dashboard Overview</h2>
 

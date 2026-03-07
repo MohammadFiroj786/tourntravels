@@ -125,7 +125,7 @@ body{ background:#f4f6f9; }
 </head>
 <body>
 <?php include("navbar_admin.php"); ?>
-<div class="container py-4">
+<div class="adminLayoutContent py-4">
 
 <h3 class="mb-4">📊 Advanced Reports & Analytics</h3>
 

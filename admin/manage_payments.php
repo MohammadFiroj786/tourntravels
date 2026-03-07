@@ -102,7 +102,7 @@ padding:15px;
 </head>
 <body>
 <?php include("navbar_admin.php"); ?>
-<div class="contain">
+<div class="adminLayoutContent">
 
 <h3 class="mb-4">💳 Payment Management</h3>
 

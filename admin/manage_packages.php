@@ -248,6 +248,23 @@ background:#1e1e2f;
 color:white;
 }
 
+.adminLayoutContent {
+    margin-left: 250px; /* match your sidebar width */
+    padding: 20px;
+    transition: margin-left 0.3s;
+    width: calc(100% - 250px); /* make content fit remaining space */
+    box-sizing: border-box;
+}
+
+@media(max-width:991px){
+    .adminLayoutContent {
+        margin-left: 0;
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
 </style>
 
 </head>
@@ -256,7 +273,7 @@ color:white;
 <!-- SIDEBAR -->
 <?php include("navbar_admin.php"); ?>
 
-<div class="main-content container-fluid py-4">
+<div class="adminLayoutContent container-fluid py-4">
 <div class="header-gradient mb-4 d-flex justify-content-between align-items-center">
 <h3>📦 Manage Packages</h3>
 <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addModal">+ Add Package</button>
