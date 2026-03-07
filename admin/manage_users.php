@@ -116,7 +116,7 @@ padding:5px 10px;
 
 <?php include("navbar_admin.php"); ?>
 
-<div class="content">
+<div class="adminLayoutContent">
 
 <h3 class="mb-4">👥 Manage Users</h3>
 
