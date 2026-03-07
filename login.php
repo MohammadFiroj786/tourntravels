@@ -4,6 +4,12 @@ include("includes/db.php");
 
 $error = "";
 
+/* Show reset success message */
+
+if(isset($_GET['reset'])){
+    $resetMessage = "Password updated successfully. Please login.";
+}
+
 // Check if form is submitted
 if (isset($_POST['email']) && isset($_POST['password'])) {
 

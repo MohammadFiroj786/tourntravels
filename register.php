@@ -91,7 +91,7 @@ body{
 <body>
 <?php include 'navbar.php'; ?>
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="d-flex justify-content-center align-items-center min-vh-100 mt-5">
   <div class="card p-4 p-md-5 shadow-lg" style="width: 100%; max-width: 450px;">
     <!-- Title -->
     <h1 class="text-center mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00;">Tour N Travels</h1>
@@ -122,8 +122,10 @@ body{
         <span class="password-toggle" onclick="togglePassword('confirm_password')"><i class="fa fa-eye"></i></span>
       </div>
 
-      <div class="d-grid mb-3">
-        <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold">Register</button>
+      <div class="text-center mb-3">
+        <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold px-5">
+          Register
+        </button>
       </div>
 
       <p class="text-center mb-0">Already have an account? <a href="login.php" class="text-warning fw-bold text-decoration-none">Login</a></p>
