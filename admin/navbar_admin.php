@@ -130,6 +130,10 @@ color:#F96D00 !important;
 </li>
 
 <li class="nav-item">
+<a class="nav-link" href="contact_messages.php">📩 Contact Messages</a>
+</li>
+
+<li class="nav-item">
 <a class="nav-link text-danger" href="../includes/logout.php">🚪 Logout</a>
 </li>
 
@@ -153,6 +157,7 @@ color:#F96D00 !important;
 <a href="manage_users.php">👤 Manage Users</a>
 <a href="manage_payments.php">💳 Manage Payments</a>
 <a href="reports.php">📈 Reports</a>
+<a href="contact_messages.php">📩 Contact Messages</a>
 <a href="../includes/logout.php" class="text-danger">🚪 Logout</a>
 
 </div>
