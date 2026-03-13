@@ -120,6 +120,10 @@ padding:15px;
 </li>
 
 <li class="nav-item">
+<a class="nav-link" href="custom-package-requests.php">🌍 Custom Requests</a>
+</li>
+
+<li class="nav-item">
 <a class="nav-link" href="manage_bookings.php">📖 Bookings</a>
 </li>
 
@@ -160,6 +164,7 @@ padding:15px;
 
 <a class="adminLayoutLink" href="dashboard.php">📊 Dashboard</a>
 <a class="adminLayoutLink" href="manage_packages.php">📦 Manage Packages</a>
+<a class="adminLayoutLink" href="custom-package-requests.php">🌍 Custom Tour Requests</a>
 <a class="adminLayoutLink" href="manage_bookings.php">📖 Manage Bookings</a>
 <a class="adminLayoutLink" href="manage_users.php">👤 Manage Users</a>
 <a class="adminLayoutLink" href="manage_payments.php">💳 Manage Payments</a>

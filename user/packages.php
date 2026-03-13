@@ -224,6 +224,34 @@ value="<?php echo $max_price; ?>">
 
 <div class="row">
 
+<div class="col-md-4 mb-4">
+
+<div class="card package-card shadow-lg border-0" 
+style="background:linear-gradient(135deg,#ff9a9e,#fad0c4); color:white;">
+
+<div class="card-body text-center d-flex flex-column justify-content-center">
+
+<h4 class="fw-bold mb-3">
+✈️ Plan Your Own Trip
+</h4>
+
+<p class="mb-4">
+Can't find the perfect package?  
+Create your own trip to <b>Darjeeling, Sikkim, or Kalimpong</b>.
+Our travel expert will plan everything for you.
+</p>
+
+<a href="custom-package.php"
+class="btn btn-light fw-bold">
+Create Custom Package
+</a>
+
+</div>
+
+</div>
+
+</div>
+
 <?php while($row = $result->fetch_assoc()) {
 
 $images = explode(",", $row['image']);
