@@ -3,8 +3,8 @@ session_start();
 include("../includes/db.php");
 
 if(!isset($_SESSION['admin_id'])){
-header("Location: ../login.php");
-exit();
+    header("Location: ../login.php");
+    exit();
 }
 
 $sql = "SELECT c.*, u.name, u.phone, u.email 
@@ -17,208 +17,234 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Custom Package Requests</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
-
 body{
-background:#f4f6f9;
-font-family:'Segoe UI',sans-serif;
+    background:#f4f6f9;
+    font-family:'Segoe UI',sans-serif;
 }
 
-/* ===== MAIN CONTENT ===== */
+/* SIDEBAR */
+.sidebar{
+    width:250px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:#ff7f50;
+    padding:20px;
+    color:white;
+}
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:10px;
+    border-radius:6px;
+    margin-bottom:10px;
+}
+.sidebar a:hover{
+    background:rgba(255,255,255,0.2);
+}
 
+/* MAIN */
 .main-content{
-margin-left:250px;
-padding:25px;
-transition:0.3s;
+    margin-left:260px;
+    padding:25px;
 }
 
-/* ===== CARD DESIGN ===== */
-
-.request-card{
-border-radius:14px;
-padding:22px;
-background:white;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
-transition:0.3s;
-height:100%;
+/* MOBILE */
+.mobile-nav{
+    display:none;
 }
-
-.request-card:hover{
-transform:translateY(-6px);
-box-shadow:0 15px 35px rgba(0,0,0,0.15);
-}
-
-/* ===== STATUS BADGE ===== */
-
-.status{
-font-size:12px;
-padding:6px 12px;
-border-radius:20px;
-font-weight:600;
-}
-
-.pending{
-background:#fff3cd;
-color:#856404;
-}
-
-/* ===== CUSTOMER INFO ===== */
-
-.customer-info p{
-margin-bottom:4px;
-font-size:14px;
-}
-
-/* ===== REQUEST TEXT ===== */
-
-.request-box{
-background:#f8f9fa;
-padding:10px;
-border-radius:8px;
-font-size:14px;
-}
-
-/* ===== BUTTONS ===== */
-
-.action-buttons a{
-margin-bottom:6px;
-}
-
-/* ===== MOBILE RESPONSIVE ===== */
-
 @media(max-width:991px){
-
-.main-content{
-margin-left:0;
-padding:15px;
+    .sidebar{ display:none; }
+    .mobile-nav{ display:block; }
+    .main-content{
+        margin-left:0;
+        padding:15px;
+    }
 }
-
-.request-card{
-padding:18px;
-}
-
-h2{
-font-size:22px;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<?php include("navbar_admin.php"); ?>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h4>✈ Tour N Travels</h4>
+    <a href="dashboard.php">🏠 Dashboard</a>
+    <a href="packages.php">📦 Packages</a>
+    <a href="custom-package-requests.php">🌍 Custom Requests</a>
+    <a href="../logout.php">🚪 Logout</a>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="navbar navbar-dark bg-dark mobile-nav">
+    <div class="container-fluid">
+        <span class="navbar-brand">Tour N Travels</span>
+    </div>
+</nav>
 
 <div class="main-content">
 
-<div class="container-fluid">
+<h3 class="mb-4 fw-bold">🌍 Custom Package Requests</h3>
 
-<h2 class="mb-4 fw-bold">
-📦 Custom Package Requests
-</h2>
+<input type="text" id="search" class="form-control mb-3" placeholder="Search customer or destination">
 
-<div class="row">
+<div class="table-responsive">
+<table class="table table-bordered table-hover align-middle text-center">
 
-<?php while($row = $result->fetch_assoc()) { ?>
+<thead class="table-dark">
+<tr>
+    <th>Customer</th>
+    <th>Destination</th>
+    <th>Date</th>
+    <th>Travelers</th>
+    <th>Hotel</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+</thead>
 
-<div class="col-lg-6 col-md-12 mb-4">
+<tbody id="requestTable">
+<?php while($row = $result->fetch_assoc()){ ?>
 
-<div class="request-card">
+<tr>
+<td>
+    <b><?= htmlspecialchars($row['name']) ?></b><br>
+    <small><?= $row['phone'] ?></small>
+</td>
+<td><?= $row['destination'] ?></td>
+<td><?= $row['travel_date'] ?></td>
+<td><?= $row['travelers'] ?></td>
+<td><?= $row['hotel'] ?></td>
 
-<!-- CUSTOMER NAME -->
+<td>
+<?php if($row['status']=="Accepted"){ ?>
+    <span class="badge bg-success">Accepted</span>
+<?php } else { ?>
+    <span class="badge bg-warning text-dark">Pending</span>
+<?php } ?>
+</td>
 
-<h5 class="fw-bold mb-2">
-👤 <?php echo htmlspecialchars($row['name']); ?>
-</h5>
+<td>
+<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal<?= $row['id']; ?>">
+    View
+</button>
+</td>
+</tr>
 
-<!-- CONTACT -->
+<!-- MODAL -->
+<div class="modal fade" id="viewModal<?= $row['id']; ?>">
+<div class="modal-dialog">
+<div class="modal-content">
 
-<div class="customer-info text-muted">
-
-<p>📧 <?php echo htmlspecialchars($row['email']); ?></p>
-
-<p>📞 <?php echo htmlspecialchars($row['phone']); ?></p>
-
+<div class="modal-header">
+    <h5 class="modal-title">Customer Request</h5>
+    <button class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
-<hr>
+<div class="modal-body">
+    <p><b>Destination:</b> <?= $row['destination'] ?></p>
+    <p><b>Style:</b> <?= $row['style'] ?></p>
+    <p><b>Days:</b> <?= $row['days'] ?></p>
+    <p><b>Travelers:</b> <?= $row['travelers'] ?></p>
+    <p><b>Hotel:</b> <?= $row['hotel'] ?></p>
 
-<!-- TRIP DETAILS -->
+    <p><b>Customer Experience:</b></p>
+    <div class="alert alert-light">
+        <?= nl2br(htmlspecialchars($row['experience'])) ?>
+    </div>
 
-<p><strong>🌍 Destination:</strong> <?php echo $row['destination']; ?></p>
+    <hr>
 
-<p><strong>🎯 Travel Style:</strong> <?php echo $row['style']; ?></p>
+<?php if($row['status']!="Accepted"){ ?>
 
-<p><strong>📅 Travel Date:</strong> <?php echo $row['travel_date']; ?></p>
+<form class="confirmForm" action="confirm_booking.php" method="POST">
 
-<p><strong>⏳ Days:</strong> <?php echo $row['days']; ?></p>
+<input type="hidden" name="request_id" value="<?= $row['id'] ?>">
+<input type="hidden" name="user_id" value="<?= $row['user_id'] ?>">
+<input type="hidden" name="travel_date" value="<?= $row['travel_date'] ?>">
+<input type="hidden" name="persons" value="<?= $row['travelers'] ?>">
 
-<p><strong>👥 Travelers:</strong> <?php echo $row['travelers']; ?></p>
+<label class="fw-bold">Package Price</label>
+<input type="number" name="price" class="form-control mb-3" required>
 
-<p><strong>🏨 Hotel Type:</strong> <?php echo $row['hotel']; ?></p>
+<button class="btn btn-primary w-100">Confirm Booking</button>
 
-<!-- CUSTOMER REQUEST -->
+</form>
 
-<p class="mt-3 mb-1"><strong>📝 Customer Request:</strong></p>
-
-<div class="request-box">
-<?php echo nl2br(htmlspecialchars($row['experience'])); ?>
+<?php } else { ?>
+<div class="alert alert-success text-center fw-bold">
+    ✅ Booking Already Confirmed
 </div>
+<?php } ?>
 
-<hr>
-
-<!-- STATUS -->
-
-<span class="status pending">
-⏳ Pending
-</span>
-
-<!-- ACTION BUTTONS -->
-
-<div class="mt-3 action-buttons">
-
-<a href="tel:<?php echo $row['phone']; ?>" 
-class="btn btn-success btn-sm w-100">
-📞 Call Customer
-</a>
-
-<a href="https://wa.me/<?php echo $row['phone']; ?>" 
-class="btn btn-success btn-sm w-100">
-💬 WhatsApp
-</a>
-
-<a href="delete-request.php?id=<?php echo $row['id']; ?>" 
-class="btn btn-danger btn-sm w-100"
-onclick="return confirm('Delete this request?')">
-🗑 Delete
-</a>
+<a href="tel:<?= $row['phone'] ?>" class="btn btn-success w-100 mt-2">📞 Call Customer</a>
+<a href="https://wa.me/<?= $row['phone'] ?>" class="btn btn-success w-100 mt-2">💬 WhatsApp</a>
 
 </div>
-
 </div>
-
+</div>
 </div>
 
 <?php } ?>
-
+</tbody>
+</table>
+</div>
 </div>
 
-</div>
-
-</div>
-
-</body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+/* SEARCH */
+document.getElementById("search").addEventListener("keyup", function(){
+    let value = this.value.toLowerCase();
+    document.querySelectorAll("#requestTable tr").forEach(row=>{
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+    });
+});
+
+/* SWEETALERT CONFIRM */
+document.querySelectorAll(".confirmForm").forEach(form=>{
+    form.addEventListener("submit", function(e){
+        e.preventDefault();
+        Swal.fire({
+            title: "Confirm Booking?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Confirm"
+        }).then((result)=>{
+            if(result.isConfirmed){
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+
+<?php if(isset($_GET['confirmed'])){ ?>
+<script>
+Swal.fire({
+    icon:"success",
+    title:"Booking Confirmed!",
+    text:"Custom package has been booked successfully.",
+    timer:2500,
+    showConfirmButton:false
+});
+</script>
+<?php } ?>
+
+</body>
 </html>
