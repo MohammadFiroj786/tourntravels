@@ -10,7 +10,7 @@ if(!isset($_SESSION['user_id'])){
 $user_id = $_SESSION['user_id'];
 $message = "";
 
-/* ================= CANCEL BOOKING LOGIC ================= */
+/* ================= CANCEL BOOKING ================= */
 
 if(isset($_GET['cancel_id'])){
 
@@ -20,7 +20,7 @@ if(isset($_GET['cancel_id'])){
         SELECT * FROM bookings 
         WHERE id = $booking_id 
         AND user_id = $user_id 
-        AND booking_status = 'Pending'
+        AND (booking_status = 'Pending' OR booking_status IS NULL)
     ");
 
     if($check->num_rows > 0){
@@ -60,20 +60,14 @@ body{
 background:#f4f6f9;
 }
 
-/* page content area */
-
 .main-content{
 padding:25px;
 }
 
-/* make space for navbar */
-
 @media(max-width:768px){
-
 .main-content{
 margin-top:80px;
 }
-
 }
 
 .card{
@@ -87,9 +81,7 @@ border:none;
 
 <body>
 
-<!-- NAVBAR / SIDEBAR -->
 <?php include("navbar_user.php"); ?>
-
 
 <div class="main-content">
 
@@ -108,11 +100,26 @@ border:none;
 <?php
 
 $result = $conn->query("
-SELECT bookings.*, packages.title 
-FROM bookings 
-JOIN packages ON bookings.package_id = packages.id
+
+SELECT 
+bookings.*,
+packages.title,
+c.destination,
+c.status AS custom_status
+
+FROM bookings
+
+LEFT JOIN packages 
+ON bookings.package_id = packages.id
+
+LEFT JOIN custom_package_requests c
+ON bookings.user_id = c.user_id 
+AND bookings.travel_date = c.travel_date
+
 WHERE bookings.user_id = $user_id
+
 ORDER BY bookings.id DESC
+
 ");
 
 ?>
@@ -142,7 +149,19 @@ ORDER BY bookings.id DESC
 
 <tr>
 
-<td><?= $row['title']; ?></td>
+<td>
+
+<?php
+
+if(!empty($row['title'])){
+echo $row['title'];
+}else{
+echo "<span class='badge bg-info text-dark'>Custom - ".$row['destination']."</span>";
+}
+
+?>
+
+</td>
 
 <td><?= $row['travel_date']; ?></td>
 
@@ -154,20 +173,34 @@ ORDER BY bookings.id DESC
 
 <?php
 
-if($row['booking_status']=="Pending"){
+$status = "";
+
+/* if custom package */
+
+if($row['package_id'] == NULL){
+    $status = $row['custom_status'];
+}
+else{
+    $status = $row['booking_status'];
+}
+
+if($status=="Pending"){
 echo "<span class='badge bg-warning text-dark'>Pending</span>";
 }
-
-elseif($row['booking_status']=="Confirmed"){
-echo "<span class='badge bg-primary'>Confirmed</span>";
+elseif($status=="Accepted"){
+echo "<span class='badge bg-primary'>Accepted</span>";
 }
-
-elseif($row['booking_status']=="Cancelled"){
+elseif($status=="Confirmed"){
+echo "<span class='badge bg-success'>Confirmed</span>";
+}
+elseif($status=="Cancelled"){
 echo "<span class='badge bg-danger'>Cancelled</span>";
 }
-
-elseif($row['booking_status']=="Completed"){
+elseif($status=="Completed"){
 echo "<span class='badge bg-success'>Completed</span>";
+}
+else{
+echo "<span class='badge bg-secondary'>Processing</span>";
 }
 
 ?>
@@ -176,11 +209,11 @@ echo "<span class='badge bg-success'>Completed</span>";
 
 <td>
 
-<?php if($row['booking_status']=="Pending"){ ?>
+<?php if($status=="Pending"){ ?>
 
 <a href="my-bookings.php?cancel_id=<?= $row['id']; ?>"
 class="btn btn-sm btn-danger"
-onclick="return confirm('As per cancellation policy, this action cannot be undone. Cancel booking?');">
+onclick="return confirm('Cancel this booking?');">
 
 Cancel
 
@@ -217,14 +250,10 @@ You have not made any bookings yet.
 </div>
 
 
-<!-- TERMS -->
-
 <div class="card mt-4 shadow-sm">
 
 <div class="card-header bg-light">
-
 <h5 class="mb-0">Cancellation Policy & Terms</h5>
-
 </div>
 
 <div class="card-body">
@@ -237,11 +266,11 @@ You have not made any bookings yet.
 
 <li>No cancellation allowed after travel date.</li>
 
-<li>Refund processing (if applicable) may take 5-7 working days.</li>
+<li>Refund processing may take 5-7 working days.</li>
 
-<li>The company reserves the right to cancel due to unavoidable circumstances.</li>
+<li>Company may cancel due to unavoidable conditions.</li>
 
-<li>All disputes are subject to local jurisdiction.</li>
+<li>All disputes subject to local jurisdiction.</li>
 
 </ul>
 
@@ -249,13 +278,10 @@ You have not made any bookings yet.
 
 </div>
 
-
 <div class="text-center mt-4">
 
 <a href="packages.php" class="btn btn-secondary">
-
 Browse More Packages
-
 </a>
 
 </div>
@@ -263,7 +289,6 @@ Browse More Packages
 </div>
 
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -21,14 +21,30 @@ $confirmedBookings = $conn->query("SELECT COUNT(*) as total FROM bookings WHERE 
 $totalSpent = $conn->query("SELECT SUM(total_price) as total FROM bookings WHERE user_id=$user_id AND booking_status='confirmed'")->fetch_assoc()['total'];
 $totalSpent = $totalSpent ? $totalSpent : 0;
 
+/* ================= RECENT BOOKINGS ================= */
+
 $recentBookings = $conn->query("
-SELECT bookings.*, packages.title 
-FROM bookings 
-JOIN packages ON bookings.package_id = packages.id 
-WHERE bookings.user_id=$user_id 
-ORDER BY bookings.created_at DESC 
+SELECT 
+bookings.*,
+packages.title,
+c.destination,
+c.status AS custom_status
+
+FROM bookings
+
+LEFT JOIN packages 
+ON bookings.package_id = packages.id
+
+LEFT JOIN custom_package_requests c
+ON bookings.user_id = c.user_id 
+AND bookings.travel_date = c.travel_date
+
+WHERE bookings.user_id=$user_id
+
+ORDER BY bookings.created_at DESC
 LIMIT 5
 ");
+
 ?>
 
 <!DOCTYPE html>
@@ -81,7 +97,7 @@ transform:translateY(-5px);
 
 </div>
 
-<!-- Stat Cards -->
+<!-- STAT CARDS -->
 
 <div class="row g-4 mb-4">
 
@@ -135,7 +151,7 @@ transform:translateY(-5px);
 
 </div>
 
-<!-- Recent Bookings -->
+<!-- RECENT BOOKINGS -->
 
 <div class="card shadow p-4">
 
@@ -165,15 +181,37 @@ transform:translateY(-5px);
 
 <?php while($row = $recentBookings->fetch_assoc()){ 
 
-$status = strtolower(trim($row['booking_status']));
+$status = $row['booking_status'];
+
+if($row['package_id'] == NULL){
+$status = $row['custom_status'];
+}
+
+$status = strtolower(trim($status));
 
 ?>
 
 <tr>
 
-<td><?php echo $row['title']; ?></td>
+<td>
+
+<?php
+
+if(!empty($row['title'])){
+echo $row['title'];
+}
+else{
+echo "<span class='badge bg-info text-dark'>Custom - ".$row['destination']."</span>";
+}
+
+?>
+
+</td>
+
 <td><?php echo $row['travel_date']; ?></td>
+
 <td><?php echo $row['persons']; ?></td>
+
 <td>₹<?php echo $row['total_price']; ?></td>
 
 <td>
@@ -183,6 +221,9 @@ $status = strtolower(trim($row['booking_status']));
 if($status == 'pending'){
 echo "<span class='badge bg-warning'>⏳ Pending</span>";
 }
+elseif($status == 'accepted'){
+echo "<span class='badge bg-info'>✔ Accepted</span>";
+}
 elseif($status == 'confirmed'){
 echo "<span class='badge bg-success'>✔ Confirmed</span>";
 }
@@ -190,7 +231,7 @@ elseif($status == 'cancelled'){
 echo "<span class='badge bg-danger'>✖ Cancelled</span>";
 }
 else{
-echo "<span class='badge bg-secondary'>Unknown</span>";
+echo "<span class='badge bg-secondary'>Processing</span>";
 }
 
 ?>
