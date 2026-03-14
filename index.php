@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Pacific - Free Bootstrap 4 Template by Colorlib</title>
+	<title>Hidden Hills Collective | Homestays & Travel Experiences in Darjeeling</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Discover authentic homestays and curated travel experiences in Darjeeling, Mirik, and Kalimpong with Hidden Hills Collective. Book your hill station adventure today.">
+	<meta name="keywords" content="Darjeeling travel, Darjeeling homestays, Mirik tourism, Kalimpong travel, hill tourism West Bengal">
+	<meta property="og:title" content="Hidden Hills Collective | Homestays & Travel Experiences in Darjeeling">
+	<meta property="og:description" content="Discover authentic homestays and curated travel experiences in Darjeeling, Mirik, and Kalimpong with Hidden Hills Collective.">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://hiddenhills.com">
+	<meta property="og:image" content="images/bg_1.jpg">
+	<link rel="icon" href="images/favicon.png">
 	
 	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
@@ -31,9 +39,9 @@
 		<div class="container">
 			<div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
 				<div class="col-md-7 ftco-animate">
-					<span class="subheading">Welcome to Pacific</span>
-					<h1 class="mb-4">Discover Your Favorite Place with Us</h1>
-					<p class="caps">Travel to the any corner of the world, without going around in circles</p>
+					<span class="subheading">Welcome to Hidden Hills Collective</span>
+					<h1 class="mb-4">Explore Beautiful Darjeeling With Us</h1>
+					<p class="caps">Discover sunrise tours, sightseeing packages and unforgettable Himalayan experiences.</p>
 				</div>
 				<a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
 					<span class="fa fa-play"></span>
@@ -42,173 +50,14 @@
 		</div>
 	</div>
 
-	<section class="ftco-section ftco-no-pb ftco-no-pt">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="ftco-search d-flex justify-content-center">
-						<div class="row">
-							<div class="col-md-12 nav-link-wrap">
-								<div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-									<a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Search Tour</a>
-
-									<a class="nav-link" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Hotel</a>
-
-								</div>
-							</div>
-							<div class="col-md-12 tab-wrap">
-								
-								<div class="tab-content" id="v-pills-tabContent">
-
-									<div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-nextgen-tab">
-										<form action="#" class="search-property-1">
-											<div class="row no-gutters">
-												<div class="col-md d-flex">
-													<div class="form-group p-4 border-0">
-														<label for="#">Destination</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-search"></span></div>
-															<input type="text" class="form-control" placeholder="Search place">
-														</div>
-													</div>
-												</div>
-												<div class="col-md d-flex">
-													<div class="form-group p-4">
-														<label for="#">Check-in date</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-calendar"></span></div>
-															<input type="text" class="form-control checkin_date" placeholder="Check In Date">
-														</div>
-													</div>
-												</div>
-												<div class="col-md d-flex">
-													<div class="form-group p-4">
-														<label for="#">Check-out date</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-calendar"></span></div>
-															<input type="text" class="form-control checkout_date" placeholder="Check Out Date">
-														</div>
-													</div>
-												</div>
-												<div class="col-md d-flex">
-													<div class="form-group p-4">
-														<label for="#">Price Limit</label>
-														<div class="form-field">
-															<div class="select-wrap">
-																<div class="icon"><span class="fa fa-chevron-down"></span></div>
-																<select name="" id="" class="form-control">
-																	<option value="">$100</option>
-																	<option value="">$10,000</option>
-																	<option value="">$50,000</option>
-																	<option value="">$100,000</option>
-																	<option value="">$200,000</option>
-																	<option value="">$300,000</option>
-																	<option value="">$400,000</option>
-																	<option value="">$500,000</option>
-																	<option value="">$600,000</option>
-																	<option value="">$700,000</option>
-																	<option value="">$800,000</option>
-																	<option value="">$900,000</option>
-																	<option value="">$1,000,000</option>
-																	<option value="">$2,000,000</option>
-																</select>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-md d-flex">
-													<div class="form-group d-flex w-100 border-0">
-														<div class="form-field w-100 align-items-center d-flex">
-															<input type="submit" value="Search" class="align-self-stretch form-control btn btn-primary">
-														</div>
-													</div>
-												</div>
-											</div>
-										</form>
-									</div>
-
-									<div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-performance-tab">
-										<form action="#" class="search-property-1">
-											<div class="row no-gutters">
-												<div class="col-lg d-flex">
-													<div class="form-group p-4 border-0">
-														<label for="#">Destination</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-search"></span></div>
-															<input type="text" class="form-control" placeholder="Search place">
-														</div>
-													</div>
-												</div>
-												<div class="col-lg d-flex">
-													<div class="form-group p-4">
-														<label for="#">Check-in date</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-calendar"></span></div>
-															<input type="text" class="form-control checkin_date" placeholder="Check In Date">
-														</div>
-													</div>
-												</div>
-												<div class="col-lg d-flex">
-													<div class="form-group p-4">
-														<label for="#">Check-out date</label>
-														<div class="form-field">
-															<div class="icon"><span class="fa fa-calendar"></span></div>
-															<input type="text" class="form-control checkout_date" placeholder="Check Out Date">
-														</div>
-													</div>
-												</div>
-												<div class="col-lg d-flex">
-													<div class="form-group p-4">
-														<label for="#">Price Limit</label>
-														<div class="form-field">
-															<div class="select-wrap">
-																<div class="icon"><span class="fa fa-chevron-down"></span></div>
-																<select name="" id="" class="form-control">
-																	<option value="">$100</option>
-																	<option value="">$10,000</option>
-																	<option value="">$50,000</option>
-																	<option value="">$100,000</option>
-																	<option value="">$200,000</option>
-																	<option value="">$300,000</option>
-																	<option value="">$400,000</option>
-																	<option value="">$500,000</option>
-																	<option value="">$600,000</option>
-																	<option value="">$700,000</option>
-																	<option value="">$800,000</option>
-																	<option value="">$900,000</option>
-																	<option value="">$1,000,000</option>
-																	<option value="">$2,000,000</option>
-																</select>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="col-lg d-flex">
-													<div class="form-group d-flex w-100 border-0">
-														<div class="form-field w-100 align-items-center d-flex">
-															<input type="submit" value="Search" class="align-self-stretch form-control btn btn-primary p-0">
-														</div>
-													</div>
-												</div>
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
 		<section class="ftco-section services-section">
 			<div class="container">
 				<div class="row d-flex">
 					<div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">
 						<div class="w-100">
-							<span class="subheading">Welcome to Pacific</span>
+							<span class="subheading">Welcome to Hidden Hills Collective</span>
 							<h2 class="mb-4">It's time to start your adventure</h2>
-							<p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
+							<p>Hidden Hills Collective is a local travel service based in Darjeeling providing comfortable sightseeing tours, car rentals and customized travel packages. We specialize in Darjeeling, Mirik and Kalimpong tours with experienced drivers and reliable service.</p>
 							<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
 							A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
 							<p><a href="#" class="btn btn-primary py-3 px-4">Search Destination</a></p>
@@ -220,8 +69,8 @@
 								<div class="services services-1 color-1 d-block img" style="background-image: url(images/services-1.jpg);">
 									<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-paragliding"></span></div>
 									<div class="media-body">
-										<h3 class="heading mb-3">Activities</h3>
-										<p>A small river named Duden flows by their place and supplies it with the necessary</p>
+										<h3 class="heading mb-3">Darjeeling Sightseeing</h3>
+										<p>Explore the famous 3 point, 5 point and 7 point sightseeing tours across Darjeeling.</p>
 									</div>
 								</div>      
 							</div>
@@ -229,8 +78,8 @@
 								<div class="services services-1 color-2 d-block img" style="background-image: url(images/services-2.jpg);">
 									<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
 									<div class="media-body">
-										<h3 class="heading mb-3">Travel Arrangements</h3>
-										<p>A small river named Duden flows by their place and supplies it with the necessary</p>
+										<h3 class="heading mb-3">Car Rental Services</h3>
+										<p>Reliable car services for Darjeeling local tours, NJP pickup and airport transfers.</p>
 									</div>
 								</div>    
 							</div>
@@ -238,8 +87,8 @@
 								<div class="services services-1 color-3 d-block img" style="background-image: url(images/services-3.jpg);">
 									<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-tour-guide"></span></div>
 									<div class="media-body">
-										<h3 class="heading mb-3">Private Guide</h3>
-										<p>A small river named Duden flows by their place and supplies it with the necessary</p>
+										<h3 class="heading mb-3">Custom Tour Packages</h3>
+										<p>Plan personalized tours including Mirik, Kalimpong and Indo-Nepal border sightseeing.</p>
 									</div>
 								</div>      
 							</div>
@@ -247,8 +96,8 @@
 								<div class="services services-1 color-4 d-block img" style="background-image: url(images/services-4.jpg);">
 									<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-map"></span></div>
 									<div class="media-body">
-										<h3 class="heading mb-3">Location Manager</h3>
-										<p>A small river named Duden flows by their place and supplies it with the necessary</p>
+										<h3 class="heading mb-3">Homestay Booking</h3>
+										<p>Comfortable homestay accommodations with beautiful Himalayan views.</p>
 									</div>
 								</div>      
 							</div>
@@ -262,7 +111,7 @@
 			<div class="container">
 				<div class="row justify-content-center pb-4">
 					<div class="col-md-12 heading-section text-center ftco-animate">
-						<span class="subheading">Pacific Provide Places</span>
+						<span class="subheading">Hidden Hills Collective Provide Places</span>
 						<h2 class="mb-4">Select Your Destination</h2>
 					</div>
 				</div>
@@ -275,7 +124,7 @@
 								<div class="project-destination">
 									<a href="#" class="img" style="background-image: url(images/place-1.jpg);">
 										<div class="text">
-											<h3>Philippines</h3>
+											<h3>Darjeeling</h3>
 											<span>8 Tours</span>
 										</div>
 									</a>
@@ -285,7 +134,7 @@
 								<div class="project-destination">
 									<a href="#" class="img" style="background-image: url(images/place-2.jpg);">
 										<div class="text">
-											<h3>Canada</h3>
+											<h3>Mirik</h3>
 											<span>2 Tours</span>
 										</div>
 									</a>
@@ -295,7 +144,7 @@
 								<div class="project-destination">
 									<a href="#" class="img" style="background-image: url(images/place-3.jpg);">
 										<div class="text">
-											<h3>Thailand</h3>
+											<h3>Kalimpong</h3>
 											<span>5 Tours</span>
 										</div>
 									</a>
@@ -305,7 +154,7 @@
 								<div class="project-destination">
 									<a href="#" class="img" style="background-image: url(images/place-4.jpg);">
 										<div class="text">
-											<h3>Autralia</h3>
+											<h3>Lamahatta</h3>
 											<span>5 Tours</span>
 										</div>
 									</a>
@@ -315,7 +164,7 @@
 								<div class="project-destination">
 									<a href="#" class="img" style="background-image: url(images/place-5.jpg);">
 										<div class="text">
-											<h3>Greece</h3>
+											<h3>Lepcha Jagat</h3>
 											<span>7 Tours</span>
 										</div>
 									</a>
@@ -342,9 +191,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">8 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Darjeeling Sunrise Tour</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Tiger Hill • Batasia Loop • Ghoom Monastery, Darjeeling</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -359,9 +208,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">10 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Darjeeling 7 Point Sightseeing</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Zoo • HMI • Tenzing Rock • Tea Garden • Japanese Temple • Peace Pagoda, Darjeeling</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -376,9 +225,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">7 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Mirik & Indo-Nepal Border Tour</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Mirik Lake • Pashupati Market • Simana View Point • Lepcha Jagat, Mirik</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -394,9 +243,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">8 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Kalimpong Sightseeing</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Delo • Cactus Garden • Pine View Park • Lamahatta, Kalimpong</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -411,9 +260,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">10 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Darjeeling Sunrise Tour</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Tiger Hill • Batasia Loop • Ghoom Monastery, Darjeeling</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -428,9 +277,9 @@
 								<span class="price">$550/person</span>
 							</a>
 							<div class="text p-4">
-								<span class="days">7 Days Tour</span>
-								<h3><a href="#">Banaue Rice Terraces</a></h3>
-								<p class="location"><span class="fa fa-map-marker"></span> Banaue, Ifugao, Philippines</p>
+								<span class="days">1 Day Tour</span>
+								<h3><a href="#">Darjeeling 7 Point Sightseeing</a></h3>
+								<p class="location"><span class="fa fa-map-marker"></span> Zoo • HMI • Tenzing Rock • Tea Garden • Japanese Temple • Peace Pagoda, Darjeeling</p>
 								<ul>
 									<li><span class="flaticon-shower"></span>2</li>
 									<li><span class="flaticon-king-size"></span>3</li>
@@ -443,18 +292,7 @@
 			</div>
 		</section>
 		
-		<section class="ftco-section ftco-about img"style="background-image: url(images/bg_4.jpg);">
-			<div class="overlay"></div>
-			<div class="container py-md-5">
-				<div class="row py-md-5">
-					<div class="col-md d-flex align-items-center justify-content-center">
-						<a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
-							<span class="fa fa-play"></span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</section>
+
 
 		<section class="ftco-section ftco-about ftco-no-pt img">
 			<div class="container">
@@ -470,7 +308,7 @@
 									<div class="col-md-12 heading-section ftco-animate">
 										<span class="subheading">About Us</span>
 										<h2 class="mb-4">Make Your Tour Memorable and Safe With Us</h2>
-										<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+										<p>Hidden Hills Collective is a local travel service based in Darjeeling providing comfortable sightseeing tours, car rentals and customized travel packages. We specialize in Darjeeling, Mirik and Kalimpong tours with experienced drivers and reliable service.</p>
 										<p><a href="#" class="btn btn-primary">Book Your Destination</a></p>
 									</div>
 								</div>
@@ -481,202 +319,10 @@
 			</div>
 		</section>
 
-		<section class="ftco-section testimony-section bg-bottom" style="background-image: url(images/bg_1.jpg);">
-			<div class="overlay"></div>
-			<div class="container">
-				<div class="row justify-content-center pb-4">
-					<div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-						<span class="subheading">Testimonial</span>
-						<h2 class="mb-4">Tourist Feedback</h2>
-					</div>
-				</div>
-				<div class="row ftco-animate">
-					<div class="col-md-12">
-						<div class="carousel-testimony owl-carousel">
-							<div class="item">
-								<div class="testimony-wrap py-4">
-									<div class="text">
-										<p class="star">
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-										</p>
-										<p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-										<div class="d-flex align-items-center">
-											<div class="user-img" style="background-image: url(images/person_1.jpg)"></div>
-											<div class="pl-3">
-												<p class="name">Roger Scott</p>
-												<span class="position">Marketing Manager</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-wrap py-4">
-									<div class="text">
-										<p class="star">
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-										</p>
-										<p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-										<div class="d-flex align-items-center">
-											<div class="user-img" style="background-image: url(images/person_2.jpg)"></div>
-											<div class="pl-3">
-												<p class="name">Roger Scott</p>
-												<span class="position">Marketing Manager</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-wrap py-4">
-									<div class="text">
-										<p class="star">
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-										</p>
-										<p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-										<div class="d-flex align-items-center">
-											<div class="user-img" style="background-image: url(images/person_3.jpg)"></div>
-											<div class="pl-3">
-												<p class="name">Roger Scott</p>
-												<span class="position">Marketing Manager</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-wrap py-4">
-									<div class="text">
-										<p class="star">
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-										</p>
-										<p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-										<div class="d-flex align-items-center">
-											<div class="user-img" style="background-image: url(images/person_1.jpg)"></div>
-											<div class="pl-3">
-												<p class="name">Roger Scott</p>
-												<span class="position">Marketing Manager</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="testimony-wrap py-4">
-									<div class="text">
-										<p class="star">
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-											<span class="fa fa-star"></span>
-										</p>
-										<p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-										<div class="d-flex align-items-center">
-											<div class="user-img" style="background-image: url(images/person_2.jpg)"></div>
-											<div class="pl-3">
-												<p class="name">Roger Scott</p>
-												<span class="position">Marketing Manager</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
 
 
-		<section class="ftco-section">
-			<div class="container">
-				<div class="row justify-content-center pb-4">
-					<div class="col-md-12 heading-section text-center ftco-animate">
-						<span class="subheading">Our Blog</span>
-						<h2 class="mb-4">Recent Post</h2>
-					</div>
-				</div>
-				<div class="row d-flex">
-					<div class="col-md-4 d-flex ftco-animate">
-						<div class="blog-entry justify-content-end">
-							<a href="blog-single.html" class="block-20" style="background-image: url('images/image_1.jpg');">
-							</a>
-							<div class="text">
-								<div class="d-flex align-items-center mb-4 topp">
-									<div class="one">
-										<span class="day">11</span>
-									</div>
-									<div class="two">
-										<span class="yr">2020</span>
-										<span class="mos">September</span>
-									</div>
-								</div>
-								<h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
-								<!-- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p> -->
-								<p><a href="#" class="btn btn-primary">Read more</a></p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4 d-flex ftco-animate">
-						<div class="blog-entry justify-content-end">
-							<a href="blog-single.html" class="block-20" style="background-image: url('images/image_2.jpg');">
-							</a>
-							<div class="text">
-								<div class="d-flex align-items-center mb-4 topp">
-									<div class="one">
-										<span class="day">11</span>
-									</div>
-									<div class="two">
-										<span class="yr">2020</span>
-										<span class="mos">September</span>
-									</div>
-								</div>
-								<h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
-								<!-- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p> -->
-								<p><a href="#" class="btn btn-primary">Read more</a></p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4 d-flex ftco-animate">
-						<div class="blog-entry">
-							<a href="blog-single.html" class="block-20" style="background-image: url('images/image_3.jpg');">
-							</a>
-							<div class="text">
-								<div class="d-flex align-items-center mb-4 topp">
-									<div class="one">
-										<span class="day">11</span>
-									</div>
-									<div class="two">
-										<span class="yr">2020</span>
-										<span class="mos">September</span>
-									</div>
-								</div>
-								<h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
-								<!-- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p> -->
-								<p><a href="#" class="btn btn-primary">Read more</a></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+
+
 
 		<section class="ftco-intro ftco-section ftco-no-pt">
 			<div class="container">
@@ -684,8 +330,8 @@
 					<div class="col-md-12 text-center">
 						<div class="img"  style="background-image: url(images/bg_2.jpg);">
 							<div class="overlay"></div>
-							<h2>We Are Pacific A Travel Agency</h2>
-							<p>We can manage your dream building A small river named Duden flows by their place</p>
+							<h2>We Are Hidden Hills Collective A Travel Agency</h2>
+							<p>Discover the beauty of Darjeeling with our expert travel services and unforgettable experiences.</p>
 							<p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Ask For A Quote</a></p>
 						</div>
 					</div>

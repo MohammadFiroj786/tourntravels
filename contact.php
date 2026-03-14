@@ -23,10 +23,18 @@ $msg="Message Sent Successfully!";
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Contact Us | Tour N Travel</title>
+<title>Contact Hidden Hills Collective | Plan Your Darjeeling Trip</title>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Get in touch with Hidden Hills Collective to plan your perfect trip to Darjeeling, Mirik, and Kalimpong. Contact us for bookings, inquiries, and travel advice.">
+<meta name="keywords" content="Darjeeling travel, Darjeeling homestays, Mirik tourism, Kalimpong travel, hill tourism West Bengal">
+<meta property="og:title" content="Contact Hidden Hills Collective | Plan Your Darjeeling Trip">
+<meta property="og:description" content="Get in touch with Hidden Hills Collective to plan your perfect trip to Darjeeling, Mirik, and Kalimpong. Contact us for bookings, inquiries, and travel advice.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hiddenhills.com/contact">
+<meta property="og:image" content="images/bg_1.jpg">
+<link rel="icon" href="images/favicon.png">
 
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">

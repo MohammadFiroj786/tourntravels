@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Pacific - Free Bootstrap 4 Template by Colorlib</title>
+  <title>Darjeeling Travel Blog | Hidden Hills Collective</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Read our travel blog for insights, tips, and stories about Darjeeling, Mirik, and Kalimpong. Discover hidden gems and local experiences in the hills.">
+  <meta name="keywords" content="Darjeeling travel, Darjeeling homestays, Mirik tourism, Kalimpong travel, hill tourism West Bengal">
+  <meta property="og:title" content="Darjeeling Travel Blog | Hidden Hills Collective">
+  <meta property="og:description" content="Read our travel blog for insights, tips, and stories about Darjeeling, Mirik, and Kalimpong. Discover hidden gems and local experiences in the hills.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hiddenhills.com/blog">
+  <meta property="og:image" content="images/bg_1.jpg">
+  <link rel="icon" href="images/favicon.png">
   
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
@@ -24,15 +32,14 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
- <div id="navbar-placeholder"></div>
- 
+ <?php include 'navbar.php'; ?>
  <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('images/bg_1.jpg');">
   <div class="overlay"></div>
   <div class="container">
     <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
       <div class="col-md-9 ftco-animate pb-5 text-center">
-       <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Blog <i class="fa fa-chevron-right"></i></span></p>
-       <h1 class="mb-0 bread">Blog</h1>
+       <p class="breadcrumbs"><span class="mr-2"><a href="index.php">Home <i class="fa fa-chevron-right"></i></a></span> <span>Blog <i class="fa fa-chevron-right"></i></span></p>
+       <h1 class="mb-0 bread">Travel Blog</h1>
      </div>
    </div>
  </div>
@@ -55,8 +62,8 @@
            <span class="mos">September</span>
          </div>
        </div>
-       <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
-       <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+       <h3 class="heading"><a href="#">Top Places to Visit in Darjeeling</a></h3>
+       <p>Discover the most iconic attractions in Darjeeling including Tiger Hill, Batasia Loop, and the Himalayan Mountaineering Institute.</p>
        <p><a href="#" class="btn btn-primary">Read more</a></p>
      </div>
    </div>
@@ -75,8 +82,8 @@
        <span class="mos">September</span>
      </div>
    </div>
-   <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
-   <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+   <h3 class="heading"><a href="#">Best Time to Visit Darjeeling</a></h3>
+   <p>Learn about the ideal seasons for visiting Darjeeling, from the blooming flowers of spring to the clear mountain views of winter.</p>
    <p><a href="#" class="btn btn-primary">Read more</a></p>
  </div>
 </div>
@@ -95,8 +102,8 @@
      <span class="mos">September</span>
    </div>
  </div>
- <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+ <h3 class="heading"><a href="#">Tiger Hill Sunrise Experience</a></h3>
+ <p>Experience the breathtaking sunrise over Kanchenjunga from Tiger Hill, one of Darjeeling's most famous viewpoints.</p>
  <p><a href="#" class="btn btn-primary">Read more</a></p>
 </div>
 </div>
@@ -115,8 +122,8 @@
      <span class="mos">September</span>
    </div>
  </div>
- <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+ <h3 class="heading"><a href="#">Exploring Mirik Lake</a></h3>
+ <p>Discover the serene beauty of Mirik Lake, a peaceful retreat surrounded by pine forests and offering boating and nature walks.</p>
  <p><a href="#" class="btn btn-primary">Read more</a></p>
 </div>
 </div>
@@ -135,8 +142,8 @@
      <span class="mos">September</span>
    </div>
  </div>
- <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+ <h3 class="heading"><a href="#">Kalimpong Travel Guide</a></h3>
+ <p>A comprehensive guide to Kalimpong, featuring monasteries, orchid gardens, and the famous Deolo Hill viewpoint.</p>
  <p><a href="#" class="btn btn-primary">Read more</a></p>
 </div>
 </div>
@@ -155,8 +162,8 @@
      <span class="mos">September</span>
    </div>
  </div>
- <h3 class="heading"><a href="#">Most Popular Place In This World</a></h3>
- <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+ <h3 class="heading"><a href="#">Darjeeling Tea Garden Tour</a></h3>
+ <p>Take a journey through the lush tea gardens of Darjeeling, learning about tea production and tasting world-famous Darjeeling tea.</p>
  <p><a href="#" class="btn btn-primary">Read more</a></p>
 </div>
 </div>
@@ -186,78 +193,10 @@
    <div class="col-md-12 text-center">
     <div class="img"  style="background-image: url(images/bg_2.jpg);">
      <div class="overlay"></div>
-     <h2>We Are Pacific A Travel Agency</h2>
-     <p>We can manage your dream building A small river named Duden flows by their place</p>
-     <p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Ask For A Quote</a></p>
-   </div>
- </div>
-</div>
-</div>
-</section>
-
-<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image: url(images/bg_3.jpg);">
-  <div class="container">
-    <div class="row mb-5">
-      <div class="col-md pt-5">
-        <div class="ftco-footer-widget pt-md-5 mb-4">
-          <h2 class="ftco-heading-2">About</h2>
-          <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-          <ul class="ftco-footer-social list-unstyled float-md-left float-lft">
-            <li class="ftco-animate"><a href="#"><span class="fa fa-twitter"></span></a></li>
-            <li class="ftco-animate"><a href="#"><span class="fa fa-facebook"></span></a></li>
-            <li class="ftco-animate"><a href="#"><span class="fa fa-instagram"></span></a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md pt-5 border-left">
-        <div class="ftco-footer-widget pt-md-5 mb-4 ml-md-5">
-          <h2 class="ftco-heading-2">Infromation</h2>
-          <ul class="list-unstyled">
-            <li><a href="#" class="py-2 d-block">Online Enquiry</a></li>
-            <li><a href="#" class="py-2 d-block">General Enquiries</a></li>
-            <li><a href="#" class="py-2 d-block">Booking Conditions</a></li>
-            <li><a href="#" class="py-2 d-block">Privacy and Policy</a></li>
-            <li><a href="#" class="py-2 d-block">Refund Policy</a></li>
-            <li><a href="#" class="py-2 d-block">Call Us</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="col-md pt-5 border-left">
-       <div class="ftco-footer-widget pt-md-5 mb-4">
-        <h2 class="ftco-heading-2">Experience</h2>
-        <ul class="list-unstyled">
-          <li><a href="#" class="py-2 d-block">Adventure</a></li>
-          <li><a href="#" class="py-2 d-block">Hotel and Restaurant</a></li>
-          <li><a href="#" class="py-2 d-block">Beach</a></li>
-          <li><a href="#" class="py-2 d-block">Nature</a></li>
-          <li><a href="#" class="py-2 d-block">Camping</a></li>
-          <li><a href="#" class="py-2 d-block">Party</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-md pt-5 border-left">
-      <div class="ftco-footer-widget pt-md-5 mb-4">
-       <h2 class="ftco-heading-2">Have a Questions?</h2>
-       <div class="block-23 mb-3">
-         <ul>
-           <li><span class="icon fa fa-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
-           <li><a href="#"><span class="icon fa fa-phone"></span><span class="text">+2 392 3929 210</span></a></li>
-           <li><a href="#"><span class="icon fa fa-paper-plane"></span><span class="text">info@yourdomain.com</span></a></li>
-         </ul>
-       </div>
-     </div>
-   </div>
- </div>
- <div class="row">
-  <div class="col-md-12 text-center">
-
-    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-      Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-      <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-    </div>
-  </div>
-</div>
-</footer>
+     <h2>Explore Darjeeling With Hidden Hills Collective</h2>
+     <p>Discover the beauty of Darjeeling, Mirik and Kalimpong with our local travel guides and curated travel experiences.</p>
+     <p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Plan Your Trip</a></p>
+<?php include 'footer.php'; ?>
 
 
 
@@ -280,15 +219,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 <script src="js/google-map.js"></script>
 <script src="js/main.js"></script>
-<!-- Add jQuery library link to your <head> section -->
-<script src="https://code.jquery.com"></script>
 
-<!-- Add this script before the closing </body> tag -->
-<script>
-  $(function() {
-    $("#navbar-placeholder").load("navbar.php");
-  });
-</script>
 
 </body>
 </html>
