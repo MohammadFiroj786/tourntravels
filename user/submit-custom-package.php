@@ -9,26 +9,40 @@ if(!isset($_SESSION['user_id'])){
 
 $user_id = $_SESSION['user_id'];
 
-$destination = $_POST['destination'] ?? '';
-$style = $_POST['style'] ?? '';
-$travel_date = $_POST['travel_date'] ?? '';
-$days = $_POST['days'] ?? '';
-$travelers = $_POST['travelers'] ?? '';
-$hotel = $_POST['hotel'] ?? '';
-$experience = $_POST['experience'] ?? '';
+/* ===== FUNCTION TO FIX ARRAY ERROR ===== */
 
-if(empty($destination) || empty($style) || empty($travel_date) || empty($days) || empty($travelers)){
-
-echo "Invalid request";
-exit();
-
+function clean_input($data){
+    if(is_array($data)){
+        return implode(",", $data);
+    }
+    return $data;
 }
 
-$stmt = $conn->prepare("INSERT INTO custom_package_requests 
+/* ===== GET FORM DATA ===== */
+
+$destination = clean_input($_POST['destination'] ?? '');
+$style = clean_input($_POST['style'] ?? '');
+$travel_date = clean_input($_POST['travel_date'] ?? '');
+$days = clean_input($_POST['days'] ?? '');
+$travelers = clean_input($_POST['travelers'] ?? '');
+$hotel = clean_input($_POST['hotel'] ?? '');
+$experience = clean_input($_POST['experience'] ?? '');
+
+/* ===== VALIDATION ===== */
+
+if(empty($destination) || empty($travel_date) || empty($days) || empty($travelers)){
+    echo "Invalid Request";
+    exit();
+}
+
+/* ===== INSERT DATA ===== */
+
+$stmt = $conn->prepare("INSERT INTO custom_package_requests
 (user_id,destination,style,travel_date,days,travelers,hotel,experience)
 VALUES (?,?,?,?,?,?,?,?)");
 
-$stmt->bind_param("isssiiss",
+$stmt->bind_param(
+"isssiiss",
 $user_id,
 $destination,
 $style,
@@ -40,7 +54,7 @@ $experience
 );
 
 $stmt->execute();
-
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -48,58 +62,32 @@ $stmt->execute();
 <head>
 
 <title>Request Sent</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-
-body{
-background:#f4f6f9;
-font-family:'Segoe UI',sans-serif;
-}
-
-.box{
-margin-top:120px;
-background:white;
-padding:40px;
-border-radius:12px;
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-text-align:center;
-}
-
-</style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
 <body>
 
-<div class="container">
+<script>
 
-<div class="row justify-content-center">
+Swal.fire({
+    title: "Request Sent!",
+    text: "Our travel expert will contact you soon to plan your trip.",
+    icon: "success",
+    confirmButtonText: "Go to Packages",
+    confirmButtonColor: "#3085d6",
+    background: "#ffffff",
+    backdrop: `
+        rgba(0,0,0,0.6)
+    `
+}).then((result) => {
+    if (result.isConfirmed) {
+        window.location.href = "packages.php";
+    }
+});
 
-<div class="col-md-6">
-
-<div class="box">
-
-<h3 class="text-success mb-3">
-✅ Request Sent Successfully
-</h3>
-
-<p>
-Our travel expert will contact you soon to discuss your custom trip and finalize the itinerary.
-</p>
-
-<a href="packages.php" class="btn btn-primary mt-3">
-Back to Packages
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+</script>
 
 </body>
 </html>

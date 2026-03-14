@@ -78,20 +78,7 @@ body{
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar">
-    <h4>✈ Tour N Travels</h4>
-    <a href="dashboard.php">🏠 Dashboard</a>
-    <a href="packages.php">📦 Packages</a>
-    <a href="custom-package-requests.php">🌍 Custom Requests</a>
-    <a href="../logout.php">🚪 Logout</a>
-</div>
-
-<!-- MOBILE NAV -->
-<nav class="navbar navbar-dark bg-dark mobile-nav">
-    <div class="container-fluid">
-        <span class="navbar-brand">Tour N Travels</span>
-    </div>
-</nav>
+<?php include("navbar_admin.php"); ?>
 
 <div class="main-content">
 
