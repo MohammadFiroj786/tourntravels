@@ -60,7 +60,7 @@
 							<p>Hidden Hills Collective is a local travel service based in Darjeeling providing comfortable sightseeing tours, car rentals and customized travel packages. We specialize in Darjeeling, Mirik and Kalimpong tours with experienced drivers and reliable service.</p>
 							<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
 							A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-							<p><a href="#" class="btn btn-primary py-3 px-4">Search Destination</a></p>
+							<p><a href="#custom-packages" class="btn btn-primary py-3 px-4">Create Custom Package</a></p>
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -106,6 +106,88 @@
 				</div>
 			</div>
 		</section>
+
+		<!-- CUSTOM PACKAGE SERVICE TYPES SECTION -->
+		<section id="custom-packages" class="ftco-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+			<div class="container">
+				<div class="row justify-content-center pb-4">
+					<div class="col-md-12 heading-section text-center ftco-animate">
+						<span class="subheading" style="color: white;">Create Your Perfect Journey</span>
+						<h2 class="mb-4" style="color: white;">Choose Your Package Type</h2>
+						<p style="color: rgba(255,255,255,0.9);">Select the type of service that best fits your travel needs</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<!-- FULL TRIP PACKAGE -->
+					<div class="col-md-4 mb-4 ftco-animate">
+						<a href="user/custom-package.php?type=full" class="service-package-card" style="text-decoration: none; display: block;">
+							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
+								<div class="card-body text-center p-4">
+									<div style="font-size: 48px; margin-bottom: 15px;">🚗</div>
+									<h5 class="card-title fw-bold mb-3" style="color: #333;">Full Trip Package</h5>
+									<p class="card-text text-muted mb-4">Complete experience with pickup, accommodation, sightseeing and drop</p>
+									<ul class="list-unstyled text-start mb-3" style="font-size: 14px; color: #666;">
+										<li>✓ Pickup from NJP/Siliguri</li>
+										<li>✓ Hotel Stay</li>
+										<li>✓ Sightseeing Tours</li>
+										<li>✓ Drop Back</li>
+									</ul>
+									<div class="btn btn-primary w-100" style="border-radius: 25px; font-weight: 600;">Get Started</div>
+								</div>
+							</div>
+						</a>
+					</div>
+
+					<!-- STAY + SIGHTSEEING PACKAGE -->
+					<div class="col-md-4 mb-4 ftco-animate">
+						<a href="user/custom-package.php?type=stay" class="service-package-card" style="text-decoration: none; display: block;">
+							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
+								<div class="card-body text-center p-4">
+									<div style="font-size: 48px; margin-bottom: 15px;">🏨</div>
+									<h5 class="card-title fw-bold mb-3" style="color: #333;">Stay + Sightseeing</h5>
+									<p class="card-text text-muted mb-4">Accommodation with guided tours and activities</p>
+									<ul class="list-unstyled text-start mb-3" style="font-size: 14px; color: #666;">
+										<li>✓ Hotel Stay</li>
+										<li>✓ Guided Sightseeing</li>
+										<li>✓ Activities</li>
+										<li>✓ Local Experiences</li>
+									</ul>
+									<div class="btn btn-primary w-100" style="border-radius: 25px; font-weight: 600;">Get Started</div>
+								</div>
+							</div>
+						</a>
+					</div>
+
+					<!-- ONLY SIGHTSEEING PACKAGE -->
+					<div class="col-md-4 mb-4 ftco-animate">
+						<a href="user/custom-package.php?type=sightseeing" class="service-package-card" style="text-decoration: none; display: block;">
+							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
+								<div class="card-body text-center p-4">
+									<div style="font-size: 48px; margin-bottom: 15px;">🏔️</div>
+									<h5 class="card-title fw-bold mb-3" style="color: #333;">Only Sightseeing</h5>
+									<p class="card-text text-muted mb-4">Day tours for exploring scenic beauty</p>
+									<ul class="list-unstyled text-start mb-3" style="font-size: 14px; color: #666;">
+										<li>✓ Day Tours</li>
+										<li>✓ Popular Spots</li>
+										<li>✓ Expert Guides</li>
+										<li>✓ Photography Stops</li>
+									</ul>
+									<div class="btn btn-primary w-100" style="border-radius: 25px; font-weight: 600;">Get Started</div>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<style>
+			.service-package-card:hover .card {
+				transform: translateY(-10px);
+				box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+			}
+		</style>
 
 		<section class="ftco-section img ftco-select-destination" style="background-image: url(images/bg_3.jpg);">
 			<div class="container">

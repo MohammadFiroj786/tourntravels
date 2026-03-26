@@ -92,10 +92,10 @@ body{
 <thead class="table-dark">
 <tr>
     <th>Customer</th>
-    <th>Destination</th>
-    <th>Date</th>
+    <th>Service Type</th>
     <th>Travelers</th>
-    <th>Hotel</th>
+    <th>Date</th>
+    <th>Car Required</th>
     <th>Status</th>
     <th>Action</th>
 </tr>
@@ -109,14 +109,23 @@ body{
     <b><?= htmlspecialchars($row['name']) ?></b><br>
     <small><?= $row['phone'] ?></small>
 </td>
-<td><?= $row['destination'] ?></td>
-<td><?= $row['travel_date'] ?></td>
+<td>
+    <?php 
+    $service_labels = [
+        'full' => '🚗 Full Trip',
+        'stay' => '🏨 Stay + Sightseeing',
+        'sightseeing' => '🏔️ Sightseeing Only'
+    ];
+    echo isset($service_labels[$row['service_type']]) ? $service_labels[$row['service_type']] : $row['service_type'];
+    ?>
+</td>
 <td><?= $row['travelers'] ?></td>
-<td><?= $row['hotel'] ?></td>
+<td><?= $row['travel_date'] ?></td>
+<td><?= htmlspecialchars($row['car_type']) ?></td>
 
 <td>
 <?php if($row['status']=="Accepted"){ ?>
-    <span class="badge bg-success">Accepted</span>
+    <span class="badge bg-success">Confirmed</span>
 <?php } else { ?>
     <span class="badge bg-warning text-dark">Pending</span>
 <?php } ?>
@@ -130,53 +139,135 @@ body{
 </tr>
 
 <!-- MODAL -->
-<div class="modal fade" id="viewModal<?= $row['id']; ?>">
-<div class="modal-dialog">
+<div class="modal fade" id="viewModal<?= $row['id']; ?>" tabindex="-1">
+<div class="modal-dialog modal-lg">
 <div class="modal-content">
 
-<div class="modal-header">
-    <h5 class="modal-title">Customer Request</h5>
-    <button class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">📋 Custom Package Request Details</h5>
+    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
 
 <div class="modal-body">
-    <p><b>Destination:</b> <?= $row['destination'] ?></p>
-    <p><b>Style:</b> <?= $row['style'] ?></p>
-    <p><b>Days:</b> <?= $row['days'] ?></p>
-    <p><b>Travelers:</b> <?= $row['travelers'] ?></p>
-    <p><b>Hotel:</b> <?= $row['hotel'] ?></p>
-
-    <p><b>Customer Experience:</b></p>
-    <div class="alert alert-light">
-        <?= nl2br(htmlspecialchars($row['experience'])) ?>
+    
+    <!-- CUSTOMER INFO -->
+    <h6 class="fw-bold text-primary mb-3">👤 Customer Information</h6>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p><b>Name:</b> <?= htmlspecialchars($row['name']) ?></p>
+            <p><b>Phone:</b> <?= htmlspecialchars($row['phone']) ?></p>
+        </div>
+        <div class="col-md-6">
+            <p><b>Email:</b> <?= htmlspecialchars($row['email']) ?></p>
+            <p><b>Request Date:</b> <?= isset($row['created_at']) ? date('d-M-Y', strtotime($row['created_at'])) : 'N/A' ?></p>
+        </div>
     </div>
-
+    
     <hr>
-
-<?php if($row['status']!="Accepted"){ ?>
-
-<form class="confirmForm" action="confirm_booking.php" method="POST">
-
-<input type="hidden" name="request_id" value="<?= $row['id'] ?>">
-<input type="hidden" name="user_id" value="<?= $row['user_id'] ?>">
-<input type="hidden" name="travel_date" value="<?= $row['travel_date'] ?>">
-<input type="hidden" name="persons" value="<?= $row['travelers'] ?>">
-
-<label class="fw-bold">Package Price</label>
-<input type="number" name="price" class="form-control mb-3" required>
-
-<button class="btn btn-primary w-100">Confirm Booking</button>
-
-</form>
-
-<?php } else { ?>
-<div class="alert alert-success text-center fw-bold">
-    ✅ Booking Already Confirmed
-</div>
-<?php } ?>
-
-<a href="tel:<?= $row['phone'] ?>" class="btn btn-success w-100 mt-2">📞 Call Customer</a>
-<a href="https://wa.me/<?= $row['phone'] ?>" class="btn btn-success w-100 mt-2">💬 WhatsApp</a>
+    
+    <!-- PACKAGE DETAILS -->
+    <h6 class="fw-bold text-primary mb-3">📦 Package Details</h6>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p><b>Service Type:</b> 
+                <?php 
+                $service_labels = [
+                    'full' => '🚗 Full Trip (Pickup + Stay + Sightseeing + Drop)',
+                    'stay' => '🏨 Stay + Sightseeing',
+                    'sightseeing' => '🏔️ Sightseeing Only'
+                ];
+                echo isset($service_labels[$row['service_type']]) ? $service_labels[$row['service_type']] : $row['service_type'];
+                ?>
+            </p>
+            <p><b>Travel Date:</b> <?= $row['travel_date'] ?></p>
+            <p><b>Duration:</b> <?= $row['days'] ?> day(s)</p>
+        </div>
+        <div class="col-md-6">
+            <p><b>Number of Travelers:</b> <?= $row['travelers'] ?></p>
+            <p><b>Car Required:</b> <span class="badge bg-info"><?= htmlspecialchars($row['car_type']) ?></span></p>
+            <p><b>Hotel Type:</b> <?= !empty($row['hotel_type']) ? htmlspecialchars($row['hotel_type']) : 'N/A' ?></p>
+        </div>
+    </div>
+    
+    <!-- DESTINATION & PLACES -->
+    <?php if(!empty($row['destinations'])): ?>
+    <div class="mb-3">
+        <p><b>📍 Destinations:</b></p>
+        <div class="alert alert-light">
+            <?= nl2br(htmlspecialchars($row['destinations'])) ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <?php if(!empty($row['pickup_location'])): ?>
+    <div class="mb-3">
+        <p><b>🚗 Pickup Location:</b></p>
+        <div class="alert alert-light">
+            <?= htmlspecialchars($row['pickup_location']) ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <?php if(!empty($row['sightseeing_places'])): ?>
+    <div class="mb-3">
+        <p><b>✨ Selected Sightseeing Places:</b></p>
+        <div class="alert alert-light">
+            <?php
+            $places = json_decode($row['sightseeing_places'], true);
+            if (is_array($places)) {
+                echo '<ul class="mb-0">';
+                foreach ($places as $place) {
+                    echo '<li>' . htmlspecialchars($place) . '</li>';
+                }
+                echo '</ul>';
+            } else {
+                echo nl2br(htmlspecialchars($row['sightseeing_places']));
+            }
+            ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <!-- CUSTOMER NOTES -->
+    <?php if(!empty($row['user_notes'])): ?>
+    <div class="mb-3">
+        <p><b>📝 Customer Notes:</b></p>
+        <div class="alert alert-light">
+            <?= nl2br(htmlspecialchars($row['user_notes'])) ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <hr>
+    
+    <!-- PRICING & CONFIRMATION -->
+    <?php if($row['status']!="Accepted"){ ?>
+    
+    <h6 class="fw-bold text-primary mb-3">💰 Confirm Booking</h6>
+    
+    <form class="confirmForm" action="confirm_booking.php" method="POST">
+        <input type="hidden" name="request_id" value="<?= $row['id'] ?>">
+        <input type="hidden" name="user_id" value="<?= $row['user_id'] ?>">
+        <input type="hidden" name="travel_date" value="<?= $row['travel_date'] ?>">
+        <input type="hidden" name="persons" value="<?= $row['travelers'] ?>">
+        
+        <label class="fw-bold mb-2">Enter Final Package Price (₹)</label>
+        <input type="number" name="price" class="form-control mb-3" placeholder="Enter price per person or total" required>
+        
+        <button class="btn btn-primary w-100">✅ Confirm Booking</button>
+    </form>
+    
+    <?php } else { ?>
+    <div class="alert alert-success text-center fw-bold">
+        ✅ Booking Already Confirmed
+    </div>
+    <?php } ?>
+    
+    <!-- CONTACT BUTTONS -->
+    <div class="mt-3">
+        <a href="tel:<?= $row['phone'] ?>" class="btn btn-success w-100 mb-2">📞 Call Customer</a>
+        <a href="https://wa.me/<?= $row['phone'] ?>" target="_blank" class="btn btn-success w-100">💬 WhatsApp</a>
+    </div>
 
 </div>
 </div>
