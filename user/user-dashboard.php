@@ -21,6 +21,9 @@ $confirmedBookings = $conn->query("SELECT COUNT(*) as total FROM bookings WHERE 
 $totalSpent = $conn->query("SELECT SUM(total_price) as total FROM bookings WHERE user_id=$user_id AND booking_status='confirmed'")->fetch_assoc()['total'];
 $totalSpent = $totalSpent ? $totalSpent : 0;
 
+/* ================= CUSTOM PACKAGE REQUESTS ================= */
+$customPackageRequests = $conn->query("SELECT * FROM custom_package_requests WHERE user_id=$user_id ORDER BY created_at DESC");
+
 /* ================= RECENT BOOKINGS ================= */
 
 $recentBookings = $conn->query("
@@ -258,6 +261,59 @@ echo "<span class='badge bg-secondary'>Processing</span>";
 
 </div>
 
+<!-- CUSTOM PACKAGE REQUESTS -->
+<div class="card shadow p-4 mt-4">
+    <h4 class="mb-3">🧩 Your Custom Package Requests</h4>
+    <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Pickup</th>
+                <th>Destination</th>
+                <th>Sightseeing</th>
+                <th>Days</th>
+                <th>Travellers</th>
+                <th>Hotel</th>
+                <th>Car</th>
+                <th>Estimate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if($customPackageRequests && $customPackageRequests->num_rows > 0){ ?>
+                <?php while($req = $customPackageRequests->fetch_assoc()){ 
+                    $labels = ['full'=>'🚗 Full Trip','stay'=>'🏨 Stay + Sightseeing','sightseeing'=>'🏔️ Sightseeing Only'];
+                    $packageStatus = strtolower(trim($req['status']));
+                ?>
+                <tr>
+                    <td><?= htmlspecialchars(date('d-M-Y', strtotime($req['created_at']))) ?></td>
+                    <td><?= isset($labels[$req['service_type']]) ? $labels[$req['service_type']] : htmlspecialchars($req['service_type']) ?></td>
+                    <td><?= !empty($req['pickup_location']) ? htmlspecialchars($req['pickup_location']) : 'N/A' ?></td>
+                    <td><?= !empty($req['destinations']) ? htmlspecialchars($req['destinations']) : 'N/A' ?></td>
+                    <td><?php
+                        $places = json_decode($req['sightseeing_places'], true);
+                        if(is_array($places)){
+                            echo htmlspecialchars(implode(', ', $places));
+                        } else {
+                            echo !empty($req['sightseeing_places']) ? htmlspecialchars($req['sightseeing_places']) : 'N/A';
+                        }
+                    ?></td>
+                    <td><?= htmlspecialchars($req['days']) ?></td>
+                    <td><?= htmlspecialchars($req['travelers']) ?></td>
+                    <td><?= !empty($req['hotel_type']) ? htmlspecialchars($req['hotel_type']) : 'N/A' ?></td>
+                    <td><?= htmlspecialchars($req['car_type']) ?></td>
+                    <td><?= isset($req['price']) ? '₹'.number_format($req['price'],2) : 'N/A' ?></td>
+                    <td><?php if($packageStatus == 'accepted') echo '<span class="badge bg-success">Accepted</span>'; elseif($packageStatus == 'pending') echo '<span class="badge bg-warning text-dark">Pending</span>'; else echo '<span class="badge bg-secondary">'.htmlspecialchars($req['status']).'</span>'; ?></td>
+                </tr>
+                <?php } ?>
+            <?php } else { ?>
+                <tr><td colspan="11" class="text-center">No custom packages yet.</td></tr>
+            <?php } ?>
+        </tbody>
+    </table>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -36,7 +36,7 @@ $row = $data->fetch_assoc();
 
 $email = $row['email'];
 $name = $row['name'];
-$subject = "Tour N Travels Support [Ticket #$id] - ".$row['subject'];
+$subject = "Hidden Hills Collective Support [Ticket #$id] - ".$row['subject'];
 
 $mail = new PHPMailer(true);
 
@@ -50,8 +50,8 @@ $mail->Password   = MAIL_PASSWORD;
 $mail->SMTPSecure = 'tls';
 $mail->Port       = MAIL_PORT;
 
-$mail->setFrom(MAIL_USERNAME,"Tour N Travels");
-$mail->addReplyTo(MAIL_USERNAME,"Tour N Travels Support");
+$mail->setFrom(MAIL_USERNAME,"Hidden Hills Collective");
+$mail->addReplyTo(MAIL_USERNAME,"Hidden Hills Collective Support");
 
 $mail->addAddress($email,$name);
 
@@ -65,11 +65,11 @@ $mail->Body = "
 
 <div style='max-width:600px;margin:auto;background:#ffffff;border-radius:6px;padding:25px;'>
 
-<h2 style='color:#0d6efd;'>Tour N Travels Support</h2>
+<h2 style='color:#0d6efd;'>Hidden Hills Collective Support</h2>
 
 <p>Hello <b>$name</b>,</p>
 
-<p>Thank you for contacting <b>Tour N Travels</b>.  
+<p>Thank you for contacting <b>Hidden Hills Collective</b>.  
 Our support team has reviewed your enquiry and here is our response:</p>
 
 <div style='background:#f8f9fa;padding:15px;border-left:4px solid #0d6efd;margin:15px 0;'>
@@ -80,7 +80,7 @@ $reply
 
 <p>
 Best regards,<br>
-<b>Tour N Travels Support Team</b>
+<b>Hidden Hills Collective Support Team</b>
 </p>
 
 <hr>
@@ -105,7 +105,7 @@ $mail->AltBody = "Hello $name,
 $reply
 
 Best regards,
-Tour N Travels Support Team
+Hidden Hills Collective Support Team
 
 Please do not reply to this email. Visit ".APP_URL;
 

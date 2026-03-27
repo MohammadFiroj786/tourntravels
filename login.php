@@ -66,7 +66,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Tour N Travels - Login</title>
+	<title>Hidden Hills Collective - Login</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
@@ -113,12 +113,12 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     <div class="card-body text-center">
 
       <!-- Logo / Title -->
-      <h1 class="mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00; font-size: 2.5rem;">Tour N Travels</h1>
+      <h1 class="mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00; font-size: 2.5rem;">Hidden Hills Collective</h1>
 
       <!-- Login pitch -->
       <p class="mb-4 text-dark fw-semibold fs-6 fs-md-5">
         Welcome back! 🌄 <br>
-        Sign in to continue planning your dream trips with Tour N Travels.
+        Sign in to continue planning your dream trips with Hidden Hills Collective.
       </p>
 
       <!-- Display error if exists -->

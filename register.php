@@ -94,7 +94,7 @@ body{
 <div class="d-flex justify-content-center align-items-center min-vh-100 mt-5">
   <div class="card p-4 p-md-5 shadow-lg" style="width: 100%; max-width: 450px;">
     <!-- Title -->
-    <h1 class="text-center mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00;">Tour N Travels</h1>
+    <h1 class="text-center mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00;">Hidden Hills Collective</h1>
     <p class="text-center mb-4 fw-semibold">Create your account to start your journey with us 🌍</p>
 
     <!-- Display error -->

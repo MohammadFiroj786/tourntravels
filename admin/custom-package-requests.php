@@ -93,9 +93,15 @@ body{
 <tr>
     <th>Customer</th>
     <th>Service Type</th>
+    <th>Pickup</th>
+    <th>Destination</th>
+    <th>Sightseeing</th>
     <th>Travelers</th>
+    <th>Days</th>
+    <th>Hotel</th>
+    <th>Car</th>
     <th>Date</th>
-    <th>Car Required</th>
+    <th>Estimate</th>
     <th>Status</th>
     <th>Action</th>
 </tr>
@@ -107,7 +113,7 @@ body{
 <tr>
 <td>
     <b><?= htmlspecialchars($row['name']) ?></b><br>
-    <small><?= $row['phone'] ?></small>
+    <small><?= htmlspecialchars($row['phone']) ?></small>
 </td>
 <td>
     <?php 
@@ -116,13 +122,27 @@ body{
         'stay' => '🏨 Stay + Sightseeing',
         'sightseeing' => '🏔️ Sightseeing Only'
     ];
-    echo isset($service_labels[$row['service_type']]) ? $service_labels[$row['service_type']] : $row['service_type'];
+    echo isset($service_labels[$row['service_type']]) ? $service_labels[$row['service_type']] : htmlspecialchars($row['service_type']);
     ?>
 </td>
-<td><?= $row['travelers'] ?></td>
-<td><?= $row['travel_date'] ?></td>
+<td><?= !empty($row['pickup_location']) ? htmlspecialchars($row['pickup_location']) : 'N/A' ?></td>
+<td><?= !empty($row['destinations']) ? htmlspecialchars($row['destinations']) : 'N/A' ?></td>
+<td>
+    <?php
+    $places = json_decode($row['sightseeing_places'], true);
+    if (is_array($places)) {
+        echo htmlspecialchars(implode(', ', $places));
+    } else {
+        echo !empty($row['sightseeing_places']) ? htmlspecialchars($row['sightseeing_places']) : 'N/A';
+    }
+    ?>
+</td>
+<td><?= htmlspecialchars($row['travelers']) ?></td>
+<td><?= htmlspecialchars($row['days']) ?></td>
+<td><?= !empty($row['hotel_type']) ? htmlspecialchars($row['hotel_type']) : 'N/A' ?></td>
 <td><?= htmlspecialchars($row['car_type']) ?></td>
-
+<td><?= htmlspecialchars($row['travel_date']) ?></td>
+<td><?= isset($row['price']) ? '₹' . number_format($row['price'], 2) : 'N/A' ?></td>
 <td>
 <?php if($row['status']=="Accepted"){ ?>
     <span class="badge bg-success">Confirmed</span>

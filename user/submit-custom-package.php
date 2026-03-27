@@ -29,13 +29,22 @@ function validate_required($value, $field_name) {
 $errors = [];
 $service_type = sanitize_input($_POST['service_type'] ?? '');
 $pickup_location = sanitize_input($_POST['pickup_location'] ?? '');
-$destination = sanitize_input($_POST['destination'] ?? '');
+
+// Destination may be a single value or multiple values sent in an array
+$destination_input = $_POST['destination'] ?? '';
+if (is_array($destination_input)) {
+    $destination = sanitize_input(implode(', ', $destination_input));
+} else {
+    $destination = sanitize_input($destination_input);
+}
+
 $sightseeing_places = isset($_POST['sightseeing_places']) ? $_POST['sightseeing_places'] : [];
 $travel_date = sanitize_input($_POST['travel_date'] ?? '');
 $days = isset($_POST['days']) ? (int)$_POST['days'] : 1;
 $travelers = isset($_POST['travelers']) ? (int)$_POST['travelers'] : 1;
 $hotel_type = sanitize_input($_POST['hotel_type'] ?? '');
 $user_notes = sanitize_input($_POST['user_notes'] ?? '');
+$estimated_price = isset($_POST['estimated_price']) ? (float)$_POST['estimated_price'] : 0;
 
 // Validate required fields
 if ($error = validate_required($service_type, 'Service type')) $errors[] = $error;
@@ -126,15 +135,15 @@ if ($service_type === 'sightseeing') {
 
 /* ===== INSERT DATA INTO DATABASE ===== */
 $stmt = $conn->prepare("INSERT INTO custom_package_requests
-    (user_id, service_type, pickup_location, destinations, sightseeing_places, travel_date, days, travelers, hotel_type, user_notes, car_type, status, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', NOW())");
+    (user_id, service_type, pickup_location, destinations, sightseeing_places, travel_date, days, travelers, hotel_type, user_notes, car_type, price, status, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', NOW())");
 
 if (!$stmt) {
     die("Database error: " . $conn->error);
 }
 
 $stmt->bind_param(
-    "isssssiisss",
+    "isssssiisssd",
     $user_id,
     $service_type,
     $pickup_location,
@@ -145,7 +154,8 @@ $stmt->bind_param(
     $travelers,
     $hotel_type,
     $user_notes,
-    $car_type
+    $car_type,
+    $estimated_price
 );
 
 if ($stmt->execute()) {

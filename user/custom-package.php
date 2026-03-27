@@ -329,6 +329,7 @@ $current_config = $page_config[$service_type];
                         <form id="customPackageForm" action="submit-custom-package.php" method="POST">
                             <!-- Hidden service type -->
                             <input type="hidden" name="service_type" value="<?php echo htmlspecialchars($service_type); ?>">
+                            <input type="hidden" name="estimated_price" id="estimated_price" value="0">
 
                             <!-- PICKUP LOCATION (Only for Full Trip) -->
                             <?php if($service_type === 'full'): ?>
@@ -421,13 +422,13 @@ $current_config = $page_config[$service_type];
                                     <?php if($service_type !== 'sightseeing'): ?>
                                     <div class="col-md-6">
                                         <label class="form-label">Number of Days</label>
-                                        <input type="number" name="days" class="form-control" required min="1" max="30" placeholder="e.g., 3">
+                                        <input id="days" type="number" name="days" class="form-control" required min="1" max="30" placeholder="e.g., 3">
                                     </div>
                                     <?php endif; ?>
 
                                     <div class="col-md-6">
                                         <label class="form-label">Number of Travelers</label>
-                                        <input type="number" name="travelers" class="form-control" required min="1" max="50" placeholder="e.g., 4">
+                                        <input id="travelers" type="number" name="travelers" class="form-control" required min="1" max="50" placeholder="e.g., 4">
                                     </div>
                                 </div>
                             </div>
@@ -441,12 +442,12 @@ $current_config = $page_config[$service_type];
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Select Hotel Category</label>
-                                    <select name="hotel_type" class="form-select" required>
+                                    <select id="hotel_type" name="hotel_type" class="form-select" required>
                                         <option value="">Choose hotel type</option>
-                                        <option value="Budget">Budget</option>
-                                        <option value="Standard">Standard</option>
-                                        <option value="Deluxe">Deluxe</option>
-                                        <option value="Luxury">Luxury</option>
+                                        <option value="Homestay">Homestay (Not Confirmed)</option>
+                                        <option value="Budget Hotel">Budget Hotel (Not Confirmed)</option>
+                                        <option value="Deluxe Hotel">Deluxe Hotel (Not Confirmed)</option>
+                                        <option value="Luxury Hotel">Luxury Hotel (Not Confirmed)</option>
                                     </select>
                                 </div>
                             </div>
@@ -470,6 +471,10 @@ $current_config = $page_config[$service_type];
                                 <p><strong>Starting from ₹999 per person</strong><br>
                                 Final price depends on number of travelers, vehicle type, and season.<br>
                                 Our team will provide a detailed quote after reviewing your requirements.</p>
+                            </div>
+
+                            <div id="estimateBox" class="alert alert-info mt-3">
+                                Estimated price will appear here
                             </div>
 
                             <!-- SUBMIT BUTTON -->
@@ -497,18 +502,18 @@ $current_config = $page_config[$service_type];
         function updateSightseeingVisibility() {
             const selectedDestination = document.querySelector('input[name="destination"]:checked');
             if (!selectedDestination) {
-                darjeelingPlaces.style.display = 'none';
-                sikkimPlaces.style.display = 'none';
+                if (darjeelingPlaces) darjeelingPlaces.style.display = 'none';
+                if (sikkimPlaces) sikkimPlaces.style.display = 'none';
                 return;
             }
 
             const destination = selectedDestination.value;
             if (destination === 'Darjeeling') {
-                darjeelingPlaces.style.display = 'block';
-                sikkimPlaces.style.display = 'none';
+                if (darjeelingPlaces) darjeelingPlaces.style.display = 'block';
+                if (sikkimPlaces) sikkimPlaces.style.display = 'none';
             } else if (destination === 'Sikkim') {
-                darjeelingPlaces.style.display = 'none';
-                sikkimPlaces.style.display = 'block';
+                if (darjeelingPlaces) darjeelingPlaces.style.display = 'none';
+                if (sikkimPlaces) sikkimPlaces.style.display = 'block';
             }
         }
 
@@ -521,10 +526,10 @@ $current_config = $page_config[$service_type];
         destinationCards.forEach(card => {
             card.addEventListener('click', function() {
                 const radio = this.querySelector('input[type="radio"]');
+                if (!radio) return;
                 radio.checked = true;
                 updateSightseeingVisibility();
 
-                // Update visual selection
                 destinationCards.forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
             });
@@ -535,10 +540,83 @@ $current_config = $page_config[$service_type];
         sightseeingItems.forEach(item => {
             item.addEventListener('click', function() {
                 const checkbox = this.querySelector('input[type="checkbox"]');
+                if (!checkbox) return;
                 checkbox.checked = !checkbox.checked;
                 this.classList.toggle('selected', checkbox.checked);
             });
         });
+
+        // Estimate logic
+        const serviceType = '<?php echo htmlspecialchars($service_type); ?>';
+        const estimateBox = document.getElementById('estimateBox');
+        const travelersInput = document.getElementById('travelers');
+        const daysInput = document.getElementById('days');
+        const hotelTypeSelect = document.getElementById('hotel_type');
+
+        function calculateEstimate() {
+            const travelers = Number(travelersInput?.value) || 0;
+            const days = Number(daysInput?.value) || 0;
+            const hotelType = hotelTypeSelect?.value || '';
+
+            if (travelers < 1 || (serviceType !== 'sightseeing' && days < 1)) {
+                estimateBox.innerHTML = 'Estimated price will appear here';
+                return;
+            }
+
+            const sightseeingCost = travelers * 999;
+
+            const stayRates = {
+                'Homestay': 1200,
+                'Budget Hotel': 1800,
+                'Deluxe Hotel': 2500,
+                'Luxury Hotel': 4000
+            };
+
+            let stayCost = 0;
+            if (serviceType !== 'sightseeing') {
+                if (hotelType && stayRates[hotelType] !== undefined) {
+                    stayCost = days * stayRates[hotelType];
+                } else {
+                    // default to 0 if hotel type not selected
+                    stayCost = 0;
+                }
+            }
+
+            let carCost = 0;
+            if (serviceType === 'full') {
+                if (travelers <= 4) carCost = 2500;
+                else if (travelers <= 7) carCost = 3500;
+                else if (travelers <= 12) carCost = 5000;
+                else carCost = 7000;
+            }
+
+            let estimate = 0;
+            if (serviceType === 'full') {
+                estimate = sightseeingCost + stayCost + carCost;
+            } else if (serviceType === 'stay') {
+                estimate = sightseeingCost + stayCost;
+            } else if (serviceType === 'sightseeing') {
+                estimate = sightseeingCost;
+            }
+
+            estimateBox.innerHTML = '<strong>Estimated Starting Price: ₹' + estimate.toLocaleString('en-IN') + '</strong><br>' +
+                '<small>Homestay subject to availability<br>Final price may vary based on season and vehicle</small>';
+
+            const estimateInput = document.getElementById('estimated_price');
+            if (estimateInput) {
+                estimateInput.value = estimate;
+            }
+        }
+
+        [travelersInput, daysInput, hotelTypeSelect].forEach(el => {
+            if (el) {
+                el.addEventListener('change', calculateEstimate);
+                el.addEventListener('input', calculateEstimate);
+            }
+        });
+
+        // Initial estimation
+        calculateEstimate();
 
         // Form validation and submission
         const form = document.getElementById('customPackageForm');
@@ -546,12 +624,10 @@ $current_config = $page_config[$service_type];
         const loadingSpinner = document.querySelector('.loading-spinner');
 
         form.addEventListener('submit', function(e) {
-            // Show loading state
             submitBtn.disabled = true;
             loadingSpinner.style.display = 'inline-block';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-            // Basic validation
             const destination = document.querySelector('input[name="destination"]:checked');
             if (!destination) {
                 e.preventDefault();
@@ -575,7 +651,6 @@ $current_config = $page_config[$service_type];
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ✨ Get Final Quote';
         }
 
-        // Set minimum date to today
         const dateInput = document.querySelector('input[name="travel_date"]');
         if (dateInput) {
             const today = new Date().toISOString().split('T')[0];
@@ -584,110 +659,6 @@ $current_config = $page_config[$service_type];
     </script>
 </body>
 </html>
-        
-        .form-section.active {
-            display: block;
-        }
-        
-        .pricing-alert {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #856404;
-        }
-        
-        .field-row {
-            display: none;
-        }
-        
-        .field-row.show {
-            display: block;
-        }
-        
-        @media(max-width: 768px) {
-            .custom-box {
-                padding: 20px;
-            }
-            .destination-card {
-                padding: 14px;
-            }
-            h2 {
-                font-size: 24px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <?php include("navbar_user.php"); ?>
-    
-    <div class="container main-content">
-        <h2 class="text-center mb-2 fw-bold">
-            🌍 Design Your Dream Trip
-        </h2>
-        
-        <?php if($service_type == 'full'): ?>
-            <p class="text-center text-muted mb-4">Full Trip: Pickup + Stay + Sightseeing + Drop</p>
-        <?php elseif($service_type == 'stay'): ?>
-            <p class="text-center text-muted mb-4">Stay + Sightseeing Experience</p>
-        <?php else: ?>
-            <p class="text-center text-muted mb-4">Day Sightseeing Tours</p>
-        <?php endif; ?>
-        
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-9 col-md-11">
-                <div class="custom-box">
-                    
-                    <div class="pricing-alert">
-                        ℹ️ <strong>Pricing Information:</strong> Starting from ₹999 per person. Final price depends on number of travelers, vehicle type, season, and selected services.
-                    </div>
-                    
-                    <form action="submit-custom-package.php" method="POST">
-                        
-                        <!-- Hidden service type -->
-                        <input type="hidden" name="service_type" value="<?= htmlspecialchars($service_type) ?>">
-                        
-                        <!-- PICKUP LOCATION (Only for Full Trip) -->
-                        <div class="form-section <?= ($service_type == 'full') ? 'active' : '' ?> mb-4" id="pickup-section">
-                            <h5 class="step-title">🚗 Pickup Location</h5>
-                            <select name="pickup_location" class="form-control">
-                                <option value="">Select Pickup Location</option>
-                                <option value="NJP">NJP Junction</option>
-                                <option value="Siliguri">Siliguri</option>
-                            </select>
-                        </div>
-                        
-                        <!-- DESTINATION -->
-                        <div class="mb-4">
-                            <h5 class="step-title">
-                                <?php if($service_type == 'full'): ?>
-                                    📍 Choose Destination
-                                <?php elseif($service_type == 'stay'): ?>
-                                    📍 Choose Destination
-                                <?php else: ?>
-                                    📍 Where do you want to visit?
-                                <?php endif; ?>
-                            </h5>
-                            
-                            <div class="row g-3">
-                                <div class="col-lg-6 col-md-6">
-                                    <label class="destination-card w-100" id="darjeeling-option">
-                                        <input type="checkbox" name="destination[]" value="Darjeeling">
-                                        <h6>Darjeeling</h6>
-                                        <p class="small text-muted">Queen of Hills</p>
-                                    </label>
-                                </div>
-                                
-                                <div class="col-lg-6 col-md-6">
-                                    <label class="destination-card w-100" id="sikkim-option">
-                                        <input type="checkbox" name="destination[]" value="Sikkim">
-                                        <h6>Sikkim</h6>
-                                        <p class="small text-muted">Land of Mountains</p>
-                                    </label>
-                                </div>
                             </div>
                         </div>
                         

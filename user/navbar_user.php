@@ -88,8 +88,8 @@ padding:15px;
 
 <div class="container-fluid">
 
-<a class="navbar-brand" href="user-dashboard.php">
-<i class="fa fa-plane"></i> Tour N Travels
+<a class="navbar-brand" href="../index.php">
+<i class="fa fa-plane"></i> Hidden Hills Collective
 </a>
 
 <button class="navbar-toggler ms-auto" type="button"
@@ -148,7 +148,7 @@ data-bs-target="#mobileMenu">
 <div class="sidebar">
 
 <h4 class="text-center mb-4">
-<i class="fa-solid fa-plane"></i> Tour N Travels
+<a href="../index.php" class="text-decoration-none text-reset"><i class="fa-solid fa-plane"></i> Hidden Hills Collective</a>
 </h4>
 
 <a href="user-dashboard.php"><i class="fa-solid fa-house"></i> Dashboard</a>
