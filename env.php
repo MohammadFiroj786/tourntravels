@@ -13,6 +13,10 @@ define("MAIL_PORT", $env["MAIL_PORT"] ?? 587);
 define("MAIL_FROM", $env["MAIL_FROM"] ?? $env["MAIL_USERNAME"]);
 define("MAIL_FROM_NAME", $env["MAIL_FROM_NAME"] ?? "Tour N Travel");
 
+define("UPI_ID", $env["UPI_ID"]);
+define("UPI_NAME", $env["UPI_NAME"]);
+
+
 define("APP_URL", $env["APP_URL"] ?? "http://localhost/tourntravels");
 
 ?>

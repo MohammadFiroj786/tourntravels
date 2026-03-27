@@ -1,54 +1,64 @@
 <?php
 session_start();
 include("../includes/db.php");
+require_once("../env.php");
 
-/* ================= SECURITY CHECK ================= */
-if(!isset($_SESSION['admin_id'])){
+/* PHPMailer */
+require_once("../includes/PHPMailer/src/PHPMailer.php");
+require_once("../includes/PHPMailer/src/SMTP.php");
+require_once("../includes/PHPMailer/src/Exception.php");
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+/* ================= SECURITY ================= */
+if (!isset($_SESSION['admin_id'])) {
     header("Location: ../login.php");
     exit();
 }
 
-/* ================= VALIDATE REQUEST ================= */
-if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+/* ================= REQUEST ================= */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: custom-package-requests.php");
     exit();
 }
 
-/* ================= GET POST DATA ================= */
-$request_id  = $_POST['request_id'] ?? '';
-$user_id     = $_POST['user_id'] ?? '';
-$travel_date = $_POST['travel_date'] ?? '';
-$persons     = $_POST['persons'] ?? '';
-$price       = $_POST['price'] ?? '';
+$request_id = $_POST['request_id'] ?? '';
+$user_id    = $_POST['user_id'] ?? '';
+$price      = $_POST['price'] ?? '';
 
-/* ================= BASIC VALIDATION ================= */
-if(empty($request_id) || empty($user_id) || empty($travel_date) || empty($persons) || empty($price)){
-    header("Location: custom-package-requests.php?error=1");
-    exit();
+if (!$request_id || !$user_id || !$price) {
+    die("Invalid request");
 }
 
-/* ================= CHECK ALREADY CONFIRMED ================= */
-$check = $conn->prepare("
-    SELECT status 
-    FROM custom_package_requests 
-    WHERE id=?
+/* ================= FETCH REQUEST + USER ================= */
+$get = $conn->prepare("
+    SELECT 
+        c.travel_date, c.travelers,
+        u.name, u.email, u.phone
+    FROM custom_package_requests c
+    JOIN users u ON c.user_id = u.id
+    WHERE c.id = ?
 ");
-$check->bind_param("i", $request_id);
-$check->execute();
-$result = $check->get_result();
-$row = $result->fetch_assoc();
+$get->bind_param("i", $request_id);
+$get->execute();
+$data = $get->get_result()->fetch_assoc();
 
-if(!$row || $row['status'] === 'Accepted'){
-    // Already confirmed → prevent duplicate booking
-    header("Location: custom-package-requests.php");
-    exit();
+if (!$data) {
+    die("Request not found");
 }
 
-/* ================= UPDATE REQUEST ================= */
+$name        = $data['name'];
+$email       = $data['email'];
+$phone       = preg_replace('/\D/', '', $data['phone']);
+$travel_date = $data['travel_date'];
+$persons     = $data['travelers'];
+
+/* ================= UPDATE CUSTOM REQUEST ================= */
 $update = $conn->prepare("
     UPDATE custom_package_requests
-    SET price=?, status='Accepted'
-    WHERE id=?
+    SET price = ?, status = 'Accepted'
+    WHERE id = ?
 ");
 $update->bind_param("di", $price, $request_id);
 $update->execute();
@@ -56,13 +66,75 @@ $update->execute();
 /* ================= INSERT BOOKING ================= */
 $insert = $conn->prepare("
     INSERT INTO bookings
-    (user_id, package_id, travel_date, persons, total_price, booking_status)
-    VALUES (?, NULL, ?, ?, ?, 'Confirmed')
+    (user_id, package_id, travel_date, persons, total_price, booking_status, created_at, payment_status)
+    VALUES (?, NULL, ?, ?, ?, 'Confirmed', NOW(), 'Pending')
 ");
 $insert->bind_param("isid", $user_id, $travel_date, $persons, $price);
 $insert->execute();
 
-/* ================= SUCCESS REDIRECT ================= */
-header("Location: custom-package-requests.php?confirmed=1");
+$booking_id = $conn->insert_id;
+
+/* ================= PAYMENT LINK ================= */
+$payment_link = APP_URL . "/pay.php?booking_id=" . $booking_id;
+
+/* ================= SEND EMAIL (SAME AS CONTACT LOGIC) ================= */
+$mail = new PHPMailer(true);
+
+try {
+
+    $mail->isSMTP();
+    $mail->Host       = MAIL_HOST;
+    $mail->SMTPAuth   = true;
+    $mail->Username   = MAIL_USERNAME;
+    $mail->Password   = MAIL_PASSWORD;
+    $mail->SMTPSecure = 'tls';
+    $mail->Port       = MAIL_PORT;
+
+    $mail->setFrom(MAIL_USERNAME, MAIL_FROM_NAME);
+    $mail->addReplyTo(MAIL_USERNAME, MAIL_FROM_NAME);
+    $mail->addAddress($email, $name);
+
+    $mail->isHTML(true);
+    $mail->Subject = "Payment Link - Tour Booking Confirmed";
+
+    $mail->Body = "
+        <div style='font-family:Arial;background:#f4f6f9;padding:20px'>
+        <div style='max-width:600px;margin:auto;background:#fff;padding:25px;border-radius:8px'>
+        <h2>Tour Booking Confirmed ✅</h2>
+        <p>Hello <b>$name</b>,</p>
+        <p>Your tour booking has been confirmed.</p>
+        <p><b>Amount:</b> ₹$price</p>
+        <p>
+            <a href='$payment_link'
+               style='background:#28a745;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px'>
+               Pay Now
+            </a>
+        </p>
+        <p>Thank you for choosing us.</p>
+        </div>
+        </div>
+    ";
+
+    $mail->AltBody = "Hello $name, Pay here: $payment_link";
+
+    $mail->send();
+
+} catch (Exception $e) {
+    // Email failure should NOT break booking
+}
+
+/* ================= WHATSAPP ================= */
+if (strlen($phone) === 10) {
+    $phone = "91" . $phone;
+}
+
+$wa_msg = urlencode(
+    "Hello $name 👋\n\n" .
+    "Your booking is confirmed ✅\n" .
+    "Amount: ₹$price\n\n" .
+    "Pay here:\n$payment_link"
+);
+
+/* ================= REDIRECT ================= */
+header("Location: https://wa.me/$phone?text=$wa_msg");
 exit();
-?>
