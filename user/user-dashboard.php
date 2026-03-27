@@ -47,12 +47,10 @@ WHERE bookings.user_id=$user_id
 ORDER BY bookings.created_at DESC
 LIMIT 5
 ");
-
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
 
 <title>User Dashboard</title>
@@ -63,23 +61,73 @@ LIMIT 5
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 
 body{
-background:#f4f6f9;
+    font-family:'Poppins',sans-serif;
+    background: linear-gradient(120deg,#eef2f7,#e3ebf6);
 }
 
+/* HEADER */
+.main-content h2{
+    font-weight:700;
+}
+
+/* CARD */
 .card{
-border:none;
-border-radius:15px;
+    border:none;
+    border-radius:20px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
+/* STAT CARDS */
 .stat-card{
-transition:0.3s;
+    padding:25px;
+    transition:0.3s;
+    text-align:center;
 }
 
 .stat-card:hover{
-transform:translateY(-5px);
+    transform:translateY(-8px) scale(1.02);
+}
+
+.stat-icon{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+/* COLORS */
+.bg1{ background:linear-gradient(135deg,#667eea,#764ba2); color:white; }
+.bg2{ background:linear-gradient(135deg,#f7971e,#ffd200); color:black; }
+.bg3{ background:linear-gradient(135deg,#43cea2,#185a9d); color:white; }
+.bg4{ background:linear-gradient(135deg,#ff416c,#ff4b2b); color:white; }
+
+/* TABLE */
+.table{
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.table thead{
+    background:#1e1e2f;
+    color:white;
+}
+
+/* BADGES */
+.badge{
+    padding:7px 14px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+/* SECTION */
+.section-title{
+    font-weight:600;
+    margin-bottom:15px;
 }
 
 </style>
@@ -93,95 +141,68 @@ transform:translateY(-5px);
 <div class="main-content p-4">
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-
 <h2>Welcome, <?php echo $user_name; ?> 👋</h2>
-
 <span class="badge bg-success p-2">User Panel</span>
-
 </div>
 
 <!-- STAT CARDS -->
-
 <div class="row g-4 mb-4">
 
 <div class="col-md-3">
-
-<div class="card shadow stat-card p-3 text-center">
-
+<div class="card stat-card bg1">
+<i class="fas fa-suitcase-rolling stat-icon"></i>
 <h5>Total Bookings</h5>
-
-<h2 class="text-primary"><?php echo $totalBookings; ?></h2>
-
+<h2><?php echo $totalBookings; ?></h2>
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card shadow stat-card p-3 text-center">
-
+<div class="card stat-card bg2">
+<i class="fas fa-hourglass-half stat-icon"></i>
 <h5>Pending</h5>
-
-<h2 class="text-warning"><?php echo $pendingBookings; ?></h2>
-
+<h2><?php echo $pendingBookings; ?></h2>
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card shadow stat-card p-3 text-center">
-
+<div class="card stat-card bg3">
+<i class="fas fa-check-circle stat-icon"></i>
 <h5>Confirmed</h5>
-
-<h2 class="text-success"><?php echo $confirmedBookings; ?></h2>
-
+<h2><?php echo $confirmedBookings; ?></h2>
 </div>
-
 </div>
 
 <div class="col-md-3">
-
-<div class="card shadow stat-card p-3 text-center">
-
+<div class="card stat-card bg4">
+<i class="fas fa-wallet stat-icon"></i>
 <h5>Total Spent</h5>
-
-<h2 class="text-danger">₹<?php echo $totalSpent; ?></h2>
-
+<h2>₹<?php echo $totalSpent; ?></h2>
 </div>
-
 </div>
 
 </div>
 
 <!-- RECENT BOOKINGS -->
+<div class="card shadow p-4 mb-4">
 
-<div class="card shadow p-4">
-
-<h4 class="mb-3">Recent Bookings</h4>
+<h4 class="section-title">📅 Recent Bookings</h4>
 
 <div class="table-responsive">
+<table class="table table-hover">
 
-<table class="table table-bordered table-hover">
-
-<thead class="table-dark">
-
+<thead>
 <tr>
-
 <th>Package</th>
 <th>Travel Date</th>
 <th>Persons</th>
-<th>Total Price</th>
+<th>Total</th>
 <th>Status</th>
-
 </tr>
-
 </thead>
 
 <tbody>
 
 <?php if($recentBookings->num_rows > 0){ ?>
-
 <?php while($row = $recentBookings->fetch_assoc()){ 
 
 $status = $row['booking_status'];
@@ -191,66 +212,124 @@ $status = $row['custom_status'];
 }
 
 $status = strtolower(trim($status));
-
 ?>
 
 <tr>
 
 <td>
-
 <?php
-
 if(!empty($row['title'])){
 echo $row['title'];
-}
-else{
+}else{
 echo "<span class='badge bg-info text-dark'>Custom - ".$row['destination']."</span>";
 }
-
 ?>
-
 </td>
 
 <td><?php echo $row['travel_date']; ?></td>
-
 <td><?php echo $row['persons']; ?></td>
-
 <td>₹<?php echo $row['total_price']; ?></td>
 
 <td>
-
 <?php
-
 if($status == 'pending'){
-echo "<span class='badge bg-warning'>⏳ Pending</span>";
+echo "<span class='badge bg-warning text-dark'>⏳ Pending</span>";
 }
 elseif($status == 'accepted'){
-echo "<span class='badge bg-info'>✔ Accepted</span>";
+echo "<span class='badge bg-info'>🚀 Accepted</span>";
 }
 elseif($status == 'confirmed'){
-echo "<span class='badge bg-success'>✔ Confirmed</span>";
+echo "<span class='badge bg-success'>✅ Confirmed</span>";
 }
 elseif($status == 'cancelled'){
-echo "<span class='badge bg-danger'>✖ Cancelled</span>";
+echo "<span class='badge bg-danger'>❌ Cancelled</span>";
 }
 else{
-echo "<span class='badge bg-secondary'>Processing</span>";
+echo "<span class='badge bg-secondary'>⚙ Processing</span>";
 }
-
 ?>
-
 </td>
 
 </tr>
 
 <?php } ?>
-
 <?php } else { ?>
-
 <tr>
 <td colspan="5" class="text-center">No bookings yet.</td>
 </tr>
+<?php } ?>
 
+</tbody>
+
+</table>
+</div>
+</div>
+
+<!-- CUSTOM PACKAGE REQUESTS -->
+<div class="card shadow p-4">
+
+<h4 class="section-title">🧩 Custom Package Requests</h4>
+
+<div class="table-responsive">
+
+<table class="table table-hover">
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Service</th>
+<th>Destination</th>
+<th>Days</th>
+<th>Travellers</th>
+<th>Price</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+<?php if($customPackageRequests && $customPackageRequests->num_rows > 0){ ?>
+<?php while($req = $customPackageRequests->fetch_assoc()){ 
+
+$labels = ['full'=>'🚗 Full Trip','stay'=>'🏨 Stay','sightseeing'=>'🏔️ Tour'];
+$status = strtolower(trim($req['status']));
+?>
+
+<tr>
+
+<td><?php echo date('d M Y', strtotime($req['created_at'])); ?></td>
+
+<td><?php echo $labels[$req['service_type']] ?? $req['service_type']; ?></td>
+
+<td><?php echo $req['destinations'] ?? 'N/A'; ?></td>
+
+<td><?php echo $req['days']; ?></td>
+
+<td><?php echo $req['travelers']; ?></td>
+
+<td><?php echo $req['price'] ? '₹'.$req['price'] : 'N/A'; ?></td>
+
+<td>
+<?php
+if($status == 'accepted'){
+echo "<span class='badge bg-success'>Accepted</span>";
+}
+elseif($status == 'pending'){
+echo "<span class='badge bg-warning text-dark'>Pending</span>";
+}
+else{
+echo "<span class='badge bg-secondary'>".$req['status']."</span>";
+}
+?>
+</td>
+
+</tr>
+
+<?php } ?>
+<?php } else { ?>
+<tr>
+<td colspan="7" class="text-center">No custom packages yet.</td>
+</tr>
 <?php } ?>
 
 </tbody>
@@ -258,62 +337,8 @@ echo "<span class='badge bg-secondary'>Processing</span>";
 </table>
 
 </div>
-
 </div>
 
-<!-- CUSTOM PACKAGE REQUESTS -->
-<div class="card shadow p-4 mt-4">
-    <h4 class="mb-3">🧩 Your Custom Package Requests</h4>
-    <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Date</th>
-                <th>Service</th>
-                <th>Pickup</th>
-                <th>Destination</th>
-                <th>Sightseeing</th>
-                <th>Days</th>
-                <th>Travellers</th>
-                <th>Hotel</th>
-                <th>Car</th>
-                <th>Estimate</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if($customPackageRequests && $customPackageRequests->num_rows > 0){ ?>
-                <?php while($req = $customPackageRequests->fetch_assoc()){ 
-                    $labels = ['full'=>'🚗 Full Trip','stay'=>'🏨 Stay + Sightseeing','sightseeing'=>'🏔️ Sightseeing Only'];
-                    $packageStatus = strtolower(trim($req['status']));
-                ?>
-                <tr>
-                    <td><?= htmlspecialchars(date('d-M-Y', strtotime($req['created_at']))) ?></td>
-                    <td><?= isset($labels[$req['service_type']]) ? $labels[$req['service_type']] : htmlspecialchars($req['service_type']) ?></td>
-                    <td><?= !empty($req['pickup_location']) ? htmlspecialchars($req['pickup_location']) : 'N/A' ?></td>
-                    <td><?= !empty($req['destinations']) ? htmlspecialchars($req['destinations']) : 'N/A' ?></td>
-                    <td><?php
-                        $places = json_decode($req['sightseeing_places'], true);
-                        if(is_array($places)){
-                            echo htmlspecialchars(implode(', ', $places));
-                        } else {
-                            echo !empty($req['sightseeing_places']) ? htmlspecialchars($req['sightseeing_places']) : 'N/A';
-                        }
-                    ?></td>
-                    <td><?= htmlspecialchars($req['days']) ?></td>
-                    <td><?= htmlspecialchars($req['travelers']) ?></td>
-                    <td><?= !empty($req['hotel_type']) ? htmlspecialchars($req['hotel_type']) : 'N/A' ?></td>
-                    <td><?= htmlspecialchars($req['car_type']) ?></td>
-                    <td><?= isset($req['price']) ? '₹'.number_format($req['price'],2) : 'N/A' ?></td>
-                    <td><?php if($packageStatus == 'accepted') echo '<span class="badge bg-success">Accepted</span>'; elseif($packageStatus == 'pending') echo '<span class="badge bg-warning text-dark">Pending</span>'; else echo '<span class="badge bg-secondary">'.htmlspecialchars($req['status']).'</span>'; ?></td>
-                </tr>
-                <?php } ?>
-            <?php } else { ?>
-                <tr><td colspan="11" class="text-center">No custom packages yet.</td></tr>
-            <?php } ?>
-        </tbody>
-    </table>
-    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
