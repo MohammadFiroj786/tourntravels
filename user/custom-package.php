@@ -376,7 +376,96 @@ $current_config = $page_config[$service_type];
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- SIGHTSEEING PLACES -->
+                            <div class="form-section">
+                                <div class="section-title">
+                                    <i class="fas fa-binoculars"></i>
+                                    Select Sightseeing Places
+                                </div>
 
+                                <!-- Darjeeling Places -->
+                                <div id="darjeeling-places" style="display:none;">
+                                    <h6 class="mb-3">Darjeeling Sightseeing</h6>
+                                    <div class="sightseeing-grid">
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Tiger Hill">
+                                            <div>
+                                                <strong>Tiger Hill</strong><br>
+                                                <small>Sunrise view over Kanchenjunga</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Batasia Loop">
+                                            <div>
+                                                <strong>Batasia Loop</strong><br>
+                                                <small>Railway loop with mountain views</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Japanese Temple">
+                                            <div>
+                                                <strong>Japanese Temple</strong><br>
+                                                <small>Peace Pagoda scenic point</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Toy Train">
+                                            <div>
+                                                <strong>Toy Train</strong><br>
+                                                <small>Heritage train ride</small>
+                                            </div>
+                                        </label>
+
+                                    </div>
+                                </div>
+
+                                <!-- Sikkim Places -->
+                                <div id="sikkim-places" style="display:none;">
+                                    <h6 class="mb-3">Sikkim Sightseeing</h6>
+                                    <div class="sightseeing-grid">
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Tsomgo Lake">
+                                            <div>
+                                                <strong>Tsomgo Lake</strong><br>
+                                                <small>Beautiful glacial lake</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Nathula Pass">
+                                            <div>
+                                                <strong>Nathula Pass</strong><br>
+                                                <small>India-China border pass</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Baba Mandir">
+                                            <div>
+                                                <strong>Baba Mandir</strong><br>
+                                                <small>War memorial</small>
+                                            </div>
+                                        </label>
+
+                                        <label class="sightseeing-item">
+                                            <input type="checkbox" name="sightseeing_places[]" value="Gangtok">
+                                            <div>
+                                                <strong>Gangtok</strong><br>
+                                                <small>Capital city sightseeing</small>
+                                            </div>
+                                        </label>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            
                             <!-- TRIP DETAILS -->
                             <div class="form-section">
                                 <div class="section-title">
