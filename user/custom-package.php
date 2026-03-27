@@ -16,18 +16,22 @@ if(!in_array($service_type, ['full', 'stay', 'sightseeing'])) {
 // Define sightseeing places by destination (simplified as per requirements)
 $sightseeing_places = [
     'Darjeeling' => [
-        'Tiger Hill',
-        'Batasia Loop',
-        'Japanese Temple',
-        'Toy Train'
+        'Tiger Hill' => 'Famous for breathtaking sunrise views over Kanchenjunga',
+        'Batasia Loop' => 'Historic railway loop with stunning mountain scenery',
+        'Japanese Temple' => 'Peace Pagoda offering panoramic views',
+        'Toy Train' => 'Heritage narrow gauge train ride through the hills'
     ],
     'Sikkim' => [
-        'Tsomgo Lake',
-        'Nathula Pass',
-        'Baba Mandir',
-        'Gangtok'
+        'Tsomgo Lake' => 'Sacred glacial lake with stunning natural beauty',
+        'Nathula Pass' => 'Strategic border pass with historical significance',
+        'Baba Mandir' => 'War memorial dedicated to soldiers',
+        'Gangtok' => 'Capital city with monasteries and cultural sites'
     ]
 ];
+
+// Extract places for easier access in templates
+$darjeeling_places = $sightseeing_places['Darjeeling'];
+$sikkim_places = $sightseeing_places['Sikkim'];
 
 // Get page title and description based on service type
 $page_config = [
@@ -373,40 +377,6 @@ $current_config = $page_config[$service_type];
                                 </div>
                             </div>
 
-                            <!-- SIGHTSEEING PLACES -->
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-camera"></i>
-                                    Select Sightseeing Places
-                                </div>
-
-                                <!-- Darjeeling Places -->
-                                <div id="darjeeling-places" class="sightseeing-section" style="display: none;">
-                                    <h6 class="mb-3" style="color: #667eea;">🏔️ Darjeeling Attractions</h6>
-                                    <div class="sightseeing-grid">
-                                        <?php foreach($sightseeing_places['Darjeeling'] as $place): ?>
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="<?php echo htmlspecialchars($place); ?>">
-                                            <span><?php echo htmlspecialchars($place); ?></span>
-                                        </label>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-
-                                <!-- Sikkim Places -->
-                                <div id="sikkim-places" class="sightseeing-section" style="display: none;">
-                                    <h6 class="mb-3" style="color: #667eea;">🏔️ Sikkim Attractions</h6>
-                                    <div class="sightseeing-grid">
-                                        <?php foreach($sightseeing_places['Sikkim'] as $place): ?>
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="<?php echo htmlspecialchars($place); ?>">
-                                            <span><?php echo htmlspecialchars($place); ?></span>
-                                        </label>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- TRIP DETAILS -->
                             <div class="form-section">
                                 <div class="section-title">
@@ -657,141 +627,5 @@ $current_config = $page_config[$service_type];
             dateInput.setAttribute('min', today);
         }
     </script>
-</body>
-</html>
-                            </div>
-                        </div>
-                        
-                        <!-- SIGHTSEEING PLACES -->
-                        <div class="mb-4">
-                            <h5 class="step-title">✨ Select Sightseeing Places</h5>
-                            
-                            <!-- Darjeeling Places -->
-                            <div id="darjeeling-places" class="mb-3">
-                                <h6 class="text-primary mb-3" style="font-size: 16px;">🏔️ Darjeeling Attractions:</h6>
-                                <div class="row g-3">
-                                    <?php foreach($darjeeling_places as $place => $description): ?>
-                                        <div class="col-md-6 col-lg-4">
-                                            <label class="destination-card w-100">
-                                                <input type="checkbox" name="sightseeing_places[]" value="Darjeeling - <?= htmlspecialchars($place) ?>">
-                                                <h6><?= htmlspecialchars($place) ?></h6>
-                                                <p class="small text-muted"><?= htmlspecialchars($description) ?></p>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                            
-                            <!-- Sikkim Places -->
-                            <div id="sikkim-places" class="mb-3">
-                                <h6 class="text-primary mb-3" style="font-size: 16px;">🏔️ Sikkim Attractions:</h6>
-                                <div class="row g-3">
-                                    <?php foreach($sikkim_places as $place => $description): ?>
-                                        <div class="col-md-6 col-lg-4">
-                                            <label class="destination-card w-100">
-                                                <input type="checkbox" name="sightseeing_places[]" value="Sikkim - <?= htmlspecialchars($place) ?>">
-                                                <h6><?= htmlspecialchars($place) ?></h6>
-                                                <p class="small text-muted"><?= htmlspecialchars($description) ?></p>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- TRIP DETAILS -->
-                        <div class="row mb-4 g-3">
-                            <div class="col-md-4">
-                                <label>📅 Travel Date</label>
-                                <input type="date" name="travel_date" class="form-control" required>
-                            </div>
-                            
-                            <div class="form-section col-md-4 show" id="days-field">
-                                <label>📆 Duration (Days)</label>
-                                <input type="number" name="days" class="form-control" min="1" placeholder="2">
-                            </div>
-                            
-                            <div class="col-md-4">
-                                <label>👥 Number of Travelers</label>
-                                <input type="number" name="travelers" class="form-control" required min="1" max="50">
-                            </div>
-                        </div>
-                        
-                        <!-- HOTEL (Not for sightseeing only) -->
-                        <div class="form-section mb-4 <?= ($service_type != 'sightseeing') ? 'active' : '' ?>" id="hotel-section">
-                            <label class="step-title">🏨 Accommodation Type</label>
-                            <select name="hotel_type" class="form-control">
-                                <option value="">Select Hotel Type</option>
-                                <option value="Budget">Budget</option>
-                                <option value="Standard">Standard</option>
-                                <option value="Deluxe">Deluxe</option>
-                                <option value="Luxury">Luxury</option>
-                            </select>
-                        </div>
-                        
-                        <!-- NOTES -->
-                        <div class="mb-4">
-                            <label class="step-title">📝 Special Requests / Notes</label>
-                            <textarea 
-                                name="user_notes"
-                                class="form-control"
-                                rows="4"
-                                placeholder="Tell us any special requirements: dietary preferences, accessibility needs, photography interests, etc.">
-                            </textarea>
-                        </div>
-                        
-                        <!-- PRICING NOTICE -->
-                        <div class="alert alert-info mb-4">
-                            <strong>💡 Pricing Notice:</strong> Prices may vary based on availability, season, and selected services. Final quotation will be provided after our team reviews your request and confirms vehicle availability.
-                        </div>
-                        
-                        <!-- SUBMIT -->
-                        <button type="submit" class="btn btn-primary w-100 submit-btn">
-                            ✨ Get Final Quote
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Handle destination card selection and showing/hiding places
-        const darjeelingOption = document.getElementById('darjeeling-option');
-        const sikkimOption = document.getElementById('sikkim-option');
-        const darjeelingPlaces = document.getElementById('darjeeling-places');
-        const sikkimPlaces = document.getElementById('sikkim-places');
-        
-        function updatePlacesVisibility() {
-            const showDarjeeling = darjeelingOption.querySelector('input').checked;
-            const showSikkim = sikkimOption.querySelector('input').checked;
-            
-            darjeelingPlaces.style.display = showDarjeeling ? 'block' : 'none';
-            sikkimPlaces.style.display = showSikkim ? 'block' : 'none';
-        }
-        
-        // Make cards selectable
-        const allCards = document.querySelectorAll(".destination-card");
-        allCards.forEach(card => {
-            const checkbox = card.querySelector("input");
-            card.addEventListener("click", function(e){
-                e.preventDefault();
-                checkbox.checked = !checkbox.checked;
-                
-                if(checkbox.checked) {
-                    card.classList.add("selected");
-                } else {
-                    card.classList.remove("selected");
-                }
-                
-                updatePlacesVisibility();
-            });
-        });
-        
-        // Initialize
-        updatePlacesVisibility();
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
