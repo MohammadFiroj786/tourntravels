@@ -28,19 +28,26 @@ $customPackageRequests = $conn->query("SELECT * FROM custom_package_requests WHE
 
 $recentBookings = $conn->query("
 SELECT 
-bookings.*,
-packages.title,
-c.destination,
-c.status AS custom_status
+    bookings.*,
+    packages.title,
+    c.destination,
+    c.status AS custom_status,
+    COALESCE(p.payment_status, 'pending') AS payment_status
 
 FROM bookings
 
 LEFT JOIN packages 
-ON bookings.package_id = packages.id
+    ON bookings.package_id = packages.id
 
 LEFT JOIN custom_package_requests c
-ON bookings.user_id = c.user_id 
-AND bookings.travel_date = c.travel_date
+    ON bookings.user_id = c.user_id 
+    AND bookings.travel_date = c.travel_date
+
+LEFT JOIN (
+    SELECT booking_id, payment_status
+    FROM payments
+    GROUP BY booking_id
+) p ON bookings.id = p.booking_id
 
 WHERE bookings.user_id=$user_id
 
@@ -197,6 +204,7 @@ body{
 <th>Persons</th>
 <th>Total</th>
 <th>Status</th>
+<th>Payment</th>
 </tr>
 </thead>
 
@@ -249,6 +257,28 @@ echo "<span class='badge bg-secondary'>⚙ Processing</span>";
 }
 ?>
 </td>
+<td>
+<?php
+$payment = strtolower(trim($row['payment_status']));
+$bookingId = $row['id'];
+
+// DEBUG (remove later)
+// echo "ID:$bookingId Payment:$payment<br>";
+
+if($payment === 'paid'){
+    echo "<span class='badge bg-success'>✅ Paid</span>";
+}
+elseif($status === 'confirmed'){
+    echo "<a href='payment.php?booking_id=$bookingId' class='btn btn-sm btn-primary'>💳 Pay Now</a>";
+}
+elseif($status === 'pending'){
+    echo "<span class='badge bg-secondary'>Wait for Approval</span>";
+}
+else{
+    echo "<span class='badge bg-light text-dark'>N/A</span>";
+}
+?>
+</td>
 
 </tr>
 
@@ -257,6 +287,7 @@ echo "<span class='badge bg-secondary'>⚙ Processing</span>";
 <tr>
 <td colspan="5" class="text-center">No bookings yet.</td>
 </tr>
+
 <?php } ?>
 
 </tbody>
