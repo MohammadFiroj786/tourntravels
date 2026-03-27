@@ -189,8 +189,7 @@
 			}
 		</style>
 
-		<section class="ftco-intro ftco-section ftco-no-pt" style=" margin-top: 12px";
-}>
+		<section class="ftco-intro ftco-section ftco-no-pt" style="margin-top: 12px;">
 			<div class="container">
 				<div class="row justify-content-center">
 					<div class="col-md-12 text-center">
