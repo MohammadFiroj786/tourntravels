@@ -48,84 +48,25 @@ if(isset($_GET['cancel_id'])){
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <style>
-
-/* BACKGROUND */
 body{
 background: linear-gradient(to right,#eef2f3,#dfe9f3);
 font-family:'Segoe UI',sans-serif;
 }
-
-/* MAIN */
-.main-content{
-padding:25px;
-}
-
-/* CARD */
-.card{
-border-radius:18px;
-border:none;
-transition:0.3s;
-}
-
-.card:hover{
-transform:translateY(-3px);
-box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
-
-/* HEADER */
-.card-header{
-border-radius:18px 18px 0 0 !important;
-}
-
-/* TABLE */
-.table{
-border-radius:10px;
-overflow:hidden;
-}
-
-.table thead{
-background:#f1f3f6;
-}
-
-/* BADGES */
-.badge{
-padding:8px 12px;
-font-size:13px;
-border-radius:20px;
-}
-
-/* BUTTON */
-.btn-danger{
-border-radius:20px;
-padding:5px 12px;
-}
-
-/* EMPTY BOX */
-.empty-box{
-text-align:center;
-padding:50px;
-background:white;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,0.05);
-}
-
-/* POLICY */
-.policy-box{
-background:white;
-border-radius:15px;
-padding:20px;
-}
-
-/* ANIMATION */
-.fade-in{
-animation:fadeIn 0.5s ease-in-out;
-}
-
+.main-content{ padding:25px; }
+.card{ border-radius:18px; border:none; transition:0.3s; }
+.card:hover{ transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+.card-header{ border-radius:18px 18px 0 0 !important; }
+.table{ border-radius:10px; overflow:hidden; }
+.table thead{ background:#f1f3f6; }
+.badge{ padding:8px 12px; font-size:13px; border-radius:20px; }
+.btn-danger{ border-radius:20px; padding:5px 12px; }
+.empty-box{ text-align:center; padding:50px; background:white; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.05); }
+.policy-box{ background:white; border-radius:15px; padding:20px; }
+.fade-in{ animation:fadeIn 0.5s ease-in-out; }
 @keyframes fadeIn{
 from{opacity:0; transform:translateY(10px);}
 to{opacity:1; transform:translateY(0);}
 }
-
 </style>
 
 </head>
@@ -137,7 +78,6 @@ to{opacity:1; transform:translateY(0);}
 <div class="main-content fade-in">
 <div class="container-fluid">
 
-<!-- HEADER -->
 <div class="mb-4">
 <h3 class="fw-bold">📋 My Bookings</h3>
 <p class="text-muted">Manage your trips and track booking status easily</p>
@@ -152,7 +92,8 @@ SELECT
 bookings.*,
 packages.title,
 c.destination,
-c.status AS custom_status
+c.status AS custom_status,
+payments.payment_status
 
 FROM bookings
 
@@ -162,6 +103,9 @@ ON bookings.package_id = packages.id
 LEFT JOIN custom_package_requests c
 ON bookings.user_id = c.user_id 
 AND bookings.travel_date = c.travel_date
+
+LEFT JOIN payments
+ON bookings.id = payments.booking_id
 
 WHERE bookings.user_id = $user_id
 ORDER BY bookings.id DESC
@@ -185,6 +129,7 @@ ORDER BY bookings.id DESC
 <th>Persons</th>
 <th>Price</th>
 <th>Status</th>
+<th>Payment</th> <!-- ADDED -->
 <th>Action</th>
 </tr>
 </thead>
@@ -234,6 +179,19 @@ echo "<span class='badge bg-secondary'>Processing</span>";
 ?>
 </td>
 
+<!-- PAYMENT COLUMN -->
+<td>
+<?php
+if($row['payment_status'] == 'paid'){
+    echo "<span class='badge bg-success'>💰 Paid</span>";
+}elseif($row['payment_status'] == 'pending'){
+    echo "<span class='badge bg-warning text-dark'>Pending</span>";
+}else{
+    echo "<span class='badge bg-secondary'>N/A</span>";
+}
+?>
+</td>
+
 <td>
 
 <?php if($status=="Pending"){ ?>
@@ -279,7 +237,6 @@ Explore Packages
 
 <?php } ?>
 
-<!-- POLICY -->
 <div class="policy-box mt-4 shadow-sm">
 
 <h5>📌 Cancellation Policy</h5>
@@ -294,13 +251,10 @@ Explore Packages
 
 </div>
 
-<!-- CTA -->
 <div class="text-center mt-4">
-
 <a href="packages.php" class="btn btn-dark">
 🚀 Book Another Trip
 </a>
-
 </div>
 
 </div>

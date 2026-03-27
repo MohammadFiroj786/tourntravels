@@ -1,7 +1,6 @@
 <?php
 session_start();
 include("../includes/db.php");
-require('../includes/fpdf186/fpdf.php');
 
 if(!isset($_SESSION['admin_id'])){
     header("Location: ../login.php");
@@ -17,12 +16,12 @@ $to_date = $_GET['to_date'] ?? '';
 $where = " WHERE 1=1 ";
 
 if($search != ''){
-    $where .= " AND (users.name LIKE '%$search%' 
-                OR packages.title LIKE '%$search%')";
+    $where .= " AND (u.name LIKE '%$search%' 
+                OR p.title LIKE '%$search%')";
 }
 
 if($from_date != '' && $to_date != ''){
-    $where .= " AND bookings.travel_date 
+    $where .= " AND b.travel_date 
                 BETWEEN '$from_date' AND '$to_date'";
 }
 
@@ -35,11 +34,25 @@ header("Content-Disposition: attachment; filename=bookings.xls");
 echo "ID\tUser\tPackage\tTravel Date\tPersons\tTotal\tStatus\tPayment\n";
 
 $exportQuery = "
-SELECT bookings.*, users.name AS user_name, packages.title AS package_title
-FROM bookings
-JOIN users ON bookings.user_id = users.id
-JOIN packages ON bookings.package_id = packages.id
-$where";
+SELECT 
+b.*, 
+u.name AS user_name, 
+p.title AS package_title,
+pay.payment_status
+
+FROM bookings b
+LEFT JOIN users u ON b.user_id = u.id
+LEFT JOIN packages p ON b.package_id = p.id
+
+LEFT JOIN payments pay ON pay.id = (
+    SELECT id FROM payments 
+    WHERE booking_id = b.id 
+    ORDER BY created_at DESC 
+    LIMIT 1
+)
+
+$where
+";
 
 $result = $conn->query($exportQuery);
 
@@ -51,27 +64,64 @@ $row['travel_date']."\t".
 $row['persons']."\t".
 $row['total_price']."\t".
 $row['booking_status']."\t".
-$row['payment_status']."\n";
+($row['payment_status'] ?? 'No Payment')."\n";
 }
 
 exit();
 }
 
-/* ================= UPDATE BOOKING ================= */
+/* ================= UPDATE ================= */
 
 if(isset($_POST['update_booking'])){
 
-$stmt = $conn->prepare("UPDATE bookings 
-SET travel_date=?, booking_status=?, payment_status=? 
+$booking_id = (int)$_POST['booking_id'];
+$travel_date = $_POST['travel_date'];
+$booking_status = $_POST['booking_status'];
+$payment_status = $_POST['payment_status'];
+
+/* UPDATE BOOKING */
+$stmt = $conn->prepare("
+UPDATE bookings 
+SET travel_date=?, booking_status=? 
 WHERE id=?");
 
-$stmt->bind_param("sssi",
-$_POST['travel_date'],
-$_POST['booking_status'],
-$_POST['payment_status'],
-$_POST['booking_id']);
-
+$stmt->bind_param("ssi", $travel_date, $booking_status, $booking_id);
 $stmt->execute();
+
+/* CHECK PAYMENT */
+$check = $conn->query("
+SELECT id FROM payments 
+WHERE booking_id = $booking_id 
+ORDER BY created_at DESC 
+LIMIT 1
+");
+
+if($check && $check->num_rows > 0){
+
+    $row = $check->fetch_assoc();
+    $payment_id = $row['id'];
+
+    $stmt2 = $conn->prepare("
+    UPDATE payments 
+    SET payment_status=? 
+    WHERE id=?");
+
+    $stmt2->bind_param("si", $payment_status, $payment_id);
+    $stmt2->execute();
+
+}else{
+
+    $stmt3 = $conn->prepare("
+    INSERT INTO payments (booking_id, payment_status, amount, created_at)
+    VALUES (?, ?, 0, NOW())
+    ");
+
+    $stmt3->bind_param("is", $booking_id, $payment_status);
+    $stmt3->execute();
+}
+
+echo "<script>alert('Updated Successfully'); window.location.href='manage_bookings.php';</script>";
+exit();
 }
 
 /* ================= STATS ================= */
@@ -88,12 +138,31 @@ $stats = $conn->query($statsQuery)->fetch_assoc();
 /* ================= FETCH BOOKINGS ================= */
 
 $query = "
-SELECT bookings.*, users.name AS user_name, packages.title AS package_title
-FROM bookings
-JOIN users ON bookings.user_id = users.id
-JOIN packages ON bookings.package_id = packages.id
+SELECT 
+b.*, 
+u.name AS user_name, 
+p.title AS package_title,
+
+pay.payment_status,
+pay.payment_method,
+pay.transaction_id,
+pay.amount
+
+FROM bookings b
+
+LEFT JOIN users u ON b.user_id = u.id
+LEFT JOIN packages p ON b.package_id = p.id
+
+LEFT JOIN payments pay ON pay.id = (
+    SELECT id FROM payments 
+    WHERE booking_id = b.id 
+    ORDER BY created_at DESC 
+    LIMIT 1
+)
+
 $where
-ORDER BY bookings.created_at DESC";
+ORDER BY b.created_at DESC
+";
 
 $result = $conn->query($query);
 ?>
@@ -101,82 +170,26 @@ $result = $conn->query($query);
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>Manage Bookings</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-
-body{
-background:#f8fafc;
-font-family:Segoe UI;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:240px;
-height:100vh;
-position:fixed;
-left:0;
-top:0;
-background:#111827;
-color:white;
-padding:20px;
-}
-
-/* MAIN CONTENT */
-
-.main-content{
-margin-left:260px;
-padding:30px;
-}
-
-/* MOBILE */
-
-@media(max-width:991px){
-
-.sidebar{
-display:none;
-}
-
-.main-content{
-margin-left:0;
-padding:15px;
-}
-
-}
-
-/* CARD */
-
-.card{
-border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
-
-/* TABLE */
-
-.table thead{
-background:#f1f5f9;
-}
-
+body{ background:#f8fafc; font-family:Segoe UI; }
+.main-content{ margin-left:260px; padding:30px; }
+.card{ border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+.table thead{ background:#f1f5f9; }
 </style>
-
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <?php include("navbar_admin.php"); ?>
 
 <div class="main-content">
 
 <h2 class="mb-4">Manage Bookings</h2>
-
-<!-- STATS -->
 
 <div class="row mb-4">
 
@@ -203,10 +216,7 @@ background:#f1f5f9;
 
 </div>
 
-<!-- FILTER -->
-
 <form method="GET" class="card p-3 mb-4">
-
 <div class="row g-2">
 
 <div class="col-md-3">
@@ -216,46 +226,31 @@ value="<?= $search ?>">
 </div>
 
 <div class="col-md-3">
-<input type="date" name="from_date"
-class="form-control"
-value="<?= $from_date ?>">
+<input type="date" name="from_date" class="form-control" value="<?= $from_date ?>">
 </div>
 
 <div class="col-md-3">
-<input type="date" name="to_date"
-class="form-control"
-value="<?= $to_date ?>">
+<input type="date" name="to_date" class="form-control" value="<?= $to_date ?>">
 </div>
 
 <div class="col-md-3 d-flex gap-2">
-
-<button class="btn btn-primary w-100">
-Filter
-</button>
-
+<button class="btn btn-primary w-100">Filter</button>
 <a class="btn btn-success"
 href="?export=excel&search=<?= $search ?>&from_date=<?= $from_date ?>&to_date=<?= $to_date ?>">
 Excel
 </a>
-
 </div>
 
 </div>
-
 </form>
 
-<!-- BOOKINGS TABLE -->
-
 <div class="card p-3">
-
 <div class="table-responsive">
 
 <table class="table table-bordered table-hover">
 
 <thead>
-
 <tr>
-
 <th>ID</th>
 <th>User</th>
 <th>Package</th>
@@ -264,98 +259,57 @@ Excel
 <th>Total</th>
 <th>Status</th>
 <th>Payment</th>
+<th>Method</th>
+<th>Txn</th>
 <th>Action</th>
-
 </tr>
-
 </thead>
 
 <tbody>
 
 <?php while($row = $result->fetch_assoc()): ?>
 
+<form method="POST">
 <tr>
 
-<form method="POST">
-
 <td><?= $row['id'] ?></td>
-
 <td><?= $row['user_name'] ?></td>
-
 <td><?= $row['package_title'] ?></td>
 
 <td>
-
-<input type="date"
-name="travel_date"
-class="form-control"
+<input type="date" name="travel_date" class="form-control"
 value="<?= $row['travel_date'] ?>">
-
 </td>
 
 <td><?= $row['persons'] ?></td>
-
 <td>₹<?= $row['total_price'] ?></td>
 
 <td>
-
 <select name="booking_status" class="form-select">
-
-<option <?= $row['booking_status']=="Pending"?"selected":"" ?>>
-Pending
-</option>
-
-<option <?= $row['booking_status']=="Confirmed"?"selected":"" ?>>
-Confirmed
-</option>
-
-<option <?= $row['booking_status']=="Cancelled"?"selected":"" ?>>
-Cancelled
-</option>
-
+<option value="Pending" <?= $row['booking_status']=="Pending"?"selected":"" ?>>Pending</option>
+<option value="Confirmed" <?= $row['booking_status']=="Confirmed"?"selected":"" ?>>Confirmed</option>
+<option value="Cancelled" <?= $row['booking_status']=="Cancelled"?"selected":"" ?>>Cancelled</option>
 </select>
-
 </td>
 
 <td>
-
 <select name="payment_status" class="form-select">
-
-<option <?= $row['payment_status']=="Unpaid"?"selected":"" ?>>
-Unpaid
-</option>
-
-<option <?= $row['payment_status']=="Paid"?"selected":"" ?>>
-Paid
-</option>
-
-<option <?= $row['payment_status']=="Refunded"?"selected":"" ?>>
-Refunded
-</option>
-
+<option value="pending" <?= strtolower($row['payment_status'])=="pending"?"selected":"" ?>>Pending</option>
+<option value="paid" <?= strtolower($row['payment_status'])=="paid"?"selected":"" ?>>Paid</option>
+<option value="failed" <?= strtolower($row['payment_status'])=="failed"?"selected":"" ?>>Failed</option>
 </select>
-
 </td>
+
+<td><?= $row['payment_method'] ?? '-' ?></td>
+<td><?= $row['transaction_id'] ?? '-' ?></td>
 
 <td>
-
-<input type="hidden"
-name="booking_id"
-value="<?= $row['id'] ?>">
-
-<button
-name="update_booking"
-class="btn btn-primary btn-sm">
-
-Update
-
-</button>
-
+<input type="hidden" name="booking_id" value="<?= $row['id'] ?>">
+<button name="update_booking" class="btn btn-primary btn-sm">Update</button>
 </td>
-
-</form>
 
 </tr>
+</form>
 
 <?php endwhile; ?>
 
@@ -364,12 +318,9 @@ Update
 </table>
 
 </div>
-
 </div>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

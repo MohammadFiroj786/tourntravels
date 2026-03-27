@@ -194,7 +194,7 @@ data-bs-target="#mobileMenu">
 <div class="sidebar">
 
 <h4>
-<i class="fa-solid fa-plane-departure"></i> Hidden Hills Collective
+<i class="fa-solid fa-plane-departure me-3"></i>Hidden Hills Collective
 </h4>
 
 <a href="user-dashboard.php" class="<?= ($current_page=='user-dashboard.php')?'active':'' ?>">
