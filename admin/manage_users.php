@@ -1,30 +1,30 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['admin_id'])){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
 /* ================= USER ACTIONS ================= */
 
-if(isset($_GET['block'])){
+if (isset($_GET['block'])) {
     $id = intval($_GET['block']);
     $conn->query("UPDATE users SET status='Blocked' WHERE id=$id");
 }
 
-if(isset($_GET['unblock'])){
+if (isset($_GET['unblock'])) {
     $id = intval($_GET['unblock']);
     $conn->query("UPDATE users SET status='Active' WHERE id=$id");
 }
 
-if(isset($_GET['delete'])){
+if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     $conn->query("DELETE FROM users WHERE id=$id");
 }
 
-if(isset($_POST['change_role'])){
+if (isset($_POST['change_role'])) {
     $stmt = $conn->prepare("UPDATE users SET role=? WHERE id=?");
     $stmt->bind_param("si", $_POST['role'], $_POST['user_id']);
     $stmt->execute();
@@ -32,16 +32,20 @@ if(isset($_POST['change_role'])){
 
 /* ================= SEARCH ================= */
 
-$search = $_GET['search'] ?? '';
-$roleFilter = $_GET['role'] ?? '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$roleFilter = isset($_GET['role']) ? trim($_GET['role']) : '';
+
+// ✅ FIXED: Escape variables to prevent SQL injection
+$search = $conn->real_escape_string($search);
+$roleFilter = $conn->real_escape_string($roleFilter);
 
 $where = "WHERE 1=1";
 
-if($search != ''){
+if ($search != '') {
     $where .= " AND (name LIKE '%$search%' OR email LIKE '%$search%')";
 }
 
-if($roleFilter != ''){
+if ($roleFilter != '') {
     $where .= " AND role='$roleFilter'";
 }
 

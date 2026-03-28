@@ -1,11 +1,6 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
-
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
 
 $user_id = intval($_SESSION['user_id']);
 $user_name = $_SESSION['name'];
@@ -332,7 +327,7 @@ $status = strtolower(trim($req['status']));
 
 <td><?php echo $labels[$req['service_type']] ?? $req['service_type']; ?></td>
 
-<td><?php echo $req['destinations'] ?? 'N/A'; ?></td>
+<td><?php echo htmlspecialchars($req['destinations'] ?? $req['destination'] ?? 'N/A'); ?></td>
 
 <td><?php echo $req['days']; ?></td>
 

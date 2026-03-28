@@ -1,17 +1,12 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
-
-$user_id = $_SESSION['user_id']; 
+$user_id = $_SESSION['user_id'];
 $message = "";
 
 /* CANCEL BOOKING */
-if(isset($_GET['cancel_id'])){
+if (isset($_GET['cancel_id'])) {
     $booking_id = intval($_GET['cancel_id']);
 
     $check = $conn->query("
@@ -21,7 +16,7 @@ if(isset($_GET['cancel_id'])){
         AND (booking_status = 'Pending' OR booking_status IS NULL)
     ");
 
-    if($check->num_rows > 0){
+    if ($check->num_rows > 0) {
         $conn->query("
             UPDATE bookings 
             SET booking_status = 'Cancelled' 
@@ -29,7 +24,7 @@ if(isset($_GET['cancel_id'])){
         ");
 
         $message = "<div class='alert alert-success shadow-sm'>✅ Booking cancelled successfully.</div>";
-    }else{
+    } else {
         $message = "<div class='alert alert-danger shadow-sm'>❌ Cancellation not allowed.</div>";
     }
 }

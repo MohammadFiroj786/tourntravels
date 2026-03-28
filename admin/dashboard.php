@@ -1,11 +1,14 @@
 <?php
-session_start();
-include("../includes/db.php");
+// ✅ INCLUDE SESSION SECURITY CHECK (replaces manual session checks)
+include("../includes/session_check.php");
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
+// ✅ Verify user has admin role
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
+
+include("../includes/db.php");
 
 /* ===============================
    SAFE QUERY FUNCTION

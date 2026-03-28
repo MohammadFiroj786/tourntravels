@@ -1,5 +1,5 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 require_once("../env.php");
 
@@ -10,37 +10,37 @@ require_once("../includes/PHPMailer/src/Exception.php");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-if(!isset($_SESSION['admin_id'])){
-header("Location: ../login.php");
-exit();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: ../login.php");
+    exit();
 }
 
 /* DELETE MESSAGE */
 
-if(isset($_GET['delete'])){
-$id = intval($_GET['delete']);
-$conn->query("DELETE FROM contact_messages WHERE id='$id'");
-header("Location: contact_messages.php");
-exit();
+if (isset($_GET['delete'])) {
+    $id = intval($_GET['delete']);
+    $conn->query("DELETE FROM contact_messages WHERE id='$id'");
+    header("Location: contact_messages.php");
+    exit();
 }
 
 /* SEND REPLY */
 
-if(isset($_POST['send_reply'])){
+if (isset($_POST['send_reply'])) {
 
-$id = intval($_POST['id']);
-$reply = trim($_POST['reply']);
+    $id = intval($_POST['id']);
+    $reply = trim($_POST['reply']);
 
-$data = $conn->query("SELECT * FROM contact_messages WHERE id='$id'");
-$row = $data->fetch_assoc();
+    $data = $conn->query("SELECT * FROM contact_messages WHERE id='$id'");
+    $row = $data->fetch_assoc();
 
-$email = $row['email'];
-$name = $row['name'];
-$subject = "Hidden Hills Collective Support [Ticket #$id] - ".$row['subject'];
+    $email = $row['email'];
+    $name = $row['name'];
+    $subject = "Hidden Hills Collective Support [Ticket #$id] - " . $row['subject'];
 
-$mail = new PHPMailer(true);
+    $mail = new PHPMailer(true);
 
-try{
+    try {
 
 $mail->isSMTP();
 $mail->Host       = MAIL_HOST;

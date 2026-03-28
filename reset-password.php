@@ -10,34 +10,34 @@ require_once "includes/db.php";
 $email = $_GET['email'] ?? '';
 $token = $_GET['token'] ?? '';
 
-if(empty($email) || empty($token)){
-die("Invalid reset request.");
+if (empty($email) || empty($token)) {
+    die("Invalid reset request.");
 }
 
 /* Get user reset token */
 
 $stmt = $conn->prepare("SELECT reset_token, reset_expires FROM users WHERE email=?");
-$stmt->bind_param("s",$email);
+$stmt->bind_param("s", $email);
 $stmt->execute();
 
 $result = $stmt->get_result();
 
-if($result->num_rows !== 1){
-die("Invalid request.");
+if ($result->num_rows !== 1) {
+    die("Invalid request.");
 }
 
 $user = $result->fetch_assoc();
 
 /* Check expiry */
 
-if(strtotime($user['reset_expires']) < time()){
-die("Reset link expired.");
+if (strtotime($user['reset_expires']) < time()) {
+    die("Reset link expired.");
 }
 
 /* Verify token */
 
-if(!password_verify($token,$user['reset_token'])){
-die("Invalid reset token.");
+if (!password_verify($token, $user['reset_token'])) {
+    die("Invalid reset token.");
 }
 
 ?>

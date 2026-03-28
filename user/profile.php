@@ -1,11 +1,6 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
-
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
 
 $user_id = $_SESSION['user_id'];
 $user = $conn->query("SELECT * FROM users WHERE id=$user_id")->fetch_assoc();
@@ -14,20 +9,20 @@ $success_msg = "";
 $error_msg = "";
 
 /* UPDATE PROFILE */
-if(isset($_POST['update_profile'])){
+if (isset($_POST['update_profile'])) {
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
 
-    if(empty($name) || empty($phone)){
+    if (empty($name) || empty($phone)) {
         $error_msg = "Name and Phone cannot be empty.";
     } else {
         $stmt = $conn->prepare("UPDATE users SET name=?, phone=? WHERE id=?");
-        $stmt->bind_param("ssi",$name,$phone,$user_id);
+        $stmt->bind_param("ssi", $name, $phone, $user_id);
 
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             $success_msg = "Profile updated successfully.";
-            $user['name']=$name;
-            $user['phone']=$phone;
+            $user['name'] = $name;
+            $user['phone'] = $phone;
         } else {
             $error_msg="Something went wrong!";
         }
@@ -35,33 +30,29 @@ if(isset($_POST['update_profile'])){
 }
 
 /* CHANGE PASSWORD */
-if(isset($_POST['change_password'])){
-$current_password=$_POST['current_password'];
-$new_password=$_POST['new_password'];
-$confirm_password=$_POST['confirm_password'];
+if (isset($_POST['change_password'])) {
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
 
-if(!password_verify($current_password,$user['password'])){
-$error_msg="Current password incorrect";
-}
-elseif($new_password!=$confirm_password){
-$error_msg="Passwords do not match";
-}
-elseif(strlen($new_password)<6){
-$error_msg="Password must be minimum 6 characters";
-}
-else{
-$hashed=password_hash($new_password,PASSWORD_DEFAULT);
+    if (!password_verify($current_password, $user['password'])) {
+        $error_msg = "Current password incorrect";
+    } elseif ($new_password != $confirm_password) {
+        $error_msg = "Passwords do not match";
+    } elseif (strlen($new_password) < 6) {
+        $error_msg = "Password must be minimum 6 characters";
+    } else {
+        $hashed = password_hash($new_password, PASSWORD_DEFAULT);
 
-$stmt=$conn->prepare("UPDATE users SET password=? WHERE id=?");
-$stmt->bind_param("si",$hashed,$user_id);
+        $stmt = $conn->prepare("UPDATE users SET password=? WHERE id=?");
+        $stmt->bind_param("si", $hashed, $user_id);
 
-if($stmt->execute()){
-$success_msg="Password changed successfully.";
-}
-else{
-$error_msg="Something went wrong!";
-}
-}
+        if ($stmt->execute()) {
+            $success_msg = "Password changed successfully.";
+        } else {
+            $error_msg = "Something went wrong!";
+        }
+    }
 }
 ?>
 

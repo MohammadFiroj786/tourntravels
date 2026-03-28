@@ -1,22 +1,22 @@
 <?php
 include("includes/db.php");
 
-$msg="";
+$msg = "";
 
-if(isset($_POST['send'])){
+if (isset($_POST['send'])) {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $subject = trim($_POST['subject']);
+    $message = trim($_POST['message']);
 
-$name=$_POST['name'];
-$email=$_POST['email'];
-$subject=$_POST['subject'];
-$message=$_POST['message'];
+    // ✅ FIXED: Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO contact_messages(name,email,subject,message) VALUES(?,?,?,?)");
+    $stmt->bind_param("ssss", $name, $email, $subject, $message);
 
-$sql="INSERT INTO contact_messages(name,email,subject,message)
-VALUES('$name','$email','$subject','$message')";
-
-if($conn->query($sql)){
-$msg="Message Sent Successfully!";
-}
-
+    if ($stmt->execute()) {
+        $msg = "Message Sent Successfully!";
+    }
+    $stmt->close();
 }
 ?>
 

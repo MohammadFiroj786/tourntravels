@@ -3,11 +3,24 @@ session_start();
 include("includes/db.php");
 
 $error = "";
+$resetMessage = "";
+
+// ✅ PREVENT SESSION REUSE: If already logged in, destroy old session first
+if (isset($_SESSION['user_id'])) {
+    session_unset();
+    session_destroy();
+    session_start();
+}
 
 /* Show reset success message */
 
-if(isset($_GET['reset'])){
+if (isset($_GET['reset'])) {
     $resetMessage = "Password updated successfully. Please login.";
+}
+
+/* ✅ Show session timeout message */
+if (isset($_GET['timeout'])) {
+    $resetMessage = "Session expired due to inactivity. Please login again.";
 }
 
 // Check if form is submitted
@@ -36,6 +49,9 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['name']    = $user['name'];
             $_SESSION['role']    = $user['role'];
+
+            // ✅ TRACK LAST ACTIVITY FOR TIMEOUT
+            $_SESSION['LAST_ACTIVITY'] = time();
 
             // ADMIN LOGIN
             if ($user['role'] === 'admin') {
