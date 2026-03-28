@@ -13,25 +13,19 @@ if(!in_array($service_type, ['full', 'stay', 'sightseeing'])) {
     $service_type = 'full';
 }
 
-// Define sightseeing places by destination (simplified as per requirements)
-$sightseeing_places = [
-    'Darjeeling' => [
-        'Tiger Hill' => 'Famous for breathtaking sunrise views over Kanchenjunga',
-        'Batasia Loop' => 'Historic railway loop with stunning mountain scenery',
-        'Japanese Temple' => 'Peace Pagoda offering panoramic views',
-        'Toy Train' => 'Heritage narrow gauge train ride through the hills'
-    ],
-    'Sikkim' => [
-        'Tsomgo Lake' => 'Sacred glacial lake with stunning natural beauty',
-        'Nathula Pass' => 'Strategic border pass with historical significance',
-        'Baba Mandir' => 'War memorial dedicated to soldiers',
-        'Gangtok' => 'Capital city with monasteries and cultural sites'
-    ]
-];
-
-// Extract places for easier access in templates
-$darjeeling_places = $sightseeing_places['Darjeeling'];
-$sikkim_places = $sightseeing_places['Sikkim'];
+// Fetch sightseeing places from database
+$sightseeing_places = [];
+$stmt = $conn->prepare("SELECT * FROM sightseeing_places WHERE status = 'active' ORDER BY destination, place_name");
+$stmt->execute();
+$result = $stmt->get_result();
+while($row = $result->fetch_assoc()){
+    $destination = $row['destination'];
+    if(!isset($sightseeing_places[$destination])){
+        $sightseeing_places[$destination] = [];
+    }
+    $sightseeing_places[$destination][] = $row;
+}
+$stmt->close();
 
 // Get page title and description based on service type
 $page_config = [
@@ -308,163 +302,176 @@ $current_config = $page_config[$service_type];
             }
         }
     </style>
-</head>
-<body>
-    <?php include("navbar_user.php"); ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Destination selection handling
+            const destinationRadios = document.querySelectorAll('input[name="destination"]');
+            const sightseeingSections = document.querySelectorAll('[id$="-places"]');
 
-    <div class="container main-content">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
-                <div class="custom-box">
-                    <!-- Back Button -->
-                    <a href="../index.php#custom-packages" class="back-btn" title="Back to Package Types">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
+            destinationRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const selectedDestination = this.value.toLowerCase();
 
-                    <!-- Form Header -->
-                    <div class="form-header">
-                        <div class="icon"><?php echo $current_config['icon']; ?></div>
-                        <h2><?php echo htmlspecialchars($current_config['title']); ?></h2>
-                        <p><?php echo htmlspecialchars($current_config['description']); ?></p>
-                    </div>
+                    // Hide all sightseeing sections
+                    sightseeingSections.forEach(section => {
+                        section.style.display = 'none';
+                    });
 
-                    <!-- Form Body -->
-                    <div class="form-body">
-                        <form id="customPackageForm" action="submit-custom-package.php" method="POST">
-                            <!-- Hidden service type -->
-                            <input type="hidden" name="service_type" value="<?php echo htmlspecialchars($service_type); ?>">
-                            <input type="hidden" name="estimated_price" id="estimated_price" value="0">
+                    // Show selected destination's places
+                    const targetSection = document.getElementById(selectedDestination + '-places');
+                    if (targetSection) {
+                        targetSection.style.display = 'block';
+                    }
+                });
+            });
 
-                            <!-- PICKUP LOCATION (Only for Full Trip) -->
-                            <?php if($service_type === 'full'): ?>
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    Pickup Location
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Select Pickup Point</label>
-                                    <select name="pickup_location" class="form-select" required>
-                                        <option value="">Choose pickup location</option>
-                                        <option value="NJP">NJP Junction</option>
-                                        <option value="Siliguri">Siliguri</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <?php endif; ?>
+            // Dynamic sightseeing places loading (AJAX)
+            function loadSightseeingPlaces(destination) {
+                const sectionId = destination.toLowerCase() + '-places';
+                const section = document.getElementById(sectionId);
 
-                            <!-- DESTINATION -->
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-map"></i>
-                                    Choose Destination
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="destination-card w-100" for="dest_darjeeling">
-                                            <input type="radio" name="destination" value="Darjeeling" id="dest_darjeeling" required>
-                                            <h6>Darjeeling</h6>
-                                            <p>Queen of Hills</p>
-                                        </label>
+                if (!section) return;
+
+                // Show loading
+                section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p>Loading places...</p>';
+
+                fetch('get_sightseeing_places.php?destination=' + encodeURIComponent(destination))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p class="text-danger">Error loading places</p>';
+                            return;
+                        }
+
+                        let html = '<h6 class="mb-3">' + destination + ' Sightseeing</h6>';
+                        html += '<div class="sightseeing-grid">';
+
+                        data.forEach(place => {
+                            html += `
+                                <label class="sightseeing-item">
+                                    <input type="checkbox" name="sightseeing_places[]" value="${place.place_name}">
+                                    <div>
+                                        <strong>${place.place_name}</strong><br>
+                                        <small>${place.description}</small>
+                                        ${place.image ? `<br><img src="../assets/images/sightseeing/${place.image}" alt="${place.place_name}" style="width: 60px; height: 40px; object-fit: cover; margin-top: 5px; border-radius: 4px;">` : ''}
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="destination-card w-100" for="dest_sikkim">
-                                            <input type="radio" name="destination" value="Sikkim" id="dest_sikkim" required>
-                                            <h6>Sikkim</h6>
-                                            <p>Land of Mountains</p>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- SIGHTSEEING PLACES -->
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-binoculars"></i>
-                                    Select Sightseeing Places
-                                </div>
+                                </label>
+                            `;
+                        });
 
-                                <!-- Darjeeling Places -->
-                                <div id="darjeeling-places" style="display:none;">
-                                    <h6 class="mb-3">Darjeeling Sightseeing</h6>
-                                    <div class="sightseeing-grid">
+                        html += '</div>';
+                        section.innerHTML = html;
+                    })
+                    .catch(error => {
+                        section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p class="text-danger">Error loading places</p>';
+                        console.error('Error:', error);
+                    });
+            }
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Tiger Hill">
-                                            <div>
-                                                <strong>Tiger Hill</strong><br>
-                                                <small>Sunrise view over Kanchenjunga</small>
-                                            </div>
-                                        </label>
+            // Load places when destination is selected
+            destinationRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    loadSightseeingPlaces(this.value);
+                });
+            });
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Batasia Loop">
-                                            <div>
-                                                <strong>Batasia Loop</strong><br>
-                                                <small>Railway loop with mountain views</small>
-                                            </div>
-                                        </label>
+            // Price calculation functions
+            function calculateEstimate() {
+                const travelersInput = document.getElementById('travelers');
+                const daysInput = document.getElementById('days');
+                const hotelTypeSelect = document.querySelector('select[name="hotel_type"]');
+                const sightseeingChecked = document.querySelectorAll('input[name="sightseeing_places[]"]:checked');
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Japanese Temple">
-                                            <div>
-                                                <strong>Japanese Temple</strong><br>
-                                                <small>Peace Pagoda scenic point</small>
-                                            </div>
-                                        </label>
+                let basePrice = 0;
+                let travelers = travelersInput ? parseInt(travelersInput.value) || 0 : 0;
+                let days = daysInput ? parseInt(daysInput.value) || 0 : 0;
+                let hotelMultiplier = 1;
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Toy Train">
-                                            <div>
-                                                <strong>Toy Train</strong><br>
-                                                <small>Heritage train ride</small>
-                                            </div>
-                                        </label>
+                // Hotel type pricing
+                if (hotelTypeSelect) {
+                    switch(hotelTypeSelect.value) {
+                        case 'Budget': hotelMultiplier = 1; break;
+                        case 'Standard': hotelMultiplier = 1.5; break;
+                        case 'Deluxe': hotelMultiplier = 2; break;
+                        case 'Luxury': hotelMultiplier = 3; break;
+                    }
+                }
 
-                                    </div>
-                                </div>
+                // Base pricing per destination
+                const destination = document.querySelector('input[name="destination"]:checked');
+                if (destination) {
+                    switch(destination.value) {
+                        case 'Darjeeling': basePrice = 2500; break;
+                        case 'Sikkim': basePrice = 3500; break;
+                        default: basePrice = 2000;
+                    }
+                }
 
-                                <!-- Sikkim Places -->
-                                <div id="sikkim-places" style="display:none;">
-                                    <h6 class="mb-3">Sikkim Sightseeing</h6>
-                                    <div class="sightseeing-grid">
+                // Sightseeing places pricing
+                const sightseeingPrice = sightseeingChecked.length * 500;
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Tsomgo Lake">
-                                            <div>
-                                                <strong>Tsomgo Lake</strong><br>
-                                                <small>Beautiful glacial lake</small>
-                                            </div>
-                                        </label>
+                // Calculate total
+                let estimate = (basePrice * travelers * days * hotelMultiplier) + sightseeingPrice;
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Nathula Pass">
-                                            <div>
-                                                <strong>Nathula Pass</strong><br>
-                                                <small>India-China border pass</small>
-                                            </div>
-                                        </label>
+                const estimateInput = document.getElementById('estimated_price');
+                if (estimateInput) {
+                    estimateInput.value = estimate;
+                }
+            }
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Baba Mandir">
-                                            <div>
-                                                <strong>Baba Mandir</strong><br>
-                                                <small>War memorial</small>
-                                            </div>
-                                        </label>
+            [document.getElementById('travelers'), document.getElementById('days'), document.querySelector('select[name="hotel_type"]')].forEach(el => {
+                if (el) {
+                    el.addEventListener('change', calculateEstimate);
+                    el.addEventListener('input', calculateEstimate);
+                }
+            });
 
-                                        <label class="sightseeing-item">
-                                            <input type="checkbox" name="sightseeing_places[]" value="Gangtok">
-                                            <div>
-                                                <strong>Gangtok</strong><br>
-                                                <small>Capital city sightseeing</small>
-                                            </div>
-                                        </label>
+            // Recalculate when sightseeing places change
+            document.addEventListener('change', function(e) {
+                if (e.target.name === 'sightseeing_places[]') {
+                    calculateEstimate();
+                }
+            });
 
-                                    </div>
-                                </div>
+            // Initial estimation
+            calculateEstimate();
 
-                            </div>
+            // Form validation and submission
+            const form = document.getElementById('customPackageForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.querySelector('.loading-spinner');
+
+            form.addEventListener('submit', function(e) {
+                const destination = document.querySelector('input[name="destination"]:checked');
+                if (!destination) {
+                    e.preventDefault();
+                    alert('Please select a destination');
+                    return;
+                }
+
+                const sightseeingChecked = document.querySelectorAll('input[name="sightseeing_places[]"]:checked');
+                if (sightseeingChecked.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one sightseeing place');
+                    return;
+                }
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    if (loadingSpinner) loadingSpinner.style.display = 'inline-block';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                }
+            });
+
+            const dateInput = document.querySelector('input[name="travel_date"]');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.setAttribute('min', today);
+            }
+        });
+    </script>
+</body>
+</html>
                             
                             <!-- TRIP DETAILS -->
                             <div class="form-section">
