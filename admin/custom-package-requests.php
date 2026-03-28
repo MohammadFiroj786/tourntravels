@@ -1,8 +1,8 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['admin_id'])){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
@@ -182,7 +182,7 @@ echo $service_labels[$row['service_type']] ?? $row['service_type'];
 ?>
 </td>
 
-<td><?= htmlspecialchars($row['destinations'] ?? 'N/A') ?></td>
+<td><?= htmlspecialchars($row['destinations'] ?? $row['destination'] ?? 'N/A') ?></td>
 <td><?= $row['travelers'] ?></td>
 <td><?= $row['days'] ?></td>
 <td><?= $row['travel_date'] ?></td>
@@ -226,11 +226,51 @@ View
 </div>
 
 <div class="section-box">
-<h6>📦 Trip Info</h6>
-<p><b>Destination:</b> <?= $row['destinations'] ?></p>
-<p><b>Travelers:</b> <?= $row['travelers'] ?></p>
-<p><b>Days:</b> <?= $row['days'] ?></p>
-<p><b>Date:</b> <?= $row['travel_date'] ?></p>
+    <h6>📦 Trip Info</h6>
+
+    <?php
+    $service_labels = [
+        'full' => 'Full Package',
+        'stay' => 'Stay + Sightseeing',
+        'sightseeing' => 'Sightseeing Only'
+    ];
+    $service_text = $service_labels[$row['service_type']] ?? ucfirst($row['service_type']);
+
+    $destination = $row['destination'] ?? $row['destinations'] ?? 'N/A';
+    $pickup = $row['pickup_location'] ?? 'N/A';
+    $hotel = $row['hotel_type'] ?? 'N/A';
+    $car = $row['car_type'] ?? 'N/A';
+
+    $sightseeing_items = [];
+    if (!empty($row['sightseeing_places'])) {
+        $decoded = json_decode($row['sightseeing_places'], true);
+        if (is_array($decoded)) {
+            $sightseeing_items = $decoded;
+        } elseif (is_string($row['sightseeing_places'])) {
+            $sightseeing_items = array_filter(array_map('trim', explode(',', $row['sightseeing_places'])));
+        }
+    }
+    ?>
+
+    <p><strong>Service:</strong> <?= htmlspecialchars($service_text) ?></p>
+    <p><strong>Pickup:</strong> <?= htmlspecialchars($pickup) ?></p>
+    <p><strong>Destination:</strong> <?= htmlspecialchars($destination) ?></p>
+    <p><strong>Travelers:</strong> <?= htmlspecialchars($row['travelers'] ?? 'N/A') ?></p>
+    <p><strong>Days:</strong> <?= htmlspecialchars($row['days'] ?? 'N/A') ?></p>
+    <p><strong>Date:</strong> <?= htmlspecialchars($row['travel_date'] ?? 'N/A') ?></p>
+    <p><strong>Hotel:</strong> <?= htmlspecialchars($hotel) ?></p>
+    <p><strong>Car:</strong> <?= htmlspecialchars($car) ?></p>
+
+    <p><strong>Sightseeing:</strong></p>
+    <?php if (!empty($sightseeing_items)): ?>
+        <ul style="margin: 0.25rem 0 0 1rem; padding-left: 1rem;">
+            <?php foreach ($sightseeing_items as $place): ?>
+                <li><?= htmlspecialchars($place) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p style="margin: 0.25rem 0 0 0;">No sightseeing places selected.</p>
+    <?php endif; ?>
 </div>
 
 <?php if($row['status']!="Accepted"){ ?>

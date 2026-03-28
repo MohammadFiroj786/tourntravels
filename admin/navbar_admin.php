@@ -1,4 +1,9 @@
 <?php
+// ✅ FIXED: Ensure session is started properly
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -135,6 +140,10 @@ padding:15px;
 <ul class="navbar-nav mt-3">
 
 <li class="nav-item">
+<a class="nav-link" href="../index.php">🏠 Home</a>
+</li>
+
+<li class="nav-item">
 <a class="nav-link <?= ($current_page=='dashboard.php')?'active':'' ?>" href="dashboard.php">📊 Dashboard</a>
 </li>
 
@@ -183,6 +192,10 @@ padding:15px;
 </h4>
 
 <hr>
+
+<a class="adminLayoutLink" href="../index.php">
+🏠 Home
+</a>
 
 <a class="adminLayoutLink <?= ($current_page=='dashboard.php')?'active':'' ?>" href="dashboard.php">
 📊 Dashboard

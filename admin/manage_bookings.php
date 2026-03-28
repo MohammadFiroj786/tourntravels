@@ -1,33 +1,38 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['admin_id'])){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
 /* ================= FILTER ================= */
 
-$search = $_GET['search'] ?? '';
-$from_date = $_GET['from_date'] ?? '';
-$to_date = $_GET['to_date'] ?? '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$from_date = isset($_GET['from_date']) ? trim($_GET['from_date']) : '';
+$to_date = isset($_GET['to_date']) ? trim($_GET['to_date']) : '';
+
+// ✅ FIXED: Escape variables to prevent SQL injection
+$search = $conn->real_escape_string($search);
+$from_date = $conn->real_escape_string($from_date);
+$to_date = $conn->real_escape_string($to_date);
 
 $where = " WHERE 1=1 ";
 
-if($search != ''){
+if ($search != '') {
     $where .= " AND (u.name LIKE '%$search%' 
                 OR p.title LIKE '%$search%')";
 }
 
-if($from_date != '' && $to_date != ''){
+if ($from_date != '' && $to_date != '') {
     $where .= " AND b.travel_date 
                 BETWEEN '$from_date' AND '$to_date'";
 }
 
 /* ================= EXPORT EXCEL ================= */
 
-if(isset($_GET['export']) && $_GET['export']=="excel"){
+if (isset($_GET['export']) && $_GET['export'] == "excel") {
 header("Content-Type: application/vnd.ms-excel");
 header("Content-Disposition: attachment; filename=bookings.xls");
 
@@ -56,9 +61,9 @@ $where
 
 $result = $conn->query($exportQuery);
 
-while($row = $result->fetch_assoc()){
-echo $row['id']."\t".
-$row['user_name']."\t".
+while ($row = $result->fetch_assoc()) {
+    echo $row['id'] . "\t" .
+    $row['user_name'] . "\t" .
 $row['package_title']."\t".
 $row['travel_date']."\t".
 $row['persons']."\t".
@@ -72,7 +77,7 @@ exit();
 
 /* ================= UPDATE ================= */
 
-if(isset($_POST['update_booking'])){
+if (isset($_POST['update_booking'])) {
 
 $booking_id = (int)$_POST['booking_id'];
 $travel_date = $_POST['travel_date'];

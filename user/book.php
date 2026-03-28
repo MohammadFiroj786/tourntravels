@@ -1,15 +1,10 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
-
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
 
 $user_id = $_SESSION['user_id'];
 
-if(!isset($_GET['id'])){
+if (!isset($_GET['id'])) {
     header("Location: packages.php");
     exit();
 }
@@ -17,26 +12,24 @@ if(!isset($_GET['id'])){
 $package_id = intval($_GET['id']);
 
 /* Get Package Info */
-$package = $conn->query("SELECT * FROM packages WHERE id='$package_id'")->fetch_assoc();
+$package = $conn->query("SELECT * FROM packages WHERE id=$package_id")->fetch_assoc();
 
 /* Calculate available seats */
 $booked = $conn->query("SELECT SUM(persons) as total_booked 
                         FROM bookings 
-                        WHERE package_id='$package_id' AND booking_status IN ('Pending','Confirmed')")->fetch_assoc();
+                        WHERE package_id=$package_id AND booking_status IN ('Pending','Confirmed')")->fetch_assoc();
 $available_seats = $package['seats'] - ($booked['total_booked'] ?? 0);
 
 $message = "";
 
 /* ================= CONFIRM BOOKING ================= */
-if(isset($_POST['confirm_booking'])){
-
+if (isset($_POST['confirm_booking'])) {
     $travel_date = $_POST['travel_date'];
     $persons = intval($_POST['persons']);
 
-    if($persons < 1){
+    if ($persons < 1) {
         $message = "<div class='alert alert-danger'>Please enter a valid number of persons.</div>";
-    }
-    elseif($persons > $available_seats){
+    } elseif ($persons > $available_seats) {
         $message = "<div class='alert alert-danger'>Only $available_seats seats are available for this package.</div>";
     } else {
         $total_price = $package['final_price'] * $persons;

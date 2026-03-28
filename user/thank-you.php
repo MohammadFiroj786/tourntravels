@@ -2,7 +2,7 @@
 session_start();
 include("../includes/db.php");
 
-if(!isset($_SESSION['user_id'])){
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
@@ -28,6 +28,9 @@ $sightseeing_places = json_decode($request['sightseeing_places'], true);
 if (!is_array($sightseeing_places)) {
     $sightseeing_places = [];
 }
+
+// fallback for destination field naming
+$destinations = $request['destinations'] ?? $request['destination'] ?? 'N/A';
 ?>
 
 <!DOCTYPE html>
@@ -137,7 +140,7 @@ if (!is_array($sightseeing_places)) {
 
                 <div class="detail-row">
                     <strong>Destination:</strong>
-                    <span><?php echo htmlspecialchars($request['destinations']); ?></span>
+                    <span><?php echo htmlspecialchars($destinations); ?></span>
                 </div>
 
                 <div class="detail-row">

@@ -1,5 +1,5 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 require_once("../env.php");
 

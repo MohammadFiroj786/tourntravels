@@ -3,7 +3,7 @@ include("../includes/db.php");
 
 header('Content-Type: application/json');
 
-if(isset($_GET['destination'])){
+if (isset($_GET['destination'])) {
     $destination = mysqli_real_escape_string($conn, $_GET['destination']);
 
     $stmt = $conn->prepare("SELECT * FROM sightseeing_places WHERE destination = ? AND status = 'active' ORDER BY place_name");
@@ -12,7 +12,7 @@ if(isset($_GET['destination'])){
     $result = $stmt->get_result();
 
     $places = [];
-    while($row = $result->fetch_assoc()){
+    while ($row = $result->fetch_assoc()) {
         $places[] = [
             'id' => $row['id'],
             'place_name' => $row['place_name'],

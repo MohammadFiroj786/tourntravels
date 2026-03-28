@@ -1,15 +1,10 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
-
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
 
 // Read service type from URL
 $service_type = $_GET['type'] ?? 'full';
-if(!in_array($service_type, ['full', 'stay', 'sightseeing'])) {
+if (!in_array($service_type, ['full', 'stay', 'sightseeing'])) {
     $service_type = 'full';
 }
 
@@ -346,15 +341,15 @@ $current_config = $page_config[$service_type];
                         <div class="form-section">
                             <div class="section-title">
                                 <i class="fas fa-map"></i>
-                                Choose Destination
+                                Choose Destinations (Select One or More)
                             </div>
 
                             <div class="row g-3">
                                 <?php foreach(array_keys($sightseeing_places) as $destination): ?>
                                 <div class="col-md-6">
                                     <label class="destination-card w-100">
-                                        <input type="radio" name="destination"
-                                               value="<?php echo htmlspecialchars($destination); ?>" required>
+                                        <input type="checkbox" name="destination[]"
+                                               value="<?php echo htmlspecialchars($destination); ?>">
                                         <h6><?php echo htmlspecialchars($destination); ?></h6>
                                         <p>Select sightseeing</p>
                                     </label>
@@ -452,27 +447,42 @@ $current_config = $page_config[$service_type];
 </div>
 
 <script>
+// Handle multiple destination selection
 document.querySelectorAll('.destination-card').forEach(card=>{
     card.addEventListener('click', function(){
-        const radio = this.querySelector('input');
-        radio.checked = true;
-
-        document.querySelectorAll('.destination-card')
-            .forEach(c=>c.classList.remove('selected'));
-
-        this.classList.add('selected');
-
-        document.querySelectorAll('[id$="-places"]').forEach(el=>{
-            el.style.display='none';
-        });
-
-        const target = document.getElementById(
-            radio.value.toLowerCase() + '-places'
-        );
-
-        if(target) target.style.display='block';
+        const checkbox = this.querySelector('input');
+        checkbox.checked = !checkbox.checked;
+        this.classList.toggle('selected', checkbox.checked);
+        updateVisibleSightseeingPlaces();
     });
 });
+
+// Update visible sightseeing places based on selected destinations
+function updateVisibleSightseeingPlaces() {
+    const selectedDestinations = Array.from(
+        document.querySelectorAll('input[name="destination[]"]:checked')
+    ).map(input => input.value);
+
+    // Hide all sightseeing sections
+    document.querySelectorAll('[id$="-places"]').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Show sightseeing sections for selected destinations
+    selectedDestinations.forEach(destination => {
+        const target = document.getElementById(destination.toLowerCase() + '-places');
+        if(target) target.style.display = 'block';
+    });
+
+    // Validation: require at least one destination
+    const submitBtn = document.getElementById('submitBtn');
+    if(submitBtn) {
+        submitBtn.disabled = selectedDestinations.length === 0;
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', updateVisibleSightseeingPlaces);
 
 document.querySelectorAll('.sightseeing-item').forEach(item=>{
     item.addEventListener('click', function(){
@@ -501,6 +511,16 @@ document.querySelectorAll('#travelers,#days')
     if(el){
         el.addEventListener('input',calculateEstimate);
         el.addEventListener('change',calculateEstimate);
+    }
+});
+
+// Form validation - ensure at least one destination is selected
+document.getElementById('customPackageForm')?.addEventListener('submit', function(e) {
+    const selectedDestinations = document.querySelectorAll('input[name="destination[]"]:checked');
+    if (selectedDestinations.length === 0) {
+        e.preventDefault();
+        alert('❌ Please select at least one destination!');
+        return false;
     }
 });
 </script>

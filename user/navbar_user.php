@@ -1,5 +1,6 @@
 <?php
-if(!isset($_SESSION)){
+// ✅ FIXED: Use proper session check instead of duplicate session_start()
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
@@ -152,6 +153,12 @@ data-bs-target="#mobileMenu">
 <ul class="navbar-nav">
 
 <li class="nav-item">
+<a class="nav-link" href="../index.php">
+<i class="fa fa-home"></i> Home
+</a>
+</li>
+
+<li class="nav-item">
 <a class="nav-link <?= ($current_page=='user-dashboard.php')?'active':'' ?>" href="user-dashboard.php">
 <i class="fa fa-home"></i> Dashboard
 </a>
@@ -196,6 +203,12 @@ data-bs-target="#mobileMenu">
 <h4>
 <i class="fa-solid fa-plane-departure me-3"></i>Hidden Hills Collective
 </h4>
+
+<hr style="border-color: rgba(255,255,255,0.1); margin:15px 0;">
+
+<a href="../index.php" class="">
+<i class="fa-solid fa-home"></i> Home
+</a>
 
 <a href="user-dashboard.php" class="<?= ($current_page=='user-dashboard.php')?'active':'' ?>">
 <i class="fa-solid fa-house"></i> Dashboard

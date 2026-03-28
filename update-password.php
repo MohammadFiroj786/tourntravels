@@ -7,9 +7,9 @@ require_once "includes/db.php";
 
 /* Only POST request allowed */
 
-if($_SERVER["REQUEST_METHOD"] !== "POST"){
-header("Location: login.php");
-exit();
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: login.php");
+    exit();
 }
 
 /* Get form data */
@@ -21,40 +21,40 @@ $confirm_password = $_POST['confirm_password'] ?? '';
 
 /* Basic validation */
 
-if(empty($email) || empty($token) || empty($password) || empty($confirm_password)){
-die("Invalid request.");
+if (empty($email) || empty($token) || empty($password) || empty($confirm_password)) {
+    die("Invalid request.");
 }
 
 /* Password match */
 
-if($password !== $confirm_password){
-die("Passwords do not match.");
+if ($password !== $confirm_password) {
+    die("Passwords do not match.");
 }
 
 /* Password strength */
 
-if(strlen($password) < 8){
-die("Password must be at least 8 characters.");
+if (strlen($password) < 8) {
+    die("Password must be at least 8 characters.");
 }
 
 /* Fetch reset token */
 
 $stmt = $conn->prepare("SELECT reset_token, reset_expires FROM users WHERE email=?");
-$stmt->bind_param("s",$email);
+$stmt->bind_param("s", $email);
 $stmt->execute();
 
 $result = $stmt->get_result();
 
-if($result->num_rows !== 1){
-die("Invalid request.");
+if ($result->num_rows !== 1) {
+    die("Invalid request.");
 }
 
 $user = $result->fetch_assoc();
 
 /* Expiry check */
 
-if(strtotime($user['reset_expires']) < time()){
-die("Reset link expired.");
+if (strtotime($user['reset_expires']) < time()) {
+    die("Reset link expired.");
 }
 
 /* Verify token */

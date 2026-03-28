@@ -1,20 +1,20 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['admin_id'])){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
 /* ================= FILTER ================= */
 
-$year  = isset($_GET['year']) ? $_GET['year'] : date("Y");
+$year = isset($_GET['year']) ? $_GET['year'] : date("Y");
 $month = isset($_GET['month']) ? $_GET['month'] : "";
 
 $where = "YEAR(bookings.created_at) = '$year'";
 
-if(!empty($month)){
+if (!empty($month)) {
     $where .= " AND MONTH(bookings.created_at) = '$month'";
 }
 
@@ -30,7 +30,7 @@ GROUP BY MONTH(bookings.created_at)
 ORDER BY MONTH(bookings.created_at)
 ");
 
-while($row = $q1->fetch_assoc()){
+while ($row = $q1->fetch_assoc()) {
     $bookingData[] = $row;
 }
 
@@ -46,7 +46,7 @@ GROUP BY MONTH(bookings.created_at)
 ORDER BY MONTH(bookings.created_at)
 ");
 
-while($row = $q2->fetch_assoc()){
+while ($row = $q2->fetch_assoc()) {
     $revenueData[] = $row;
 }
 

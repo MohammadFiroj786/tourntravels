@@ -1,8 +1,8 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
@@ -10,20 +10,20 @@ if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
 $message = "";
 
 /* ================= ADD SIGHTSEEING PLACE ================= */
-if(isset($_POST['add_place'])){
+if (isset($_POST['add_place'])) {
     $destination = mysqli_real_escape_string($conn, $_POST['destination']);
     $place_name = mysqli_real_escape_string($conn, $_POST['place_name']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $status = $_POST['status'];
 
     $image_name = "";
-    if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if(in_array($_FILES['image']['type'], $allowed_types)){
+        if (in_array($_FILES['image']['type'], $allowed_types)) {
             $image_name = time() . '_' . basename($_FILES['image']['name']);
             $target_path = "../assets/images/sightseeing/" . $image_name;
 
-            if(move_uploaded_file($_FILES['image']['tmp_name'], $target_path)){
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
                 // Image uploaded successfully
             } else {
                 $message = "<div class='alert alert-danger'>Failed to upload image.</div>";
@@ -34,10 +34,10 @@ if(isset($_POST['add_place'])){
         }
     }
 
-    if(empty($message)){
+    if (empty($message)) {
         $stmt = $conn->prepare("INSERT INTO sightseeing_places (destination, place_name, description, image, status) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $destination, $place_name, $description, $image_name, $status);
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             $message = "<div class='alert alert-success'>Sightseeing place added successfully!</div>";
         } else {
             $message = "<div class='alert alert-danger'>Error adding place: " . $stmt->error . "</div>";
@@ -47,7 +47,7 @@ if(isset($_POST['add_place'])){
 }
 
 /* ================= DELETE PLACE ================= */
-if(isset($_GET['delete'])){
+if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
 
     // Get image filename to delete
@@ -58,7 +58,7 @@ if(isset($_GET['delete'])){
     $place = $result->fetch_assoc();
     $stmt->close();
 
-    if($place && !empty($place['image'])){
+    if ($place && !empty($place['image'])) {
         $image_path = "../assets/images/sightseeing/" . $place['image'];
         if(file_exists($image_path)){
             unlink($image_path);
@@ -67,7 +67,7 @@ if(isset($_GET['delete'])){
 
     $stmt = $conn->prepare("DELETE FROM sightseeing_places WHERE id = ?");
     $stmt->bind_param("i", $id);
-    if($stmt->execute()){
+    if ($stmt->execute()) {
         $message = "<div class='alert alert-success'>Place deleted successfully!</div>";
     } else {
         $message = "<div class='alert alert-danger'>Error deleting place.</div>";

@@ -16,9 +16,9 @@ require "includes/PHPMailer/src/Exception.php";
 
 /* allow only POST */
 
-if($_SERVER["REQUEST_METHOD"] !== "POST"){
-header("Location: forgot-password.php");
-exit();
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: forgot-password.php");
+    exit();
 }
 
 
@@ -27,27 +27,26 @@ $email = trim($_POST['email'] ?? '');
 
 /* validate email */
 
-if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-header("Location: forgot-password.php?notfound=1");
-exit();
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header("Location: forgot-password.php?notfound=1");
+    exit();
 }
 
 
 /* check if user exists */
 
-$stmt = $conn->prepare("SELECT id,email FROM users WHERE email=?");
-$stmt->bind_param("s",$email);
+$stmt = $conn->prepare("SELECT id, email FROM users WHERE email=?");
+$stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
 
 /* email not found */
 
-if($result->num_rows !== 1){
+if ($result->num_rows !== 1) {
 
-header("Location: forgot-password.php?notfound=1");
-exit();
-
+    header("Location: forgot-password.php?notfound=1");
+    exit();
 }
 
 

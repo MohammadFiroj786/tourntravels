@@ -1,5 +1,5 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 require_once("../env.php");
 
@@ -12,7 +12,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 /* ================= SECURITY ================= */
-if (!isset($_SESSION['admin_id'])) {
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }

@@ -103,7 +103,7 @@ body{
     <?php } ?>
 
     <!-- Registration Form -->
-    <form method="POST" action="">
+    <form method="POST" action="" id="registerForm" onsubmit="return confirmSignup(event)">
       <div class="mb-3">
         <input type="text" class="form-control form-control-lg rounded-pill shadow-sm" name="name" placeholder="Full Name" value="<?php echo htmlspecialchars($name); ?>" required>
       </div>
@@ -162,6 +162,26 @@ body{
       input.type = 'password';
       icon.classList.remove('fa-eye-slash');
       icon.classList.add('fa-eye');
+    }
+  }
+
+  // ✅ SIGNUP CONFIRMATION POPUP
+  function confirmSignup(event) {
+    event.preventDefault();
+    
+    // Get email and phone values
+    const email = document.querySelector('input[name="email"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
+    
+    // Show confirmation popup
+    const confirmMessage = `The email and phone number you provide will be used for booking confirmation. Please ensure they are correct.\n\nEmail: ${email}\nPhone: ${phone}\n\nDo you want to proceed?`;
+    
+    if (confirm(confirmMessage)) {
+      // User confirmed - submit the form
+      document.getElementById('registerForm').submit();
+    } else {
+      // User cancelled - stop submission
+      return false;
     }
   }
 </script>
