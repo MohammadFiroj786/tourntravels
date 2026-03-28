@@ -159,7 +159,7 @@ padding:15px;
 </li>
 
 <li class="nav-item">
-<a class="nav-link <?= ($current_page=='contact_messages.php')?'active':'' ?>" href="contact_messages.php">📩 Messages</a>
+<a class="nav-link <?= ($current_page=='manage_sightseeing.php')?'active':'' ?>" href="manage_sightseeing.php">🏔️ Sightseeing Places</a>
 </li>
 
 <li class="nav-item">
@@ -210,6 +210,10 @@ padding:15px;
 
 <a class="adminLayoutLink <?= ($current_page=='contact_messages.php')?'active':'' ?>" href="contact_messages.php">
 📩 Messages
+</a>
+
+<a class="adminLayoutLink <?= ($current_page=='manage_sightseeing.php')?'active':'' ?>" href="manage_sightseeing.php">
+🏔️ Sightseeing Places
 </a>
 
 <hr>
