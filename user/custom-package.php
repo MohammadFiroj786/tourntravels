@@ -15,17 +15,17 @@ if(!in_array($service_type, ['full', 'stay', 'sightseeing'])) {
 
 // Fetch sightseeing places from database
 $sightseeing_places = [];
-$stmt = $conn->prepare("SELECT * FROM sightseeing_places WHERE status = 'active' ORDER BY destination, place_name");
-$stmt->execute();
-$result = $stmt->get_result();
-while($row = $result->fetch_assoc()){
-    $destination = $row['destination'];
-    if(!isset($sightseeing_places[$destination])){
-        $sightseeing_places[$destination] = [];
+$query = "SELECT destination, place_name, description FROM sightseeing_places ORDER BY destination, place_name";
+$result = mysqli_query($conn, $query);
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $sightseeing_places[$row['destination']][$row['place_name']] = $row['description'];
     }
-    $sightseeing_places[$destination][] = $row;
 }
-$stmt->close();
+
+// Extract places for easier access in templates
+$darjeeling_places = $sightseeing_places['Darjeeling'] ?? [];
+$sikkim_places = $sightseeing_places['Sikkim'] ?? [];
 
 // Get page title and description based on service type
 $page_config = [
@@ -302,426 +302,208 @@ $current_config = $page_config[$service_type];
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Destination selection handling
-            const destinationRadios = document.querySelectorAll('input[name="destination"]');
-            const sightseeingSections = document.querySelectorAll('[id$="-places"]');
+</head>
+<body>
+<?php include("navbar_user.php"); ?>
 
-            destinationRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const selectedDestination = this.value.toLowerCase();
+<div class="container main-content">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="custom-box">
 
-                    // Hide all sightseeing sections
-                    sightseeingSections.forEach(section => {
-                        section.style.display = 'none';
-                    });
+                <a href="../index.php#custom-packages" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
 
-                    // Show selected destination's places
-                    const targetSection = document.getElementById(selectedDestination + '-places');
-                    if (targetSection) {
-                        targetSection.style.display = 'block';
-                    }
-                });
-            });
+                <div class="form-header">
+                    <div class="icon"><?php echo $current_config['icon']; ?></div>
+                    <h2><?php echo htmlspecialchars($current_config['title']); ?></h2>
+                    <p><?php echo htmlspecialchars($current_config['description']); ?></p>
+                </div>
 
-            // Dynamic sightseeing places loading (AJAX)
-            function loadSightseeingPlaces(destination) {
-                const sectionId = destination.toLowerCase() + '-places';
-                const section = document.getElementById(sectionId);
+                <div class="form-body">
+                    <form id="customPackageForm" action="submit-custom-package.php" method="POST">
 
-                if (!section) return;
+                        <input type="hidden" name="service_type" value="<?php echo htmlspecialchars($service_type); ?>">
+                        <input type="hidden" name="estimated_price" id="estimated_price" value="0">
 
-                // Show loading
-                section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p>Loading places...</p>';
+                        <!-- PICKUP LOCATION -->
+                        <?php if($service_type === 'full'): ?>
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Pickup Location
+                            </div>
+                            <select name="pickup_location" class="form-select" required>
+                                <option value="">Choose pickup location</option>
+                                <option value="NJP">NJP Junction</option>
+                                <option value="Siliguri">Siliguri</option>
+                            </select>
+                        </div>
+                        <?php endif; ?>
 
-                fetch('get_sightseeing_places.php?destination=' + encodeURIComponent(destination))
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p class="text-danger">Error loading places</p>';
-                            return;
-                        }
-
-                        let html = '<h6 class="mb-3">' + destination + ' Sightseeing</h6>';
-                        html += '<div class="sightseeing-grid">';
-
-                        data.forEach(place => {
-                            html += `
-                                <label class="sightseeing-item">
-                                    <input type="checkbox" name="sightseeing_places[]" value="${place.place_name}">
-                                    <div>
-                                        <strong>${place.place_name}</strong><br>
-                                        <small>${place.description}</small>
-                                        ${place.image ? `<br><img src="../assets/images/sightseeing/${place.image}" alt="${place.place_name}" style="width: 60px; height: 40px; object-fit: cover; margin-top: 5px; border-radius: 4px;">` : ''}
-                                    </div>
-                                </label>
-                            `;
-                        });
-
-                        html += '</div>';
-                        section.innerHTML = html;
-                    })
-                    .catch(error => {
-                        section.innerHTML = '<h6 class="mb-3">' + destination + ' Sightseeing</h6><p class="text-danger">Error loading places</p>';
-                        console.error('Error:', error);
-                    });
-            }
-
-            // Load places when destination is selected
-            destinationRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    loadSightseeingPlaces(this.value);
-                });
-            });
-
-            // Price calculation functions
-            function calculateEstimate() {
-                const travelersInput = document.getElementById('travelers');
-                const daysInput = document.getElementById('days');
-                const hotelTypeSelect = document.querySelector('select[name="hotel_type"]');
-                const sightseeingChecked = document.querySelectorAll('input[name="sightseeing_places[]"]:checked');
-
-                let basePrice = 0;
-                let travelers = travelersInput ? parseInt(travelersInput.value) || 0 : 0;
-                let days = daysInput ? parseInt(daysInput.value) || 0 : 0;
-                let hotelMultiplier = 1;
-
-                // Hotel type pricing
-                if (hotelTypeSelect) {
-                    switch(hotelTypeSelect.value) {
-                        case 'Budget': hotelMultiplier = 1; break;
-                        case 'Standard': hotelMultiplier = 1.5; break;
-                        case 'Deluxe': hotelMultiplier = 2; break;
-                        case 'Luxury': hotelMultiplier = 3; break;
-                    }
-                }
-
-                // Base pricing per destination
-                const destination = document.querySelector('input[name="destination"]:checked');
-                if (destination) {
-                    switch(destination.value) {
-                        case 'Darjeeling': basePrice = 2500; break;
-                        case 'Sikkim': basePrice = 3500; break;
-                        default: basePrice = 2000;
-                    }
-                }
-
-                // Sightseeing places pricing
-                const sightseeingPrice = sightseeingChecked.length * 500;
-
-                // Calculate total
-                let estimate = (basePrice * travelers * days * hotelMultiplier) + sightseeingPrice;
-
-                const estimateInput = document.getElementById('estimated_price');
-                if (estimateInput) {
-                    estimateInput.value = estimate;
-                }
-            }
-
-            [document.getElementById('travelers'), document.getElementById('days'), document.querySelector('select[name="hotel_type"]')].forEach(el => {
-                if (el) {
-                    el.addEventListener('change', calculateEstimate);
-                    el.addEventListener('input', calculateEstimate);
-                }
-            });
-
-            // Recalculate when sightseeing places change
-            document.addEventListener('change', function(e) {
-                if (e.target.name === 'sightseeing_places[]') {
-                    calculateEstimate();
-                }
-            });
-
-            // Initial estimation
-            calculateEstimate();
-
-            // Form validation and submission
-            const form = document.getElementById('customPackageForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const loadingSpinner = document.querySelector('.loading-spinner');
-
-            form.addEventListener('submit', function(e) {
-                const destination = document.querySelector('input[name="destination"]:checked');
-                if (!destination) {
-                    e.preventDefault();
-                    alert('Please select a destination');
-                    return;
-                }
-
-                const sightseeingChecked = document.querySelectorAll('input[name="sightseeing_places[]"]:checked');
-                if (sightseeingChecked.length === 0) {
-                    e.preventDefault();
-                    alert('Please select at least one sightseeing place');
-                    return;
-                }
-
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    if (loadingSpinner) loadingSpinner.style.display = 'inline-block';
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                }
-            });
-
-            const dateInput = document.querySelector('input[name="travel_date"]');
-            if (dateInput) {
-                const today = new Date().toISOString().split('T')[0];
-                dateInput.setAttribute('min', today);
-            }
-        });
-    </script>
-</body>
-</html>
-                            
-                            <!-- TRIP DETAILS -->
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    Trip Details
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Travel Date</label>
-                                        <input type="date" name="travel_date" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
-                                    </div>
-
-                                    <?php if($service_type !== 'sightseeing'): ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Number of Days</label>
-                                        <input id="days" type="number" name="days" class="form-control" required min="1" max="30" placeholder="e.g., 3">
-                                    </div>
-                                    <?php endif; ?>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Number of Travelers</label>
-                                        <input id="travelers" type="number" name="travelers" class="form-control" required min="1" max="50" placeholder="e.g., 4">
-                                    </div>
-                                </div>
+                        <!-- DESTINATION -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-map"></i>
+                                Choose Destination
                             </div>
 
-                            <!-- HOTEL TYPE (Not for sightseeing only) -->
-                            <?php if($service_type !== 'sightseeing'): ?>
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-hotel"></i>
-                                    Accommodation Type
+                            <div class="row g-3">
+                                <?php foreach(array_keys($sightseeing_places) as $destination): ?>
+                                <div class="col-md-6">
+                                    <label class="destination-card w-100">
+                                        <input type="radio" name="destination"
+                                               value="<?php echo htmlspecialchars($destination); ?>" required>
+                                        <h6><?php echo htmlspecialchars($destination); ?></h6>
+                                        <p>Select sightseeing</p>
+                                    </label>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">Select Hotel Category</label>
-                                    <select id="hotel_type" name="hotel_type" class="form-select" required>
-                                        <option value="">Choose hotel type</option>
-                                        <option value="Homestay">Homestay (Not Confirmed)</option>
-                                        <option value="Budget Hotel">Budget Hotel (Not Confirmed)</option>
-                                        <option value="Deluxe Hotel">Deluxe Hotel (Not Confirmed)</option>
-                                        <option value="Luxury Hotel">Luxury Hotel (Not Confirmed)</option>
-                                    </select>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
-                            <?php endif; ?>
+                        </div>
 
-                            <!-- SPECIAL NOTES -->
-                            <div class="form-section">
-                                <div class="section-title">
-                                    <i class="fas fa-sticky-note"></i>
-                                    Special Requests
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tell us about your preferences (optional)</label>
-                                    <textarea name="user_notes" class="form-control" rows="4" placeholder="Dietary requirements, accessibility needs, special interests, etc."></textarea>
-                                </div>
+                        <!-- SIGHTSEEING -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-binoculars"></i>
+                                Select Sightseeing Places
                             </div>
 
-                            <!-- PRICING NOTICE -->
-                            <div class="pricing-notice">
-                                <h6><i class="fas fa-info-circle"></i> Pricing Information</h6>
-                                <p><strong>Starting from ₹999 per person</strong><br>
-                                Final price depends on number of travelers, vehicle type, and season.<br>
-                                Our team will provide a detailed quote after reviewing your requirements.</p>
-                            </div>
+                            <?php foreach($sightseeing_places as $destination => $places): ?>
+                            <div id="<?php echo strtolower($destination); ?>-places" style="display:none;">
+                                <h6 class="mb-3"><?php echo htmlspecialchars($destination); ?> Sightseeing</h6>
 
-                            <div id="estimateBox" class="alert alert-info mt-3">
-                                Estimated price will appear here
-                            </div>
-
-                            <!-- SUBMIT BUTTON -->
-                            <button type="submit" class="btn submit-btn" id="submitBtn">
-                                <i class="fas fa-paper-plane"></i>
-                                ✨ Get Final Quote
-                                <div class="spinner-border spinner-border-sm loading-spinner" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                                <div class="sightseeing-grid">
+                                    <?php foreach($places as $place_name => $description): ?>
+                                    <label class="sightseeing-item">
+                                        <input type="checkbox"
+                                               name="sightseeing_places[]"
+                                               value="<?php echo htmlspecialchars($place_name); ?>">
+                                        <div>
+                                            <strong><?php echo htmlspecialchars($place_name); ?></strong><br>
+                                            <small><?php echo htmlspecialchars($description); ?></small>
+                                        </div>
+                                    </label>
+                                    <?php endforeach; ?>
                                 </div>
-                            </button>
-                        </form>
-                    </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- TRIP DETAILS -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-calendar-alt"></i>
+                                Trip Details
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Travel Date</label>
+                                    <input type="date" name="travel_date" class="form-control" required>
+                                </div>
+
+                                <?php if($service_type !== 'sightseeing'): ?>
+                                <div class="col-md-6">
+                                    <label class="form-label">Number of Days</label>
+                                    <input id="days" type="number" name="days" class="form-control" required min="1">
+                                </div>
+                                <?php endif; ?>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Travelers</label>
+                                    <input id="travelers" type="number" name="travelers" class="form-control" required min="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- HOTEL TYPE -->
+                        <?php if($service_type !== 'sightseeing'): ?>
+                        <div class="form-section">
+                            <div class="section-title">
+                                <i class="fas fa-hotel"></i>
+                                Accommodation Type
+                            </div>
+
+                            <select name="hotel_type" id="hotel_type" class="form-select" required>
+                                <option value="">Choose hotel type</option>
+                                <option value="Homestay">Homestay</option>
+                                <option value="Budget Hotel">Budget Hotel</option>
+                                <option value="Deluxe Hotel">Deluxe Hotel</option>
+                                <option value="Luxury Hotel">Luxury Hotel</option>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+
+                        <div id="estimateBox" class="alert alert-info mt-3">
+                            Estimated price will appear here
+                        </div>
+
+                        <button type="submit" class="btn submit-btn" id="submitBtn">
+                            ✨ Get Final Quote
+                        </button>
+
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Handle destination selection and sightseeing visibility
-        const destinationRadios = document.querySelectorAll('input[name="destination"]');
-        const darjeelingPlaces = document.getElementById('darjeeling-places');
-        const sikkimPlaces = document.getElementById('sikkim-places');
+<script>
+document.querySelectorAll('.destination-card').forEach(card=>{
+    card.addEventListener('click', function(){
+        const radio = this.querySelector('input');
+        radio.checked = true;
 
-        function updateSightseeingVisibility() {
-            const selectedDestination = document.querySelector('input[name="destination"]:checked');
-            if (!selectedDestination) {
-                if (darjeelingPlaces) darjeelingPlaces.style.display = 'none';
-                if (sikkimPlaces) sikkimPlaces.style.display = 'none';
-                return;
-            }
+        document.querySelectorAll('.destination-card')
+            .forEach(c=>c.classList.remove('selected'));
 
-            const destination = selectedDestination.value;
-            if (destination === 'Darjeeling') {
-                if (darjeelingPlaces) darjeelingPlaces.style.display = 'block';
-                if (sikkimPlaces) sikkimPlaces.style.display = 'none';
-            } else if (destination === 'Sikkim') {
-                if (darjeelingPlaces) darjeelingPlaces.style.display = 'none';
-                if (sikkimPlaces) sikkimPlaces.style.display = 'block';
-            }
-        }
+        this.classList.add('selected');
 
-        destinationRadios.forEach(radio => {
-            radio.addEventListener('change', updateSightseeingVisibility);
+        document.querySelectorAll('[id$="-places"]').forEach(el=>{
+            el.style.display='none';
         });
 
-        // Handle destination card selection
-        const destinationCards = document.querySelectorAll('.destination-card');
-        destinationCards.forEach(card => {
-            card.addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                if (!radio) return;
-                radio.checked = true;
-                updateSightseeingVisibility();
+        const target = document.getElementById(
+            radio.value.toLowerCase() + '-places'
+        );
 
-                destinationCards.forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-            });
-        });
+        if(target) target.style.display='block';
+    });
+});
 
-        // Handle sightseeing item selection
-        const sightseeingItems = document.querySelectorAll('.sightseeing-item');
-        sightseeingItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const checkbox = this.querySelector('input[type="checkbox"]');
-                if (!checkbox) return;
-                checkbox.checked = !checkbox.checked;
-                this.classList.toggle('selected', checkbox.checked);
-            });
-        });
+document.querySelectorAll('.sightseeing-item').forEach(item=>{
+    item.addEventListener('click', function(){
+        const checkbox = this.querySelector('input');
+        checkbox.checked = !checkbox.checked;
+        this.classList.toggle('selected', checkbox.checked);
+    });
+});
 
-        // Estimate logic
-        const serviceType = '<?php echo htmlspecialchars($service_type); ?>';
-        const estimateBox = document.getElementById('estimateBox');
-        const travelersInput = document.getElementById('travelers');
-        const daysInput = document.getElementById('days');
-        const hotelTypeSelect = document.getElementById('hotel_type');
+function calculateEstimate(){
+    const travelers = Number(document.getElementById('travelers')?.value || 0);
+    const days = Number(document.getElementById('days')?.value || 1);
 
-        function calculateEstimate() {
-            const travelers = Number(travelersInput?.value) || 0;
-            const days = Number(daysInput?.value) || 0;
-            const hotelType = hotelTypeSelect?.value || '';
+    if(travelers < 1) return;
 
-            if (travelers < 1 || (serviceType !== 'sightseeing' && days < 1)) {
-                estimateBox.innerHTML = 'Estimated price will appear here';
-                return;
-            }
+    let estimate = travelers * 999 * days;
 
-            const sightseeingCost = travelers * 999;
+    document.getElementById('estimateBox').innerHTML =
+        "<strong>Estimated Starting Price: ₹"+estimate.toLocaleString('en-IN')+"</strong>";
 
-            const stayRates = {
-                'Homestay': 1200,
-                'Budget Hotel': 1800,
-                'Deluxe Hotel': 2500,
-                'Luxury Hotel': 4000
-            };
+    document.getElementById('estimated_price').value = estimate;
+}
 
-            let stayCost = 0;
-            if (serviceType !== 'sightseeing') {
-                if (hotelType && stayRates[hotelType] !== undefined) {
-                    stayCost = days * stayRates[hotelType];
-                } else {
-                    // default to 0 if hotel type not selected
-                    stayCost = 0;
-                }
-            }
+document.querySelectorAll('#travelers,#days')
+.forEach(el=>{
+    if(el){
+        el.addEventListener('input',calculateEstimate);
+        el.addEventListener('change',calculateEstimate);
+    }
+});
+</script>
 
-            let carCost = 0;
-            if (serviceType === 'full') {
-                if (travelers <= 4) carCost = 2500;
-                else if (travelers <= 7) carCost = 3500;
-                else if (travelers <= 12) carCost = 5000;
-                else carCost = 7000;
-            }
-
-            let estimate = 0;
-            if (serviceType === 'full') {
-                estimate = sightseeingCost + stayCost + carCost;
-            } else if (serviceType === 'stay') {
-                estimate = sightseeingCost + stayCost;
-            } else if (serviceType === 'sightseeing') {
-                estimate = sightseeingCost;
-            }
-
-            estimateBox.innerHTML = '<strong>Estimated Starting Price: ₹' + estimate.toLocaleString('en-IN') + '</strong><br>' +
-                '<small>Homestay subject to availability<br>Final price may vary based on season and vehicle</small>';
-
-            const estimateInput = document.getElementById('estimated_price');
-            if (estimateInput) {
-                estimateInput.value = estimate;
-            }
-        }
-
-        [travelersInput, daysInput, hotelTypeSelect].forEach(el => {
-            if (el) {
-                el.addEventListener('change', calculateEstimate);
-                el.addEventListener('input', calculateEstimate);
-            }
-        });
-
-        // Initial estimation
-        calculateEstimate();
-
-        // Form validation and submission
-        const form = document.getElementById('customPackageForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const loadingSpinner = document.querySelector('.loading-spinner');
-
-        form.addEventListener('submit', function(e) {
-            submitBtn.disabled = true;
-            loadingSpinner.style.display = 'inline-block';
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-
-            const destination = document.querySelector('input[name="destination"]:checked');
-            if (!destination) {
-                e.preventDefault();
-                alert('Please select a destination');
-                resetSubmitButton();
-                return;
-            }
-
-            const sightseeingChecked = document.querySelectorAll('input[name="sightseeing_places[]"]:checked');
-            if (sightseeingChecked.length === 0) {
-                e.preventDefault();
-                alert('Please select at least one sightseeing place');
-                resetSubmitButton();
-                return;
-            }
-        });
-
-        function resetSubmitButton() {
-            submitBtn.disabled = false;
-            loadingSpinner.style.display = 'none';
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ✨ Get Final Quote';
-        }
-
-        const dateInput = document.querySelector('input[name="travel_date"]');
-        if (dateInput) {
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.setAttribute('min', today);
-        }
-    </script>
 </body>
 </html>
