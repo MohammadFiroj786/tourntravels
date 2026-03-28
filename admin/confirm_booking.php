@@ -105,7 +105,7 @@ try {
     $mail->addAddress($email, $name);
 
     $mail->isHTML(true);
-    $mail->Subject = "✅ Booking Confirmed – Payment Link";
+    $mail->Subject = " Booking Confirmed  Payment Link";
 
     $mail->Body = "
         <div style='font-family:Arial;background:#f4f6f9;padding:20px'>
@@ -143,8 +143,8 @@ if (strlen($phone) === 10) {
 
 /* IMPORTANT: Do NOT urlencode the entire message blindly */
 $wa_text = rawurlencode(
-    "Hello $name 👋\n\n" .
-    "Your booking is confirmed ✅\n" .
+    "Hello $name \n\n" .
+    "Your booking is confirmed \n" .
     "Amount: ₹$price\n\n" .
     "Pay here:\n$payment_link"
 );
