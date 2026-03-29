@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Pacific Travel - Register</title>
+<title>Hidden Hills Collective - Register</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -91,10 +91,10 @@ body{
 <body>
 <?php include 'navbar.php'; ?>
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="d-flex justify-content-center align-items-center min-vh-100 mt-5">
   <div class="card p-4 p-md-5 shadow-lg" style="width: 100%; max-width: 450px;">
     <!-- Title -->
-    <h1 class="text-center mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00;">Tour N Travels</h1>
+    <h1 class="text-center mb-3" style="font-family: 'Arizonia', cursive; color:#F96D00;">Hidden Hills Collective</h1>
     <p class="text-center mb-4 fw-semibold">Create your account to start your journey with us 🌍</p>
 
     <!-- Display error -->
@@ -103,7 +103,7 @@ body{
     <?php } ?>
 
     <!-- Registration Form -->
-    <form method="POST" action="">
+    <form method="POST" action="" id="registerForm" onsubmit="return confirmSignup(event)">
       <div class="mb-3">
         <input type="text" class="form-control form-control-lg rounded-pill shadow-sm" name="name" placeholder="Full Name" value="<?php echo htmlspecialchars($name); ?>" required>
       </div>
@@ -122,8 +122,10 @@ body{
         <span class="password-toggle" onclick="togglePassword('confirm_password')"><i class="fa fa-eye"></i></span>
       </div>
 
-      <div class="d-grid mb-3">
-        <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold">Register</button>
+      <div class="text-center mb-3">
+        <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold px-5">
+          Register
+        </button>
       </div>
 
       <p class="text-center mb-0">Already have an account? <a href="login.php" class="text-warning fw-bold text-decoration-none">Login</a></p>
@@ -160,6 +162,26 @@ body{
       input.type = 'password';
       icon.classList.remove('fa-eye-slash');
       icon.classList.add('fa-eye');
+    }
+  }
+
+  // ✅ SIGNUP CONFIRMATION POPUP
+  function confirmSignup(event) {
+    event.preventDefault();
+    
+    // Get email and phone values
+    const email = document.querySelector('input[name="email"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
+    
+    // Show confirmation popup
+    const confirmMessage = `The email and phone number you provide will be used for booking confirmation. Please ensure they are correct.\n\nEmail: ${email}\nPhone: ${phone}\n\nDo you want to proceed?`;
+    
+    if (confirm(confirmMessage)) {
+      // User confirmed - submit the form
+      document.getElementById('registerForm').submit();
+    } else {
+      // User cancelled - stop submission
+      return false;
     }
   }
 </script>

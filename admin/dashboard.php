@@ -1,26 +1,80 @@
 <?php
-session_start();
-include("../includes/db.php");
+// ✅ INCLUDE SESSION SECURITY CHECK (replaces manual session checks)
+include("../includes/session_check.php");
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
+// ✅ Verify user has admin role
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
-$total_users = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
-$total_packages = $conn->query("SELECT COUNT(*) as total FROM packages")->fetch_assoc()['total'];
-$total_bookings = $conn->query("SELECT COUNT(*) as total FROM bookings")->fetch_assoc()['total'];
+include("../includes/db.php");
 
-$total_revenue = $conn->query("SELECT SUM(total_price) as total FROM bookings WHERE booking_status='confirmed'")->fetch_assoc()['total'];
+/* ===============================
+   SAFE QUERY FUNCTION
+================================ */
+function getValue($conn, $query){
+    $result = $conn->query($query);
+    if($result && $row = $result->fetch_assoc()){
+        return $row['total'] ?? 0;
+    }
+    return 0;
+}
 
+/* ===============================
+   STATS (UPDATED LOGIC FRIENDLY)
+================================ */
+$total_users = getValue($conn, "SELECT COUNT(*) as total FROM users WHERE role='user'");
+$total_packages = getValue($conn, "SELECT COUNT(*) as total FROM packages");
+$total_bookings = getValue($conn, "SELECT COUNT(*) as total FROM bookings");
+
+/* Flexible revenue logic */
+$total_revenue = getValue($conn, "
+    SELECT SUM(
+        CASE 
+            WHEN total_price IS NOT NULL THEN total_price 
+            ELSE 0 
+        END
+    ) as total 
+    FROM bookings 
+    WHERE booking_status='confirmed'
+");
+
+/* ===============================
+   RECENT BOOKINGS (SAFE JOIN)
+================================ */
 $recent_bookings = $conn->query("
-SELECT bookings.*, users.name, packages.title
-FROM bookings
-JOIN users ON bookings.user_id = users.id
-JOIN packages ON bookings.package_id = packages.id
-ORDER BY bookings.created_at DESC
+SELECT 
+    b.*, 
+    u.name, 
+    p.title,
+
+    /* PAYMENT DATA */
+    pay.payment_status,
+    pay.amount as paid_amount,
+    pay.payment_method,
+    pay.transaction_id
+
+FROM bookings b
+
+LEFT JOIN users u ON b.user_id = u.id
+LEFT JOIN packages p ON b.package_id = p.id
+
+/* ✅ GET ONLY LATEST PAYMENT */
+LEFT JOIN payments pay ON pay.id = (
+    SELECT id FROM payments 
+    WHERE booking_id = b.id 
+    ORDER BY created_at DESC 
+    LIMIT 1
+)
+
+ORDER BY b.created_at DESC
 LIMIT 5
 ");
+
+if(!$recent_bookings){
+    die("Query Error: " . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,104 +85,86 @@ LIMIT 5
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
+/* ===== GLOBAL ===== */
 body{
-font-family:'Poppins',sans-serif;
-background:#f4f7fc;
+    font-family:'Poppins',sans-serif;
+    background:#eef2f7;
 }
 
-/* SIDEBAR */
-
-.sidebar{
-height:100vh;
-background:linear-gradient(180deg,#1e1e2f,#2c2c54);
-color:white;
-position:fixed;
-width:240px;
-padding-top:30px;
-left:0;
-top:0;
+/* ===== SIDEBAR FIX ===== */
+.adminLayoutContent{
+    margin-left:260px;
+    padding:30px;
 }
 
-/* CONTENT */
-
-.content{
-margin-left:260px;
-padding:40px;
+/* ===== TITLE ===== */
+.dashboard-title{
+    font-weight:700;
+    color:#2c3e50;
 }
 
-/* DASHBOARD CARDS */
-
+/* ===== CARDS ===== */
 .dashboard-card{
-border-radius:20px;
-padding:30px;
-color:white;
-transition:0.3s;
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    border-radius:20px;
+    padding:25px;
+    color:white;
+    transition:0.3s;
+    box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
 .dashboard-card:hover{
-transform:translateY(-8px);
+    transform:translateY(-6px);
 }
 
+.card-value{
+    font-size:28px;
+    font-weight:700;
+}
+
+.card-label{
+    opacity:0.9;
+}
+
+/* Gradients */
 .bg1{ background:linear-gradient(135deg,#667eea,#764ba2); }
 .bg2{ background:linear-gradient(135deg,#43cea2,#185a9d); }
-.bg3{ background:linear-gradient(135deg,#f7971e,#ffd200); }
+.bg3{ background:linear-gradient(135deg,#f7971e,#ffd200); color:#000;}
 .bg4{ background:linear-gradient(135deg,#ff416c,#ff4b2b); }
 
-/* TABLE */
-
-.table{
-border-radius:15px;
-overflow:hidden;
+/* ===== TABLE ===== */
+.card{
+    border-radius:20px;
 }
 
 .table thead{
-background:#1e1e2f;
-color:white;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
 }
 
-/* BADGES */
+.table td{
+    vertical-align:middle;
+}
 
+/* ===== BADGES ===== */
 .badge{
-font-size:13px;
-padding:6px 12px;
-border-radius:20px;
+    padding:6px 12px;
+    border-radius:20px;
 }
 
-/* MOBILE FIX */
-
-@media(max-width:991px){
-
-.sidebar{
-display:none;
+/* ===== ANIMATION ===== */
+.fade-in{
+    animation:fadeIn 0.6s ease-in-out;
 }
 
-.content{
-margin-left:0;
-padding:20px;
-}
-
-}
-
-/* SMALL MOBILE */
-
-@media(max-width:576px){
-
-.dashboard-card{
-padding:20px;
-text-align:center;
-}
-
-.content{
-padding:15px;
-}
-
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
 </style>
@@ -137,40 +173,40 @@ padding:15px;
 
 <body>
 
-<!-- Sidebar -->
 <?php include("navbar_admin.php"); ?>
 
-<div class="content">
+<div class="adminLayoutContent fade-in">
 
-<h2 class="mb-4 fw-bold">Dashboard Overview</h2>
+<h2 class="dashboard-title mb-4">📊 Dashboard Overview</h2>
 
+<!-- STATS -->
 <div class="row g-4">
 
 <div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg1">
-<h2><?php echo $total_users; ?></h2>
-<p>Total Users</p>
+<div class="card-value"><?= $total_users ?></div>
+<div class="card-label">Total Users</div>
 </div>
 </div>
 
 <div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg2">
-<h2><?php echo $total_packages; ?></h2>
-<p>Total Packages</p>
+<div class="card-value"><?= $total_packages ?></div>
+<div class="card-label">Total Packages</div>
 </div>
 </div>
 
 <div class="col-lg-3 col-md-6">
-<div class="dashboard-card bg3 text-dark">
-<h2><?php echo $total_bookings; ?></h2>
-<p>Total Bookings</p>
+<div class="dashboard-card bg3">
+<div class="card-value"><?= $total_bookings ?></div>
+<div class="card-label">Total Bookings</div>
 </div>
 </div>
 
 <div class="col-lg-3 col-md-6">
 <div class="dashboard-card bg4">
-<h2>₹<?php echo $total_revenue ?? 0; ?></h2>
-<p>Total Revenue</p>
+<div class="card-value">₹<?= $total_revenue ?? 0 ?></div>
+<div class="card-label">Total Revenue</div>
 </div>
 </div>
 
@@ -178,9 +214,10 @@ padding:15px;
 
 <hr class="my-5">
 
-<h4 class="mb-3 fw-semibold">Recent Bookings</h4>
+<!-- RECENT BOOKINGS -->
+<h4 class="mb-3 fw-semibold">🕒 Recent Bookings</h4>
 
-<div class="card shadow-lg border-0">
+<div class="card shadow border-0">
 
 <div class="card-body">
 
@@ -196,11 +233,15 @@ padding:15px;
 <th>Total</th>
 <th>Status</th>
 <th>Date</th>
+<th>Payment</th>
+<th>Method</th>
+<th>Txn ID</th>
 </tr>
 </thead>
 
 <tbody>
 
+<?php if($recent_bookings->num_rows > 0){ ?>
 <?php while($row = $recent_bookings->fetch_assoc()){ 
 
 $status = strtolower(trim($row['booking_status']));
@@ -208,16 +249,15 @@ $status = strtolower(trim($row['booking_status']));
 
 <tr>
 
-<td><?php echo $row['name']; ?></td>
+<td><?= htmlspecialchars($row['name'] ?? 'N/A') ?></td>
 
-<td><?php echo $row['title']; ?></td>
+<td><?= htmlspecialchars($row['title'] ?? 'Custom') ?></td>
 
-<td><?php echo $row['persons']; ?></td>
+<td><?= $row['persons'] ?? '-' ?></td>
 
-<td>₹<?php echo $row['total_price']; ?></td>
+<td>₹<?= $row['total_price'] ?? 0 ?></td>
 
 <td>
-
 <?php
 if($status == 'confirmed'){
 echo "<span class='badge bg-success'>Confirmed</span>";
@@ -232,11 +272,46 @@ else{
 echo "<span class='badge bg-secondary'>Unknown</span>";
 }
 ?>
-
 </td>
 
-<td><?php echo date("d M Y", strtotime($row['created_at'])); ?></td>
+<td><?= date("d M Y", strtotime($row['created_at'])) ?></td>
 
+<!-- PAYMENT STATUS -->
+<td>
+<?php
+$pay = strtolower($row['payment_status'] ?? 'no payment');
+
+if($pay == 'paid'){
+    echo "<span class='badge bg-success'>Paid</span>";
+}
+elseif($pay == 'pending'){
+    echo "<span class='badge bg-warning text-dark'>Pending</span>";
+}
+elseif($pay == 'failed'){
+    echo "<span class='badge bg-danger'>Failed</span>";
+}
+else{
+    echo "<span class='badge bg-secondary'>No Payment</span>";
+}
+?>
+</td>
+
+<!-- PAYMENT METHOD -->
+<td>
+<?= htmlspecialchars($row['payment_method'] ?? '-') ?>
+</td>
+
+<!-- TRANSACTION ID -->
+<td>
+<?= htmlspecialchars($row['transaction_id'] ?? '-') ?>
+</td>
+</tr>
+
+<?php } ?>
+<?php } else { ?>
+
+<tr>
+<td colspan="6" class="text-center">No bookings found</td>
 </tr>
 
 <?php } ?>
@@ -253,7 +328,7 @@ echo "<span class='badge bg-secondary'>Unknown</span>";
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

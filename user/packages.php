@@ -1,43 +1,12 @@
 <?php
-session_start();
-include("../includes/db.php");
-
-if(!isset($_SESSION['user_id'])){
-    header("Location: ../login.php");
-    exit();
-}
-
-$search = "";
-$min_price = "";
-$max_price = "";
-
-$sql = "SELECT * FROM packages WHERE status='active'";
-
-if(isset($_GET['search']) && $_GET['search'] != ""){
-    $search = $_GET['search'];
-    $sql .= " AND title LIKE '%$search%'";
-}
-
-if(isset($_GET['min_price']) && $_GET['min_price'] != ""){
-    $min_price = $_GET['min_price'];
-    $sql .= " AND final_price >= '$min_price'";
-}
-
-if(isset($_GET['max_price']) && $_GET['max_price'] != ""){
-    $max_price = $_GET['max_price'];
-    $sql .= " AND final_price <= '$max_price'";
-}
-
-$sql .= " ORDER BY id DESC";
-
-$result = $conn->query($sql);
+include("../includes/session_check.php");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
 
-<title>Tour Packages</title>
+<title>Choose Package Type</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -46,137 +15,99 @@ $result = $conn->query($sql);
 <style>
 
 body{
-background:#f4f6f9;
+background:linear-gradient(135deg,#667eea,#764ba2);
 font-family:'Segoe UI',sans-serif;
+color:white;
 }
 
-/* ===== NAVBAR FIX ===== */
-
-nav{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-z-index:999;
-}
-
-/* Prevent bootstrap from changing logo style */
-
-.navbar-brand{
-font-size:20px !important;
-font-weight:600 !important;
+/* Container */
+.main-content{
+min-height:100vh;
 display:flex;
 align-items:center;
-gap:6px;
 }
 
-/* MAIN CONTENT */
-
-.main-content{
-margin-top:90px;
-}
-
-/* PACKAGE CARD */
-
+/* Cards */
 .package-card{
-border-radius:16px;
+border-radius:20px;
+transition:0.4s;
+cursor:pointer;
+background:white;
+color:#333;
+position:relative;
 overflow:hidden;
-transition:0.3s;
-height:100%;
-display:flex;
-flex-direction:column;
 }
 
+/* Hover Effect */
 .package-card:hover{
-transform:translateY(-8px);
-box-shadow:0 15px 40px rgba(0,0,0,0.2);
+transform:translateY(-12px) scale(1.02);
+box-shadow:0 25px 50px rgba(0,0,0,0.4);
 }
 
-.package-img{
-height:220px;
-object-fit:cover;
+/* Glow Border */
+.package-card::before{
+content:'';
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(120deg,transparent,rgba(255,255,255,0.5),transparent);
+transition:0.5s;
 }
 
-.card-body{
-flex:1;
-display:flex;
-flex-direction:column;
+.package-card:hover::before{
+left:100%;
 }
 
-.card-title{
-font-weight:600;
+/* Icons */
+.icon{
+font-size:55px;
 }
 
-/* DISCOUNT */
-
-.discount-badge{
+/* Badge */
+.popular-badge{
 position:absolute;
 top:10px;
-left:10px;
-background:#ff4d4d;
+right:10px;
+background:#ff4757;
 color:white;
-padding:6px 12px;
-font-size:13px;
-border-radius:6px;
-font-weight:600;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
 }
 
-/* PRICE */
-
-.price{
-font-size:22px;
-font-weight:700;
-color:#28a745;
+/* Trust Section */
+.trust-box{
+background:rgba(255,255,255,0.1);
+border-radius:15px;
+padding:15px;
+margin-top:30px;
 }
 
-.old-price{
-text-decoration:line-through;
-color:#999;
-font-size:14px;
-margin-right:6px;
+/* Review */
+.review-box{
+background:white;
+color:#333;
+border-radius:12px;
+padding:15px;
+margin-top:10px;
 }
 
-/* SEATS */
-
-.seats-warning{
-color:#ff4d4d;
-font-weight:600;
-font-size:14px;
-}
-
-/* BUTTONS */
-
-.buttons{
-margin-top:auto;
-}
-
-.btn{
-border-radius:8px;
-}
-
-/* WHATSAPP */
-
+/* WhatsApp Button */
 .whatsapp-btn{
 background:#25D366;
 color:white;
+font-weight:bold;
+border-radius:10px;
+padding:12px;
+display:inline-block;
+text-decoration:none;
+margin-top:20px;
 }
 
 .whatsapp-btn:hover{
-background:#1ebd5a;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-.package-img{
-height:180px;
-}
-
-.main-content{
-margin-top:100px;
-}
-
+background:#1ebe5d;
 }
 
 </style>
@@ -185,181 +116,116 @@ margin-top:100px;
 
 <body>
 
-<!-- NAVBAR -->
 <?php include("navbar_user.php"); ?>
 
 <div class="main-content">
-
 <div class="container">
 
-<h2 class="text-center mb-5 fw-bold">
-🌍 Explore Tour Packages
-</h2>
-
-<form method="GET" class="row mb-4 g-2">
-
-<div class="col-md-4">
-<input type="text" name="search" class="form-control"
-placeholder="Search destination..."
-value="<?php echo $search; ?>">
+<!-- HEADER -->
+<div class="text-center mb-5">
+<h2 class="fw-bold">✨ Create Your Perfect Trip</h2>
+<p style="font-size:18px;">
+Explore Darjeeling & Sikkim like never before 🌄
+</p>
+<p style="opacity:0.8;">
+Choose your package and start your journey today
+</p>
 </div>
 
-<div class="col-md-3">
-<input type="number" name="min_price" class="form-control"
-placeholder="Min Price"
-value="<?php echo $min_price; ?>">
-</div>
+<!-- PACKAGE CARDS -->
+<div class="row text-center">
 
-<div class="col-md-3">
-<input type="number" name="max_price" class="form-control"
-placeholder="Max Price"
-value="<?php echo $max_price; ?>">
-</div>
-
-<div class="col-md-2">
-<button class="btn btn-primary w-100">Filter</button>
-</div>
-
-</form>
-
-<div class="row">
-
-<?php while($row = $result->fetch_assoc()) {
-
-$images = explode(",", $row['image']);
-$totalImages = count($images);
-$firstImage = $images[0];
-
-?>
-
+<!-- FULL TRIP -->
 <div class="col-md-4 mb-4">
+<a href="custom-package.php?type=full" class="text-decoration-none">
+<div class="card package-card p-4">
 
-<div class="card package-card shadow-sm">
+<div class="popular-badge">🔥 Most Booked</div>
 
-<div class="position-relative">
+<div class="icon">🚗</div>
+<h4 class="mt-3">Full Trip Package</h4>
+<p>Pickup + Stay + Sightseeing + Drop</p>
 
-<?php if($row['discount'] > 0){ ?>
-<div class="discount-badge">
-🔥 <?php echo $row['discount']; ?>% OFF
-</div>
-<?php } ?>
-
-<?php if($totalImages > 1){ ?>
-
-<div id="carousel<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
-
-<div class="carousel-inner">
-
-<?php
-$i=0;
-foreach($images as $img){
-?>
-
-<div class="carousel-item <?php if($i==0) echo 'active'; ?>">
-<img src="../uploads/<?php echo $img; ?>" class="d-block w-100 package-img">
-</div>
-
-<?php
-$i++;
-}
-?>
+<small class="text-success">Best for stress-free travel</small>
 
 </div>
-
-<button class="carousel-control-prev" type="button"
-data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="prev">
-<span class="carousel-control-prev-icon"></span>
-</button>
-
-<button class="carousel-control-next" type="button"
-data-bs-target="#carousel<?php echo $row['id']; ?>" data-bs-slide="next">
-<span class="carousel-control-next-icon"></span>
-</button>
-
+</a>
 </div>
 
-<?php } else { ?>
+<!-- STAY -->
+<div class="col-md-4 mb-4">
+<a href="custom-package.php?type=stay" class="text-decoration-none">
+<div class="card package-card p-4">
 
-<img src="../uploads/<?php echo $firstImage; ?>" class="w-100 package-img">
+<div class="icon">🏨</div>
+<h4 class="mt-3">Stay + Sightseeing</h4>
+<p>Hotel + Tours + Activities</p>
 
-<?php } ?>
+<small class="text-primary">Perfect for flexible trips</small>
+
+</div>
+</a>
+</div>
+
+<!-- SIGHTSEEING -->
+<div class="col-md-4 mb-4">
+<a href="custom-package.php?type=sightseeing" class="text-decoration-none">
+<div class="card package-card p-4">
+
+<div class="icon">🏔️</div>
+<h4 class="mt-3">Only Sightseeing</h4>
+<p>Day tours + popular spots</p>
+
+<small class="text-warning">Budget friendly option</small>
+
+</div>
+</a>
+</div>
 
 </div>
 
-<div class="card-body">
-
-<h5 class="card-title"><?php echo $row['title']; ?></h5>
-
-<p class="text-muted">
-<?php echo substr($row['description'],0,100); ?>...
+<!-- EMOTIONAL LINE -->
+<div class="text-center mt-4">
+<p style="font-size:18px;">
+🌄 Imagine watching sunrise at Tiger Hill with your loved ones...
 </p>
+</div>
 
-<p class="mb-2">
-⏱ Duration: <?php echo $row['duration']; ?>
-</p>
+<!-- TRUST BADGES -->
+<div class="row text-center trust-box">
+<div class="col-md-3">✔ 100+ Happy Travelers</div>
+<div class="col-md-3">✔ Verified Drivers</div>
+<div class="col-md-3">✔ No Hidden Charges</div>
+<div class="col-md-3">✔ 24/7 Support</div>
+</div>
 
-<?php if($row['seats'] <= 5 && $row['seats'] > 0){ ?>
-<p class="seats-warning">
-⚠ Only <?php echo $row['seats']; ?> Seats Left
-</p>
-<?php } ?>
+<!-- REVIEWS -->
+<div class="mt-4 text-center">
+<h5>⭐ What Our Travelers Say</h5>
 
-<?php if($row['seats'] == 0){ ?>
-<p class="text-danger fw-bold">❌ Sold Out</p>
-<?php } ?>
+<div class="review-box">
+⭐⭐⭐⭐⭐ "Amazing trip! Everything was perfectly managed." – Rahul
+</div>
 
-<p class="price">
+<div class="review-box">
+⭐⭐⭐⭐⭐ "Best experience in Sikkim. Highly recommended!" – Priya
+</div>
 
-<?php if($row['discount'] > 0){ ?>
-<span class="old-price">₹<?php echo $row['price']; ?></span>
-₹<?php echo $row['final_price']; ?>
-<?php } else { ?>
-₹<?php echo $row['price']; ?>
-<?php } ?>
+</div>
 
-</p>
-
-<div class="buttons">
-
-<a href="package-details.php?id=<?php echo $row['id']; ?>"
-class="btn btn-outline-primary btn-sm w-100 mb-2">
-View Details
+<!-- WHATSAPP -->
+<div class="text-center">
+<a href="https://wa.me/91XXXXXXXXXX?text=I%20want%20a%20trip%20quote"
+class="whatsapp-btn">
+💬 Chat on WhatsApp
 </a>
 
-<?php if($row['seats'] > 0){ ?>
-
-<a href="book.php?id=<?php echo $row['id']; ?>"
-class="btn btn-primary btn-sm w-100 mb-2">
-Book Now
-</a>
-
-<?php } else { ?>
-
-<button class="btn btn-secondary btn-sm w-100 mb-2" disabled>
-Sold Out
-</button>
-
-<?php } ?>
-
-<a href="https://wa.me/918158036510?text=Hello I want details about <?php echo urlencode($row['title']); ?>"
-class="btn whatsapp-btn btn-sm w-100">
-📱 WhatsApp Inquiry
-</a>
-
+<p class="mt-2" style="opacity:0.8;">
+💡 No payment required now. Get quote first.
+</p>
 </div>
 
 </div>
-
-</div>
-
-</div>
-
-<?php } ?>
-
-</div>
-
-</div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

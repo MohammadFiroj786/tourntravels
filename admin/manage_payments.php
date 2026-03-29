@@ -1,14 +1,14 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['admin_id'])){
+if ($_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
 /* ================= EXPORT EXCEL ================= */
-if(isset($_GET['export']) && $_GET['export']=="excel"){
+if (isset($_GET['export']) && $_GET['export'] == "excel") {
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=payments.xls");
 
@@ -16,8 +16,8 @@ if(isset($_GET['export']) && $_GET['export']=="excel"){
 
     $result = $conn->query("SELECT * FROM payments");
 
-    while($row = $result->fetch_assoc()){
-        echo $row['id']."\t".
+    while ($row = $result->fetch_assoc()) {
+        echo $row['id'] . "\t" .
              $row['booking_id']."\t".
              $row['payment_method']."\t".
              $row['transaction_id']."\t".
@@ -29,9 +29,13 @@ if(isset($_GET['export']) && $_GET['export']=="excel"){
 }
 
 /* ================= INVOICE PDF ================= */
-if(isset($_GET['invoice'])){
-    $id = $_GET['invoice'];
+if (isset($_GET['invoice'])) {
+    $id = intval($_GET['invoice']); // ✅ FIXED: Validate ID
     $payment = $conn->query("SELECT * FROM payments WHERE id=$id")->fetch_assoc();
+
+    if (!$payment) {
+        die("Payment not found");
+    }
 
     header("Content-Type: application/pdf");
     header("Content-Disposition: attachment; filename=invoice_$id.pdf");
@@ -86,6 +90,7 @@ $result = $conn->query("SELECT * FROM payments ORDER BY created_at DESC");
 <style>
 body{ background:#f4f6f9; }
 .card{ border-radius:12px; }
+<<<<<<< HEAD
 .content{
 margin-left:250px;
 padding:25px;
@@ -96,17 +101,33 @@ transition:0.3s;
 
 @media(max-width:768px){
 
+=======
+
+.content{
+margin-left:250px;
+padding:25px;
+}
+
+@media(max-width:768px){
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 .content{
 margin-left:0;
 padding:15px;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 }
 </style>
 </head>
 <body>
 <?php include("navbar_admin.php"); ?>
+<<<<<<< HEAD
 <div class="content">
+=======
+<div class="adminLayoutContent">
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 
 <h3 class="mb-4">💳 Payment Management</h3>
 

@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Pacific - Free Bootstrap 4 Template by Colorlib</title>
+  <title>About Hidden Hills Collective | Travel Experts in Darjeeling</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Learn about Hidden Hills Collective, your trusted travel experts specializing in authentic experiences in Darjeeling, Mirik, and Kalimpong regions.">
+  <meta name="keywords" content="Darjeeling travel, Darjeeling homestays, Mirik tourism, Kalimpong travel, hill tourism West Bengal">
+  <meta property="og:title" content="About Hidden Hills Collective | Travel Experts in Darjeeling">
+  <meta property="og:description" content="Learn about Hidden Hills Collective, your trusted travel experts specializing in authentic experiences in Darjeeling, Mirik, and Kalimpong regions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hiddenhills.com/about">
+  <meta property="og:image" content="images/bg_1.jpg">
+  <link rel="icon" href="images/favicon.png">
   
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Arizonia&display=swap" rel="stylesheet">
@@ -43,7 +51,7 @@
     <div class="row d-flex">
       <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">
        <div class="w-100">
-        <span class="subheading">Welcome to Pacific</span>
+        <span class="subheading">Welcome to Hidden Hills Collective</span>
         <h2 class="mb-4">It's time to start your adventure</h2>
         <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
         <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.
@@ -263,7 +271,7 @@
    <div class="col-md-12 text-center">
     <div class="img"  style="background-image: url(images/bg_2.jpg);">
      <div class="overlay"></div>
-     <h2>We Are Pacific A Travel Agency</h2>
+     <h2>We Are Hidden Hills Collective</h2>
      <p>We can manage your dream building A small river named Duden flows by their place</p>
      <p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Ask For A Quote</a></p>
    </div>

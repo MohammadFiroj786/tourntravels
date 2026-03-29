@@ -1,8 +1,8 @@
 <?php
-session_start();
+include("../includes/session_check.php");
 include("../includes/db.php");
 
-if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
+if($_SESSION['role'] !== 'admin'){
     header("Location: ../login.php");
     exit();
 }
@@ -12,7 +12,7 @@ if(!isset($_SESSION['role']) || $_SESSION['role'] != 'admin'){
 if(isset($_GET['delete_img'])){
 
 $id = intval($_GET['delete_img']);
-$img = $_GET['img'];
+$img = isset($_GET['img']) ? basename($_GET['img']) : ''; // ✅ FIXED: Use basename to prevent directory traversal
 
 $data = $conn->query("SELECT image FROM packages WHERE id=$id");
 $row = $data->fetch_assoc();
@@ -22,10 +22,13 @@ $imgs = array_diff($imgs, [$img]);
 
 $new = implode(",", $imgs);
 
-$conn->query("UPDATE packages SET image='$new' WHERE id=$id");
+// ✅ FIXED: Use prepared statement
+$stmt = $conn->prepare("UPDATE packages SET image=? WHERE id=?");
+$stmt->bind_param("si", $new, $id);
+$stmt->execute();
 
-if(file_exists("../uploads/".$img)){
-unlink("../uploads/".$img);
+if (file_exists("../uploads/" . $img)) {
+    unlink("../uploads/" . $img);
 }
 
 header("Location: manage_packages.php");
@@ -35,23 +38,23 @@ exit();
 
 /* ================= ADD PACKAGE ================= */
 
-if(isset($_POST['add_package'])){
+if (isset($_POST['add_package'])) {
 
-$title = $_POST['title'];
-$duration = $_POST['duration'];
-$price = $_POST['price'];
-$discount = $_POST['discount'];
-$seats = $_POST['seats'];
-$description = $_POST['description'];
-$status = $_POST['status'];
+    $title = $_POST['title'];
+    $duration = $_POST['duration'];
+    $price = $_POST['price'];
+    $discount = $_POST['discount'];
+    $seats = $_POST['seats'];
+    $description = $_POST['description'];
+    $status = $_POST['status'];
 
-$final_price = $price - ($price * $discount / 100);
+    $final_price = $price - ($price * $discount / 100);
 
-$images = [];
+    $images = [];
 
-if(!empty($_FILES['image']['name'][0])){
+    if (!empty($_FILES['image']['name'][0])) {
 
-foreach($_FILES['image']['name'] as $key=>$img){
+        foreach ($_FILES['image']['name'] as $key => $img) {
 
 $name = time().'_'.$img;
 
@@ -248,6 +251,23 @@ background:#1e1e2f;
 color:white;
 }
 
+.adminLayoutContent {
+    margin-left: 250px; /* match your sidebar width */
+    padding: 20px;
+    transition: margin-left 0.3s;
+    width: calc(100% - 250px); /* make content fit remaining space */
+    box-sizing: border-box;
+}
+
+@media(max-width:991px){
+    .adminLayoutContent {
+        margin-left: 0;
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
 </style>
 
 </head>
@@ -256,7 +276,7 @@ color:white;
 <!-- SIDEBAR -->
 <?php include("navbar_admin.php"); ?>
 
-<div class="main-content container-fluid py-4">
+<div class="adminLayoutContent container-fluid py-4">
 <div class="header-gradient mb-4 d-flex justify-content-between align-items-center">
 <h3>📦 Manage Packages</h3>
 <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addModal">+ Add Package</button>
