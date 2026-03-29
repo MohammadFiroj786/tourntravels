@@ -1,122 +1,188 @@
-# Hidden Hills Collective – Travel Website
+Hidden Hills Collective – Tours & Travels Management System
 
-A modern travel agency website developed for **Hidden Hills Collective**, showcasing homestays, travel experiences, and tourism information for Darjeeling and nearby hill destinations.
+A complete Tours & Travels web application developed for Hidden Hills Collective, allowing users to explore travel packages, create custom trips, and book tours, with a full admin management panel.
 
-This project was developed to provide visitors with information about local stays, travel guides, and ways to contact the agency for trip planning.
+This system provides package booking, custom package requests, admin approvals, email notifications, and user dashboard.
 
----
+🌄 About the Project
 
-## 🌄 About the Project
+Hidden Hills Collective is a travel platform designed to promote authentic hill tourism experiences in:
 
-Hidden Hills Collective is a travel platform designed to promote **authentic hill tourism experiences** in:
+Darjeeling
+Mirik
+Kalimpong
+Sikkim (extendable)
 
-* Darjeeling
-* Mirik
-* Kalimpong
+The platform allows users to:
 
-The website allows visitors to:
+Browse travel packages
+Book tours
+Request custom travel packages
+Select stay / sightseeing / full package
+Track booking status
+Receive email notifications
 
-* Explore available **homestays**
-* Read **travel blogs and travel guides**
-* Learn about the travel company
-* Send **travel enquiries**
+Admins can:
 
-The project follows a **modular PHP structure** with reusable components for better maintainability and scalability.
+Manage bookings
+Approve custom packages
+Manage sightseeing options
+Control users
+Update package status
 
----
+🛠 Tech Stack
 
-## 🛠 Tech Stack
+Frontend
+HTML5
+CSS3
+Bootstrap
+JavaScript
+jQuery
+Backend
+PHP (Core PHP)
+Database
+MySQL
+Development Tools
+Visual Studio Code
+Git & GitHub
 
-### Frontend
+✨ Features
 
-* HTML5
-* CSS3
-* Bootstrap 4
-* JavaScript
-* jQuery
+👤 User Features
+User Registration & Login
+Browse travel packages
+Book travel packages
+Custom package request system
+Choose service type:
+Full Package
+Stay Only
+Sightseeing Only
+User dashboard
+Booking confirmation page
+Booking status tracking
+Forgot password with email reset
+Email notification after booking/request
 
-### Backend
+🧳 Custom Package System
+User selects:
+Destination
+Hotel type
+Car type
+Sightseeing places
+Stored in custom_package_requests
+Admin reviews request
+Admin approves/rejects
+Status tracking:
+Pending
+Approved
+Rejected
 
-* PHP
+🛠 Admin Panel Features
+Admin dashboard
+View all users
+Manage bookings
+Approve custom packages
+Reject custom packages
+Manage sightseeing places
+Update booking status
+View statistics
+Secure session handling
 
-### Development Tools
+📧 Email Features
+Forgot password email
+Reset password link
+Booking confirmation email
+Custom package request notification
 
-* Visual Studio Code
-* Git & GitHub
+🔐 Security Features
+Session protection
+SQL Injection prevention (prepared statements)
+Input sanitization
+Secure authentication
+Admin access restriction
 
----
-
-## 📁 Project Structure
-
-```
-project-root
+📁 Project Structure
+tourntravels/
 │
-├── index.php
-├── about.php
-├── homestays.php
-├── blog.php
-├── contact.php
-│
-├── navbar.php
-├── footer.php
-│
+├── admin/              # Admin panel
+├── user/               # User dashboard
+├── includes/           # DB connection & helpers
 ├── css/
 ├── js/
 ├── images/
+├── uploads/
+│
+├── index.php
+├── login.php
+├── register.php
+├── navbar.php
+├── footer.php
+├── contact.php
+├── about.php
 │
 └── README.md
-```
 
----
+🧾 Database Modules
+users
+packages
+bookings
+custom_package_requests
+sightseeing
+admin
 
-## ✨ Features
+🔄 Booking Flow
+User selects package
+Clicks book
+Booking stored in database
+Confirmation page shown
+Email notification sent
+Admin can manage booking
 
-* Responsive travel website design
-* Reusable **navbar and footer using PHP includes**
-* Homestay listing page
-* Travel blog section
-* Contact and enquiry section
-* Clean and modular project structure
+🔄 Custom Package Flow
+User selects custom package
+Chooses service type
+Fills form
+Request saved
+Admin reviews
+Admin approves/rejects
+Status updated
+User sees status in dashboard
 
----
+📊 Admin Dashboard Includes
+Total Users
+Total Bookings
+Pending Requests
+Approved Packages
+Revenue stats (extendable)
 
-## 📌 Current Status
+🚀 Current Status
 
-The website structure and layout are completed.
+✅ Fully functional booking system
+✅ Custom package request system
+✅ Admin approval system
+✅ Email notifications
+✅ User dashboard
+✅ Admin dashboard
+✅ Secure login system
+✅ Password reset system
 
-Some content such as:
 
-* Homestay images
-* Homestay details
-* Contact information
+🔮 Future Improvements
 
-will be updated once provided by the client.
+Payment gateway integration
+Real-time notifications
+Package rating system
+Review & feedback system
+Mobile optimization
+API integration
 
----
+👨‍💻 Development Team
 
-## 🚀 Future Improvements
+Mahaboob Raza
+Mohammad Firoj
+Suraj Tamang
+Bibek Pandit
 
-Possible future enhancements include:
+📄 License
 
-* Dynamic homestay listings using a database
-* Admin dashboard for managing content
-* Online booking or enquiry management system
-* Image gallery for homestays
-* SEO optimization
-
----
-
-## 👨‍💻 Development Team
-
-This project was designed and developed by:
-
-* **Mahaboob Raza** 
-* **Mohhamad Firoj**
-* **Suraj Tamang**
-* **Bibek Pandit**
-
----
-
-## 📄 License
-
-This project is developed for the **Hidden Hills Collective** travel website.
+This project is developed for Hidden Hills Collective Travel Agency.
