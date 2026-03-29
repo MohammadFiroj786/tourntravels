@@ -74,7 +74,6 @@ if (isset($_POST['update_place'])) {
             $stmt->execute();
             $result = $stmt->get_result();
             $place = $result->fetch_assoc();
-            $stmt->close();
         } else {
             $message = "<div class='alert alert-danger'>Error updating place: " . $stmt->error . "</div>";
         }
