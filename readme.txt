@@ -169,6 +169,7 @@ Revenue stats (extendable)
 
 🔮 Future Improvements
 
+Off-Beat travel places
 Payment gateway integration
 Real-time notifications
 Package rating system
