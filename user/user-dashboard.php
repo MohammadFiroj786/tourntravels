@@ -27,7 +27,8 @@ SELECT
     packages.title,
     c.destination,
     c.status AS custom_status,
-    COALESCE(p.payment_status, 'pending') AS payment_status
+    COALESCE(p.payment_status, 'pending') AS payment_status,
+    f.id AS feedback_id
 
 FROM bookings
 
@@ -43,6 +44,9 @@ LEFT JOIN (
     FROM payments
     GROUP BY booking_id
 ) p ON bookings.id = p.booking_id
+
+LEFT JOIN feedback f 
+    ON bookings.id = f.booking_id
 
 WHERE bookings.user_id=$user_id
 
@@ -200,6 +204,7 @@ body{
 <th>Total</th>
 <th>Status</th>
 <th>Payment</th>
+<th>Feedback</th>
 </tr>
 </thead>
 
@@ -252,6 +257,7 @@ echo "<span class='badge bg-secondary'>⚙ Processing</span>";
 }
 ?>
 </td>
+
 <td>
 <?php
 $payment = strtolower(trim($row['payment_status']));
@@ -274,7 +280,27 @@ else{
 }
 ?>
 </td>
+<td>
+<?php
+$today = date('Y-m-d');
+$feedbackGiven = !empty($row['feedback_id']);
 
+if($status === 'confirmed' && $row['travel_date'] < $today){
+
+    if(!$feedbackGiven){
+        echo "<a href='feedback.php?booking_id=".$row['id']."' 
+              class='btn btn-sm btn-outline-primary'>
+              ⭐ Give Feedback
+              </a>";
+    } else {
+        echo "<span class='badge bg-success'>✔ Submitted</span>";
+    }
+
+}else{
+    echo "<span class='badge bg-secondary'>Not Available</span>";
+}
+?>
+</td>
 </tr>
 
 <?php } ?>

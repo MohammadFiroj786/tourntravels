@@ -156,6 +156,10 @@ padding:15px;
 </li>
 
 <li class="nav-item">
+<a class="nav-link <?= ($current_page=='admin_feedback.php')?'active':'' ?>" href="admin_feedback.php">⭐ Feedback</a>
+</li>
+
+<li class="nav-item">
 <a class="nav-link <?= ($current_page=='manage_users.php')?'active':'' ?>" href="manage_users.php">👤 Users</a>
 </li>
 
@@ -207,6 +211,10 @@ padding:15px;
 
 <a class="adminLayoutLink <?= ($current_page=='manage_bookings.php')?'active':'' ?>" href="manage_bookings.php">
 📖 Bookings
+</a>
+
+<a class="adminLayoutLink <?= ($current_page=='admin_feedback.php')?'active':'' ?>" href="admin_feedback.php">
+⭐ Feedback
 </a>
 
 <a class="adminLayoutLink <?= ($current_page=='manage_users.php')?'active':'' ?>" href="manage_users.php">
