@@ -165,6 +165,7 @@ Revenue stats (extendable)
 ✅ Admin dashboard
 ✅ Secure login system
 ✅ Password reset system
+✅ User Feedback 
 
 
 🔮 Future Improvements
