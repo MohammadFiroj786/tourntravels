@@ -90,6 +90,18 @@ $result = $conn->query("SELECT * FROM payments ORDER BY created_at DESC");
 <style>
 body{ background:#f4f6f9; }
 .card{ border-radius:12px; }
+<<<<<<< HEAD
+.content{
+margin-left:250px;
+padding:25px;
+transition:0.3s;
+}
+
+/* Mobile Fix */
+
+@media(max-width:768px){
+
+=======
 
 .content{
 margin-left:250px;
@@ -97,16 +109,25 @@ padding:25px;
 }
 
 @media(max-width:768px){
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 .content{
 margin-left:0;
 padding:15px;
 }
+<<<<<<< HEAD
+
+=======
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 }
 </style>
 </head>
 <body>
 <?php include("navbar_admin.php"); ?>
+<<<<<<< HEAD
+<div class="content">
+=======
 <div class="adminLayoutContent">
+>>>>>>> b9c157a06472bbb40b6e69eefee72f25c1c5192f
 
 <h3 class="mb-4">💳 Payment Management</h3>
 

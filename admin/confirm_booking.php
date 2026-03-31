@@ -1,4 +1,6 @@
 <?php
+ob_start(); // ✅ VERY IMPORTANT: prevents header issues
+
 include("../includes/session_check.php");
 include("../includes/db.php");
 require_once("../env.php");
@@ -12,7 +14,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 /* ================= SECURITY ================= */
-if ($_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
@@ -58,13 +60,14 @@ if ($data['status'] === 'Accepted') {
     exit();
 }
 
+/* ================= DATA ================= */
 $name        = $data['name'];
 $email       = $data['email'];
 $phone       = preg_replace('/\D/', '', $data['phone']);
 $travel_date = $data['travel_date'];
 $persons     = $data['travelers'];
 
-/* ================= UPDATE CUSTOM REQUEST ================= */
+/* ================= UPDATE REQUEST ================= */
 $update = $conn->prepare("
     UPDATE custom_package_requests
     SET price = ?, status = 'Accepted'
@@ -84,14 +87,14 @@ $insert->execute();
 
 $booking_id = $conn->insert_id;
 
-/* ================= PAYMENT LINK (IMPORTANT FIX) ================= */
+/* ================= PAYMENT LINK ================= */
 $baseUrl = rtrim(APP_URL, '/');
 $payment_link = $baseUrl . "/admin/pay.php?booking_id=" . $booking_id;
 
-/* ================= SEND EMAIL ================= */
-$mail = new PHPMailer(true);
-
+/* ================= SEND EMAIL (NON-BLOCKING) ================= */
 try {
+    $mail = new PHPMailer(true);
+
     $mail->isSMTP();
     $mail->Host       = MAIL_HOST;
     $mail->SMTPAuth   = true;
@@ -101,54 +104,49 @@ try {
     $mail->Port       = MAIL_PORT;
 
     $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
-    $mail->addReplyTo(MAIL_FROM, MAIL_FROM_NAME);
     $mail->addAddress($email, $name);
 
     $mail->isHTML(true);
-    $mail->Subject = " Booking Confirmed  Payment Link";
+    $mail->Subject = "Booking Confirmed - Payment Link";
 
     $mail->Body = "
-        <div style='font-family:Arial;background:#f4f6f9;padding:20px'>
-            <div style='max-width:600px;margin:auto;background:#fff;padding:25px;border-radius:8px'>
-                <h2>Booking Confirmed ✅</h2>
-                <p>Hello <b>$name</b>,</p>
-                <p>Your booking has been confirmed.</p>
-                <p><b>Amount:</b> ₹$price</p>
-                <p>
-                    <a href='$payment_link'
-                       style='background:#28a745;color:#fff;padding:12px 25px;text-decoration:none;border-radius:6px'>
-                       Pay Now
-                    </a>
-                </p>
-                <p>If the button doesn’t work, copy & paste this link:</p>
-                <p>$payment_link</p>
-                <hr>
-                <p>Thank you for choosing us.</p>
-            </div>
-        </div>
+        <h2>Booking Confirmed ✅</h2>
+        <p>Hello <b>$name</b>,</p>
+        <p>Your booking is confirmed.</p>
+        <p><b>Amount:</b> ₹$price</p>
+        <p>
+            <a href='$payment_link'
+               style='background:#28a745;color:#fff;padding:12px 20px;text-decoration:none;border-radius:5px'>
+               Pay Now
+            </a>
+        </p>
+        <p>Payment link: $payment_link</p>
     ";
 
-    $mail->AltBody = "Hello $name\n\nYour booking is confirmed.\nAmount: ₹$price\n\nPay here:\n$payment_link";
+    $mail->AltBody = "Hello $name\n\nAmount: ₹$price\nPay here:\n$payment_link";
 
     $mail->send();
 
 } catch (Exception $e) {
-    // Email failure should NOT stop WhatsApp redirect
+    // ❌ Do nothing – email failure must NOT stop WhatsApp
 }
 
-/* ================= WHATSAPP (CRITICAL FIX) ================= */
+/* ================= WHATSAPP ================= */
 if (strlen($phone) === 10) {
-    $phone = "91" . $phone;
+    $phone = "91" . $phone; // India country code
 }
 
-/* IMPORTANT: Do NOT urlencode the entire message blindly */
 $wa_text = rawurlencode(
-    "Hello $name \n\n" .
-    "Your booking is confirmed \n" .
+    "Hello $name\n\n" .
+    "Your booking is confirmed ✅\n" .
     "Amount: ₹$price\n\n" .
     "Pay here:\n$payment_link"
 );
 
-/* ================= REDIRECT TO WHATSAPP ================= */
+/* ================= FINAL REDIRECT ================= */
+if (headers_sent($file, $line)) {
+    die("Headers already sent in $file on line $line");
+}
+
 header("Location: https://wa.me/$phone?text=$wa_text");
 exit();
