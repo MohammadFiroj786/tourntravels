@@ -35,6 +35,7 @@ if (isset($_POST['update_place'])) {
     $place_name = mysqli_real_escape_string($conn, $_POST['place_name']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $status = $_POST['status'];
+    $is_offbeat = isset($_POST['is_offbeat']) ? 1 : 0;
 
     $image_name = $place['image']; // Keep existing image by default
 
@@ -64,8 +65,8 @@ if (isset($_POST['update_place'])) {
     }
 
     if (empty($message)) {
-        $stmt = $conn->prepare("UPDATE sightseeing_places SET destination = ?, place_name = ?, description = ?, image = ?, status = ? WHERE id = ?");
-        $stmt->bind_param("sssssi", $destination, $place_name, $description, $image_name, $status, $id);
+        $stmt = $conn->prepare("UPDATE sightseeing_places SET destination = ?, place_name = ?, description = ?, image = ?, status = ?, is_offbeat = ? WHERE id = ?");
+        $stmt->bind_param("sssssii", $destination, $place_name, $description, $image_name, $status, $is_offbeat, $id);
         if ($stmt->execute()) {
             $message = "<div class='alert alert-success'>Sightseeing place updated successfully!</div>";
             // Refresh place data
@@ -154,6 +155,13 @@ if (isset($_POST['update_place'])) {
                                     <label class="form-label fw-bold">Change Image (Optional)</label>
                                     <input type="file" name="image" class="form-control" accept="image/*">
                                     <small class="text-muted">Leave empty to keep current image. JPG, PNG, GIF, WEBP only.</small>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="is_offbeat" value="1" id="is_offbeat_edit" <?php echo ($place['is_offbeat'] == 1) ? 'checked' : ''; ?> >
+                                        <label class="form-check-label" for="is_offbeat_edit">Mark as Offbeat Experience</label>
+                                    </div>
                                 </div>
 
                                 <div class="col-12">

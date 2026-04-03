@@ -101,6 +101,15 @@
 									</div>
 								</div>      
 							</div>
+							<div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+								<div class="services services-1 color-5 d-block img" style="background-image: url(images/services-5.jpg);">
+									<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-compass"></span></div>
+									<div class="media-body">
+										<h3 class="heading mb-3">Offbeat Experiences</h3>
+										<p>Discover unique adventures and authentic stays in hidden gems of the Himalayas.</p>
+									</div>
+								</div>      
+							</div>
 						</div>
 					</div>
 				</div>
@@ -120,7 +129,7 @@
 
 				<div class="row">
 					<!-- FULL TRIP PACKAGE -->
-					<div class="col-md-4 mb-4 ftco-animate">
+					<div class="col-md-3 mb-4 ftco-animate">
 						<a href="user/custom-package.php?type=full" class="service-package-card" style="text-decoration: none; display: block;">
 							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
 								<div class="card-body text-center p-4">
@@ -140,7 +149,7 @@
 					</div>
 
 					<!-- STAY + SIGHTSEEING PACKAGE -->
-					<div class="col-md-4 mb-4 ftco-animate">
+					<div class="col-md-3 mb-4 ftco-animate">
 						<a href="user/custom-package.php?type=stay" class="service-package-card" style="text-decoration: none; display: block;">
 							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
 								<div class="card-body text-center p-4">
@@ -160,7 +169,7 @@
 					</div>
 
 					<!-- ONLY SIGHTSEEING PACKAGE -->
-					<div class="col-md-4 mb-4 ftco-animate">
+					<div class="col-md-3 mb-4 ftco-animate">
 						<a href="user/custom-package.php?type=sightseeing" class="service-package-card" style="text-decoration: none; display: block;">
 							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
 								<div class="card-body text-center p-4">
@@ -172,6 +181,26 @@
 										<li>✓ Popular Spots</li>
 										<li>✓ Expert Guides</li>
 										<li>✓ Photography Stops</li>
+									</ul>
+									<div class="btn btn-primary w-100" style="border-radius: 25px; font-weight: 600;">Get Started</div>
+								</div>
+							</div>
+						</a>
+					</div>
+
+					<!-- OFFBEAT EXPERIENCES -->
+					<div class="col-md-3 mb-4 ftco-animate">
+						<a href="user/custom-package.php?type=offbeat" class="service-package-card" style="text-decoration: none; display: block;">
+							<div class="card h-100" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; background: white;">
+								<div class="card-body text-center p-4">
+									<div style="font-size: 48px; margin-bottom: 15px;">🏕️</div>
+									<h5 class="card-title fw-bold mb-3" style="color: #333;">Offbeat Experiences</h5>
+									<p class="card-text text-muted mb-4">Unique adventures and authentic stays</p>
+									<ul class="list-unstyled text-start mb-3" style="font-size: 14px; color: #666;">
+										<li>✓ Camping</li>
+										<li>✓ Village Homestays</li>
+										<li>✓ Tea Garden Stays</li>
+										<li>✓ Forest Experiences</li>
 									</ul>
 									<div class="btn btn-primary w-100" style="border-radius: 25px; font-weight: 600;">Get Started</div>
 								</div>
