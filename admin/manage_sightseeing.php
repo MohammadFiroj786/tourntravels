@@ -15,6 +15,7 @@ if (isset($_POST['add_place'])) {
     $place_name = mysqli_real_escape_string($conn, $_POST['place_name']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $status = $_POST['status'];
+    $is_offbeat = isset($_POST['is_offbeat']) ? 1 : 0;
 
     $image_name = "";
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -35,8 +36,8 @@ if (isset($_POST['add_place'])) {
     }
 
     if (empty($message)) {
-        $stmt = $conn->prepare("INSERT INTO sightseeing_places (destination, place_name, description, image, status) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $destination, $place_name, $description, $image_name, $status);
+        $stmt = $conn->prepare("INSERT INTO sightseeing_places (destination, place_name, description, image, status, is_offbeat) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $destination, $place_name, $description, $image_name, $status, $is_offbeat);
         if ($stmt->execute()) {
             $message = "<div class='alert alert-success'>Sightseeing place added successfully!</div>";
         } else {
@@ -160,6 +161,14 @@ $places = $conn->query("SELECT * FROM sightseeing_places ORDER BY destination, p
                                                 <option value="active">Active</option>
                                                 <option value="inactive">Inactive</option>
                                             </select>
+                                        </div>
+
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label fw-bold">Offbeat Experience</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="is_offbeat" value="1" id="is_offbeat_add">
+                                                <label class="form-check-label" for="is_offbeat_add">Mark as Offbeat Experience</label>
+                                            </div>
                                         </div>
 
                                         <div class="col-12">

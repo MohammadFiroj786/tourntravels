@@ -26,12 +26,12 @@ $errors = [];
 $service_type = sanitize_input($_POST['service_type'] ?? '');
 $pickup_location = sanitize_input($_POST['pickup_location'] ?? '');
 
-// Handle multiple destinations as array
-$destinations_array = $_POST['destination'] ?? [];
-if (is_array($destinations_array)) {
-    $destinations_array = array_map('sanitize_input', $destinations_array);
+// Handle destination input (can be array for regular, single value for offbeat)
+$destinations_input = $_POST['destination'] ?? [];
+if (is_array($destinations_input)) {
+    $destinations_array = array_map('sanitize_input', $destinations_input);
 } else {
-    $destinations_array = [];
+    $destinations_array = [sanitize_input($destinations_input)];
 }
 $destinations = implode(', ', array_filter($destinations_array));
 
@@ -90,16 +90,20 @@ if (!empty($errors)) {
 }
 
 
-/* ===== CAR CAPACITY LOGIC ===== */
-if ($travelers <= 4) {
-    $car_type = 'Small Car';
-} elseif ($travelers <= 7) {
-    $car_type = 'SUV';
-} elseif ($travelers <= 12) {
-    $car_type = 'Tempo Traveller';
-} else {
-    $vehicles_needed = ceil($travelers / 12);
-    $car_type = "Multiple Vehicles ($vehicles_needed)";
+$car_type = sanitize_input($_POST['car_type'] ?? '');
+
+/* ===== CAR CAPACITY LOGIC (FALLBACK IF NOT PROVIDED) ===== */
+if (empty($car_type)) {
+    if ($travelers <= 4) {
+        $car_type = 'Small Car';
+    } elseif ($travelers <= 7) {
+        $car_type = 'SUV';
+    } elseif ($travelers <= 12) {
+        $car_type = 'Tempo Traveller';
+    } else {
+        $vehicles_needed = ceil($travelers / 12);
+        $car_type = "Multiple Vehicles ($vehicles_needed)";
+    }
 }
 
 

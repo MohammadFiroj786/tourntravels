@@ -42,6 +42,7 @@ overflow:hidden;
 .package-card:hover{
 transform:translateY(-12px) scale(1.02);
 box-shadow:0 25px 50px rgba(0,0,0,0.4);
+transition: 0.3s ease;
 }
 
 /* Glow Border */
@@ -74,7 +75,7 @@ background:#ff4757;
 color:white;
 padding:5px 10px;
 border-radius:20px;
-font-size:12px;
+font-size:10px;
 }
 
 /* Trust Section */
@@ -136,7 +137,7 @@ Choose your package and start your journey today
 <div class="row text-center">
 
 <!-- FULL TRIP -->
-<div class="col-md-4 mb-4">
+<div class="col-md-3 mb-4">
 <a href="custom-package.php?type=full" class="text-decoration-none">
 <div class="card package-card p-4">
 
@@ -153,7 +154,7 @@ Choose your package and start your journey today
 </div>
 
 <!-- STAY -->
-<div class="col-md-4 mb-4">
+<div class="col-md-3 mb-4">
 <a href="custom-package.php?type=stay" class="text-decoration-none">
 <div class="card package-card p-4">
 
@@ -168,7 +169,7 @@ Choose your package and start your journey today
 </div>
 
 <!-- SIGHTSEEING -->
-<div class="col-md-4 mb-4">
+<div class="col-md-3 mb-4">
 <a href="custom-package.php?type=sightseeing" class="text-decoration-none">
 <div class="card package-card p-4">
 
@@ -177,6 +178,23 @@ Choose your package and start your journey today
 <p>Day tours + popular spots</p>
 
 <small class="text-warning">Budget friendly option</small>
+
+</div>
+</a>
+</div>
+
+<!-- OFFBEAT -->
+<div class="col-md-3 mb-4">
+<a href="custom-package.php?type=offbeat" class="text-decoration-none">
+<div class="card package-card p-4">
+
+<div class="popular-badge">🌲 New</div>
+
+<div class="icon">🏕️</div>
+<h4 class="mt-3">Offbeat Experience</h4>
+<p>Camping, homestays, hidden viewpoints, tea gardens, and village experiences.</p>
+
+<small class="text-info">Unique adventures</small>
 
 </div>
 </a>
