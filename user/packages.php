@@ -1,5 +1,21 @@
 <?php
 include("../includes/session_check.php");
+include("../includes/db.php");
+
+/* ================= FETCH TOP REVIEWS ================= */
+$reviews = [];
+$sql = "
+SELECT f.rating, f.emoji, f.message, f.created_at, u.name
+FROM feedback f
+JOIN users u ON u.id = f.user_id
+ORDER BY f.rating DESC, f.created_at DESC
+LIMIT 6
+";
+$result = mysqli_query($conn, $sql);
+while ($row = mysqli_fetch_assoc($result)) {
+    $reviews[] = $row;
+}
+$currentMonth = date('Y-m');
 ?>
 
 <!DOCTYPE html>
@@ -13,104 +29,54 @@ include("../includes/session_check.php");
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-
 body{
 background:linear-gradient(135deg,#667eea,#764ba2);
-font-family:'Segoe UI',sans-serif;
 color:white;
+font-family:'Segoe UI',sans-serif;
 }
 
-/* Container */
-.main-content{
-min-height:100vh;
-display:flex;
-align-items:center;
+.glass{
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+border-radius:20px;
+padding:25px;
 }
 
-/* Cards */
 .package-card{
 border-radius:20px;
-transition:0.4s;
-cursor:pointer;
-background:white;
-color:#333;
-position:relative;
-overflow:hidden;
+transition:.3s;
 }
 
-/* Hover Effect */
 .package-card:hover{
-transform:translateY(-12px) scale(1.02);
-box-shadow:0 25px 50px rgba(0,0,0,0.4);
-transition: 0.3s ease;
+transform:translateY(-10px);
 }
 
-/* Glow Border */
-.package-card::before{
-content:'';
-position:absolute;
-top:0;
-left:-100%;
-width:100%;
-height:100%;
-background:linear-gradient(120deg,transparent,rgba(255,255,255,0.5),transparent);
-transition:0.5s;
+.review-slider{
+overflow:hidden;
+position:relative;
 }
 
-.package-card:hover::before{
-left:100%;
+.review-track{
+display:flex;
+gap:20px;
+transition:transform .5s ease;
 }
 
-/* Icons */
-.icon{
-font-size:55px;
+.review-premium{
+min-width:320px;
 }
 
-/* Badge */
-.popular-badge{
-position:absolute;
-top:10px;
-right:10px;
-background:#ff4757;
+.review-avatar{
+width:50px;
+height:50px;
+border-radius:50%;
+background:#6c63ff;
 color:white;
-padding:5px 10px;
-border-radius:20px;
-font-size:10px;
-}
-
-/* Trust Section */
-.trust-box{
-background:rgba(255,255,255,0.1);
-border-radius:15px;
-padding:15px;
-margin-top:30px;
-}
-
-/* Review */
-.review-box{
-background:white;
-color:#333;
-border-radius:12px;
-padding:15px;
-margin-top:10px;
-}
-
-/* WhatsApp Button */
-.whatsapp-btn{
-background:#25D366;
-color:white;
+display:flex;
+align-items:center;
+justify-content:center;
 font-weight:bold;
-border-radius:10px;
-padding:12px;
-display:inline-block;
-text-decoration:none;
-margin-top:20px;
 }
-
-.whatsapp-btn:hover{
-background:#1ebe5d;
-}
-
 </style>
 
 </head>
@@ -119,134 +85,172 @@ background:#1ebe5d;
 
 <?php include("navbar_user.php"); ?>
 
-<div class="main-content">
-<div class="container">
+<div class="main-content p-4">
 
 <!-- HEADER -->
 <div class="text-center mb-5">
 <h2 class="fw-bold">✨ Create Your Perfect Trip</h2>
-<p style="font-size:18px;">
-Explore Darjeeling & Sikkim like never before 🌄
-</p>
-<p style="opacity:0.8;">
-Choose your package and start your journey today
-</p>
+<p>Explore Darjeeling & Sikkim like never before 🌄</p>
+<p class="opacity-75">Choose your package and start your journey today</p>
 </div>
 
 <!-- PACKAGE CARDS -->
-<div class="row text-center">
+<div class="glass">
+<div class="row g-4 text-center">
 
-<!-- FULL TRIP -->
-<div class="col-md-3 mb-4">
-<a href="custom-package.php?type=full" class="text-decoration-none">
-<div class="card package-card p-4">
+<?php
+$packages = [
+["full","🚗","Full Trip Package","Pickup, stay, sightseeing & drop","🔥 Most Booked"],
+["stay","🏨","Stay + Sightseeing","Comfortable hotels with tours",""],
+["sightseeing","🏔️","Only Sightseeing","Day tours & popular attractions",""],
+["offbeat","🏕️","Offbeat Experience","Village life, tea gardens, camping","🌲 New"]
+];
 
-<div class="popular-badge">🔥 Most Booked</div>
+foreach($packages as $p){
+?>
+<div class="col-md-3">
+<a href="custom-package.php?type=<?= $p[0] ?>" class="text-decoration-none">
+<div class="card package-card shadow h-100 text-dark">
+<div class="card-body">
 
-<div class="icon">🚗</div>
-<h4 class="mt-3">Full Trip Package</h4>
-<p>Pickup + Stay + Sightseeing + Drop</p>
+<?php if($p[4]): ?>
+<span class="badge bg-danger position-absolute top-0 end-0 m-2"><?= $p[4] ?></span>
+<?php endif; ?>
 
-<small class="text-success">Best for stress-free travel</small>
+<div class="fs-1"><?= $p[1] ?></div>
+<h5 class="mt-3"><?= $p[2] ?></h5>
+<p><?= $p[3] ?></p>
 
+<small class="text-muted">
+✔ Flexible plans<br>
+✔ Local experts<br>
+✔ Best price guarantee
+</small>
+
+</div>
 </div>
 </a>
 </div>
-
-<!-- STAY -->
-<div class="col-md-3 mb-4">
-<a href="custom-package.php?type=stay" class="text-decoration-none">
-<div class="card package-card p-4">
-
-<div class="icon">🏨</div>
-<h4 class="mt-3">Stay + Sightseeing</h4>
-<p>Hotel + Tours + Activities</p>
-
-<small class="text-primary">Perfect for flexible trips</small>
+<?php } ?>
 
 </div>
-</a>
 </div>
 
-<!-- SIGHTSEEING -->
-<div class="col-md-3 mb-4">
-<a href="custom-package.php?type=sightseeing" class="text-decoration-none">
-<div class="card package-card p-4">
-
-<div class="icon">🏔️</div>
-<h4 class="mt-3">Only Sightseeing</h4>
-<p>Day tours + popular spots</p>
-
-<small class="text-warning">Budget friendly option</small>
-
-</div>
-</a>
-</div>
-
-<!-- OFFBEAT -->
-<div class="col-md-3 mb-4">
-<a href="custom-package.php?type=offbeat" class="text-decoration-none">
-<div class="card package-card p-4">
-
-<div class="popular-badge">🌲 New</div>
-
-<div class="icon">🏕️</div>
-<h4 class="mt-3">Offbeat Experience</h4>
-<p>Camping, homestays, hidden viewpoints, tea gardens, and village experiences.</p>
-
-<small class="text-info">Unique adventures</small>
-
-</div>
-</a>
-</div>
-
-</div>
-
-<!-- EMOTIONAL LINE -->
+<!-- EMOTIONAL -->
 <div class="text-center mt-4">
-<p style="font-size:18px;">
-🌄 Imagine watching sunrise at Tiger Hill with your loved ones...
-</p>
+<p>🌄 Imagine watching sunrise at Tiger Hill with your loved ones...</p>
 </div>
 
-<!-- TRUST BADGES -->
-<div class="row text-center trust-box">
-<div class="col-md-3">✔ 100+ Happy Travelers</div>
-<div class="col-md-3">✔ Verified Drivers</div>
-<div class="col-md-3">✔ No Hidden Charges</div>
-<div class="col-md-3">✔ 24/7 Support</div>
+<!-- TRUST -->
+<div class="row text-center mt-4">
+<div class="col-md-3">
+<div class="p-3 bg-light text-dark rounded shadow-sm">✔ 100+ Happy Travelers</div>
+</div>
+<div class="col-md-3">
+<div class="p-3 bg-light text-dark rounded shadow-sm">✔ Verified Drivers</div>
+</div>
+<div class="col-md-3">
+<div class="p-3 bg-light text-dark rounded shadow-sm">✔ No Hidden Charges</div>
+</div>
+<div class="col-md-3">
+<div class="p-3 bg-light text-dark rounded shadow-sm">✔ 24/7 Support</div>
+</div>
 </div>
 
 <!-- REVIEWS -->
-<div class="mt-4 text-center">
-<h5>⭐ What Our Travelers Say</h5>
+<div class="mt-5">
 
-<div class="review-box">
-⭐⭐⭐⭐⭐ "Amazing trip! Everything was perfectly managed." – Rahul
+<h3 class="text-center fw-bold">What Travelers Are Saying ❤️</h3>
+<p class="text-center opacity-75 mb-4">
+Real stories from people who explored with us
+</p>
+
+<div class="review-slider">
+
+<div class="review-track" id="reviewTrack">
+
+<?php foreach($reviews as $r):
+$isNew = substr($r['created_at'],0,7)===$currentMonth;
+$initial = strtoupper(substr($r['name'],0,1));
+?>
+
+<div class="card review-premium shadow border-0 text-dark">
+<div class="card-body">
+
+<div class="d-flex align-items-center mb-3">
+<div class="review-avatar me-3"><?= $initial ?></div>
+<div>
+<div class="fw-bold"><?= htmlspecialchars($r['name']) ?></div>
+<div class="text-warning">
+<?= str_repeat("★",$r['rating']) ?> <?= $r['emoji'] ?>
+</div>
+</div>
 </div>
 
-<div class="review-box">
-⭐⭐⭐⭐⭐ "Best experience in Sikkim. Highly recommended!" – Priya
+<p><?= htmlspecialchars($r['message']) ?></p>
+
+<small class="text-muted">
+<?= date("F Y", strtotime($r['created_at'])) ?>
+</small>
+
+</div>
 </div>
 
+<?php endforeach; ?>
+
+</div>
+
+</div>
 </div>
 
 <!-- WHATSAPP -->
-<div class="text-center">
+<div class="text-center mt-4">
 <a href="https://wa.me/91XXXXXXXXXX?text=I%20want%20a%20trip%20quote"
-class="whatsapp-btn">
+class="btn btn-success px-4 py-2">
 💬 Chat on WhatsApp
 </a>
 
-<p class="mt-2" style="opacity:0.8;">
+<p class="mt-2 opacity-75">
 💡 No payment required now. Get quote first.
 </p>
 </div>
 
 </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let reviewIndex = 0;
+const track = document.getElementById("reviewTrack");
+const total = track.children.length;
+
+/* Slide */
+function slideReview(step){
+    reviewIndex += step;
+
+    if(reviewIndex >= total){
+        reviewIndex = 0;
+    }
+
+    if(reviewIndex < 0){
+        reviewIndex = total - 1;
+    }
+
+    track.style.transform = `translateX(-${reviewIndex * 340}px)`;
+}
+
+/* Auto Slide */
+let autoSlide = setInterval(() => slideReview(1), 4000);
+
+/* Pause on hover */
+document.querySelector(".review-slider").addEventListener("mouseenter", () => {
+    clearInterval(autoSlide);
+});
+
+document.querySelector(".review-slider").addEventListener("mouseleave", () => {
+    autoSlide = setInterval(() => slideReview(1), 4000);
+});
+</script>
 
 </body>
 </html>
